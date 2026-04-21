@@ -37,13 +37,12 @@
 
     html, body {
       background: #EAEEF3;
-      min-height: 100vh;
-      min-height: 100dvh;
+      height: 100vh;
+      height: 100dvh;
       font-family: var(--font-body);
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      margin: 0;
       padding: 0;
+      overflow: hidden;
       overscroll-behavior: none;
     }
     html { background: #EAEEF3; }
@@ -52,11 +51,17 @@
     }
     html.night, html.night body { background: #0B1628 !important; }
 
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
     .app {
       width: 100%;
       max-width: 430px;
-      min-height: 100vh;
-      min-height: 100dvh;
+      height: 100vh;
+      height: 100dvh;
       background: #EAEEF3;
       display: flex;
       flex-direction: column;
@@ -381,9 +386,6 @@
       box-shadow: 0 -2px 12px rgba(0,0,0,0.07);
       padding: 8px 0 max(env(safe-area-inset-bottom), 20px);
       flex-shrink: 0;
-      position: sticky;
-      bottom: 0;
-      z-index: 10;
     }
     .nb-btn { flex: 1; text-align: center; cursor: pointer; padding: 4px 0; }
     .nb-icon { font-size: 20px; display: block; margin-bottom: 3px; }
