@@ -474,6 +474,8 @@
     .pack-item-del { background: transparent; border: none; color: #A32D2D; font-size: 12px; cursor: pointer; padding: 4px 6px; opacity: 0.7; }
     .pack-add-item { width: calc(100% - 24px); margin: 4px 12px 6px; padding: 9px 12px; background: #EBF4FF; border: 1px dashed var(--blue-400); border-radius: 8px; font-size: 12px; color: var(--blue-600); cursor: pointer; font-family: var(--font-body); }
     .pack-add-cat { width: 100%; padding: 13px; background: var(--white); border: 1.5px dashed var(--blue-400); border-radius: var(--radius-lg); font-size: 13px; color: var(--blue-600); cursor: pointer; font-family: var(--font-body); margin-bottom: 12px; }
+    .pack-edit-btn { background: transparent; border: none; font-size: 14px; cursor: pointer; padding: 4px 8px; color: var(--blue-600); border-radius: 6px; line-height: 1; }
+    .pack-edit-btn.active { background: var(--blue-400); color: #fff; }
 
     /* ── WISH LIST ── */
     .wish-cat-block { margin-bottom: 14px; }
@@ -580,6 +582,8 @@
     .app.night .pack-item-del { color: #F4B3B3; }
     .app.night .pack-add-item { background: rgba(95,168,255,0.12); color: #9FC5FF; border-color: rgba(95,168,255,0.4); }
     .app.night .pack-add-cat { background: #1A2A44; color: #9FC5FF; border-color: rgba(95,168,255,0.4); }
+    .app.night .pack-edit-btn { color: #9FC5FF; }
+    .app.night .pack-edit-btn.active { background: #5FA8FF; color: #0B1628; }
 
     .app.night .wish-cat-title { color: #E8F1FC; }
     .app.night .wish-cat-btn { color: #9FC5FF; }
@@ -830,24 +834,18 @@ let infoData={
   rateMyr:29.5,
   nightMode:false,
   packing:[
-    {id:'p1',name:'文件證件',items:[
-      {id:'p1a',text:'護照',done:false},
-      {id:'p1b',text:'健保卡',done:false},
-      {id:'p1c',text:'現金/信用卡',done:false}
-    ]},
-    {id:'p2',name:'電子產品',items:[
-      {id:'p2a',text:'充電頭',done:false},
-      {id:'p2b',text:'充電線',done:false},
-      {id:'p2c',text:'萬國轉接頭',done:false},
-      {id:'p2d',text:'耳機',done:false}
-    ]},
-    {id:'p3',name:'生活用品',items:[
-      {id:'p3a',text:'雨傘',done:false},
-      {id:'p3b',text:'保溫瓶',done:false},
-      {id:'p3c',text:'換洗衣物',done:false},
-      {id:'p3d',text:'盥洗用品',done:false},
-      {id:'p3e',text:'隨身藥品',done:false}
-    ]}
+    {id:'pi1',text:'護照',done:false},
+    {id:'pi2',text:'健保卡',done:false},
+    {id:'pi3',text:'現金/信用卡',done:false},
+    {id:'pi4',text:'充電頭',done:false},
+    {id:'pi5',text:'充電線',done:false},
+    {id:'pi6',text:'萬國轉接頭',done:false},
+    {id:'pi7',text:'耳機',done:false},
+    {id:'pi8',text:'雨傘',done:false},
+    {id:'pi9',text:'保溫瓶',done:false},
+    {id:'pi10',text:'換洗衣物',done:false},
+    {id:'pi11',text:'盥洗用品',done:false},
+    {id:'pi12',text:'隨身藥品',done:false}
   ],
   wishCats:[
     {id:'w1',name:'藥品',items:[]},
@@ -1084,97 +1082,65 @@ function toggleNightMode(){
 function genId(prefix){return prefix+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 
 function ensurePacking(){
-  if(!infoData.packing||!Array.isArray(infoData.packing)){
+  if(!infoData.packing||!Array.isArray(infoData.packing)||infoData.packing.length>0&&infoData.packing[0].items!==undefined){
     infoData.packing=[
-      {id:'p1',name:'文件證件',items:[
-        {id:'p1a',text:'護照',done:false},
-        {id:'p1b',text:'健保卡',done:false},
-        {id:'p1c',text:'現金/信用卡',done:false}
-      ]},
-      {id:'p2',name:'電子產品',items:[
-        {id:'p2a',text:'充電頭',done:false},
-        {id:'p2b',text:'充電線',done:false},
-        {id:'p2c',text:'萬國轉接頭',done:false},
-        {id:'p2d',text:'耳機',done:false}
-      ]},
-      {id:'p3',name:'生活用品',items:[
-        {id:'p3a',text:'雨傘',done:false},
-        {id:'p3b',text:'保溫瓶',done:false},
-        {id:'p3c',text:'換洗衣物',done:false},
-        {id:'p3d',text:'盥洗用品',done:false},
-        {id:'p3e',text:'隨身藥品',done:false}
-      ]}
+      {id:'pi1',text:'護照',done:false},
+      {id:'pi2',text:'健保卡',done:false},
+      {id:'pi3',text:'現金/信用卡',done:false},
+      {id:'pi4',text:'充電頭',done:false},
+      {id:'pi5',text:'充電線',done:false},
+      {id:'pi6',text:'萬國轉接頭',done:false},
+      {id:'pi7',text:'耳機',done:false},
+      {id:'pi8',text:'雨傘',done:false},
+      {id:'pi9',text:'保溫瓶',done:false},
+      {id:'pi10',text:'換洗衣物',done:false},
+      {id:'pi11',text:'盥洗用品',done:false},
+      {id:'pi12',text:'隨身藥品',done:false}
     ];
-    save();
   }
 }
 
 function renderPackingHTML(){
   ensurePacking();
-  let h=`<div style="margin-bottom:14px"><div class="info-title" style="padding:0 4px 8px;display:flex;justify-content:space-between;align-items:center"><span>打包清單</span><span style="font-size:11px;color:var(--blue-400);font-weight:400">${countPackingDone()}/${countPackingTotal()} 已備齊</span></div>`;
-  infoData.packing.forEach((cat,ci)=>{
-    h+=`<div class="pack-cat-card">`;
-    h+=`<div class="pack-cat-head">`;
-    h+=`<div class="pack-cat-title">📦 <input class="pack-cat-name" value="${esc(cat.name)}" onchange="renamePackCat('${cat.id}',this.value)" /></div>`;
-    h+=`<div class="pack-cat-actions">`;
-    h+=`<button class="pack-sm-btn" onclick="movePackCat('${cat.id}',-1)" ${ci===0?'disabled style="opacity:0.3"':''}>↑</button>`;
-    h+=`<button class="pack-sm-btn" onclick="movePackCat('${cat.id}',1)" ${ci===infoData.packing.length-1?'disabled style="opacity:0.3"':''}>↓</button>`;
-    h+=`<button class="pack-sm-btn del" onclick="delPackCat('${cat.id}')">✕</button>`;
-    h+=`</div></div>`;
-    cat.items.forEach(it=>{
-      h+=`<div class="pack-item ${it.done?'done':''}">`;
-      h+=`<div class="pack-check ${it.done?'done':''}" onclick="togglePackItem('${cat.id}','${it.id}')"></div>`;
-      h+=`<input class="pack-text" value="${esc(it.text)}" onchange="renamePackItem('${cat.id}','${it.id}',this.value)" />`;
-      h+=`<button class="pack-item-del" onclick="delPackItem('${cat.id}','${it.id}')">刪除</button>`;
-      h+=`</div>`;
-    });
-    h+=`<button class="pack-add-item" onclick="addPackItem('${cat.id}')">＋ 新增項目</button>`;
+  const total=infoData.packing.length;
+  const done=infoData.packing.filter(i=>i.done).length;
+  const editMode=!!window._packEditMode;
+  let h=`<div class="info-card"><div class="info-title" style="display:flex;justify-content:space-between;align-items:center"><span>📦 打包清單</span><div style="display:flex;align-items:center;gap:10px"><span style="font-size:11px;color:var(--blue-400);font-weight:400">${done}/${total} 已備齊</span><button class="pack-edit-btn ${editMode?'active':''}" onclick="togglePackEdit()">${editMode?'✓':'✏️'}</button></div></div>`;
+  infoData.packing.forEach((it,idx)=>{
+    h+=`<div class="pack-item ${it.done?'done':''}">`;
+    h+=`<input class="pack-text" value="${esc(it.text)}" onchange="renamePackItem(${idx},this.value)" ${editMode?'':'readonly'} />`;
+    if(editMode){
+      h+=`<button class="pack-item-del" onclick="delPackItem(${idx})">刪除</button>`;
+    } else {
+      h+=`<div class="pack-check ${it.done?'done':''}" onclick="togglePackItem(${idx})"></div>`;
+    }
     h+=`</div>`;
   });
-  h+=`<button class="pack-add-cat" onclick="addPackCat()">＋ 新增分類</button>`;
+  h+=`<button class="pack-add-item" onclick="addPackItem()" style="margin:8px 0 4px">＋ 新增項目</button>`;
   h+=`</div>`;
   return h;
 }
 
-function countPackingTotal(){return infoData.packing.reduce((s,c)=>s+c.items.length,0);}
-function countPackingDone(){return infoData.packing.reduce((s,c)=>s+c.items.filter(i=>i.done).length,0);}
+function togglePackEdit(){
+  window._packEditMode=!window._packEditMode;
+  renderInfo();
+}
 
-function togglePackItem(cid,iid){
-  const cat=infoData.packing.find(c=>c.id===cid);if(!cat)return;
-  const it=cat.items.find(i=>i.id===iid);if(!it)return;
-  it.done=!it.done;save();renderInfo();
-}
-function renamePackItem(cid,iid,val){
-  const cat=infoData.packing.find(c=>c.id===cid);if(!cat)return;
-  const it=cat.items.find(i=>i.id===iid);if(!it)return;
-  it.text=val;save();
-}
-function delPackItem(cid,iid){
-  if(!confirm('確定要刪除這個項目嗎？'))return;
-  const cat=infoData.packing.find(c=>c.id===cid);if(!cat)return;
-  cat.items=cat.items.filter(i=>i.id!==iid);save();renderInfo();
-}
-function addPackItem(cid){
-  const cat=infoData.packing.find(c=>c.id===cid);if(!cat)return;
-  cat.items.push({id:genId('pi_'),text:'',done:false});save();renderInfo();
-}
-function renamePackCat(cid,val){
-  const cat=infoData.packing.find(c=>c.id===cid);if(!cat)return;
-  cat.name=val;save();
-}
-function delPackCat(cid){
-  if(!confirm('確定要刪除這個分類嗎？（分類內所有項目會一起刪除）'))return;
-  infoData.packing=infoData.packing.filter(c=>c.id!==cid);
+function togglePackItem(idx){
+  if(!infoData.packing[idx])return;
+  infoData.packing[idx].done=!infoData.packing[idx].done;
   save();renderInfo();
 }
-function addPackCat(){
-  infoData.packing.push({id:genId('pc_'),name:'新分類',items:[]});save();renderInfo();
+function renamePackItem(idx,val){
+  if(!infoData.packing[idx])return;
+  infoData.packing[idx].text=val;save();
 }
-function movePackCat(cid,dir){
-  const idx=infoData.packing.findIndex(c=>c.id===cid);if(idx<0)return;
-  const newIdx=idx+dir;if(newIdx<0||newIdx>=infoData.packing.length)return;
-  const arr=infoData.packing;
-  [arr[idx],arr[newIdx]]=[arr[newIdx],arr[idx]];save();renderInfo();
+function delPackItem(idx){
+  if(!confirm('確定要刪除這個項目嗎？'))return;
+  infoData.packing.splice(idx,1);save();renderInfo();
+}
+function addPackItem(){
+  infoData.packing.push({id:genId('pi_'),text:'',done:false});save();renderInfo();
 }
 
 function ensureWish(){
@@ -1184,8 +1150,8 @@ function ensureWish(){
       {id:'w2',name:'生活用品',items:[]},
       {id:'w3',name:'零食',items:[]}
     ];
-    save();
   }
+  infoData.wishCats.forEach(c=>{if(!Array.isArray(c.items))c.items=[];});
 }
 
 function renderWish(){
@@ -1228,18 +1194,7 @@ function renderWish(){
 }
 
 function openWishRowMenu(cid,iid){
-  const choice=prompt('輸入數字選擇動作：\n1 = 刪除\n2 = 移到其他分類\n\n（取消請直接關閉）');
-  if(!choice)return;
-  if(choice==='1'){delWishItem(cid,iid);}
-  else if(choice==='2'){
-    const names=infoData.wishCats.filter(c=>c.id!==cid).map((c,i)=>`${i+1} = ${c.name}`).join('\n');
-    const target=prompt('移到哪個分類？\n'+names);
-    if(!target)return;
-    const targetIdx=parseInt(target)-1;
-    const others=infoData.wishCats.filter(c=>c.id!==cid);
-    if(targetIdx<0||targetIdx>=others.length){alert('無效選擇');return;}
-    moveWishItem(cid,iid,others[targetIdx].id);
-  }
+  if(confirm('刪除這個項目嗎？\n（要移到其他分類，可以點開該項目後修改分類）'))delWishItem(cid,iid);
 }
 
 function addWishCat(){
@@ -1511,10 +1466,7 @@ window.togglePackItem = togglePackItem;
 window.renamePackItem = renamePackItem;
 window.delPackItem = delPackItem;
 window.addPackItem = addPackItem;
-window.renamePackCat = renamePackCat;
-window.delPackCat = delPackCat;
-window.addPackCat = addPackCat;
-window.movePackCat = movePackCat;
+window.togglePackEdit = togglePackEdit;
 window.openWishNew = openWishNew;
 window.openWishDetail = openWishDetail;
 window.openWishRowMenu = openWishRowMenu;
@@ -1572,12 +1524,14 @@ onValue(ref(db,'yongbros/itinerary'),(snapshot)=>{
 
 onValue(ref(db,'yongbros/info'),(snapshot)=>{
   if(snapshot.exists()){
-    const remote=snapshot.val();
-    Object.assign(window.infoData,remote);
-    window.applyNightMode();
-    if(window.currentTab==='info') window.renderInfo&&window.renderInfo();
-    else if(window.currentTab==='hotel') window.renderHotel();
-    else if(window.currentTab==='wish') window.renderWish();
+    const remote=snapshot.val()||{};
+    Object.keys(remote).forEach(k=>{
+      if(remote[k]!==null&&remote[k]!==undefined)window.infoData[k]=remote[k];
+    });
+    window.applyNightMode&&window.applyNightMode();
+    if(window.currentTab==='info'&&window.renderInfo) window.renderInfo();
+    else if(window.currentTab==='hotel'&&window.renderHotel) window.renderHotel();
+    else if(window.currentTab==='wish'&&window.renderWish) window.renderWish();
   }
 });
 
