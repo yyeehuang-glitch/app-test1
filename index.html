@@ -511,15 +511,15 @@
 
     .wish-cat-block { margin-bottom: 10px; border-radius: var(--radius-lg); overflow: hidden; background: linear-gradient(135deg, #DAE8F7 0%, #C8DCEF 100%); box-shadow: 0 2px 10px rgba(55,138,221,0.12); }
     .wish-cat-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer; user-select: none; }
-    .wish-cat-chevron { font-size: 11px; color: var(--blue-600); transition: transform 0.3s ease; display: inline-block; flex-shrink: 0; width: 12px; }
+    .wish-cat-chevron { font-size: 11px; color: var(--blue-600); display: inline-block; flex-shrink: 0; width: 12px; }
     .wish-cat-block.open .wish-cat-chevron { transform: rotate(90deg); }
     .wish-cat-title-text { flex: 1; font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--blue-900); min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .wish-cat-title-input { flex: 1; border: none; background: rgba(255,255,255,0.65); border-radius: 6px; font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--blue-900); outline: none; padding: 4px 10px; min-width: 0; }
     .wish-cat-actions { display: flex; gap: 4px; flex-shrink: 0; align-items: center; }
     .wish-cat-btn { background: rgba(255,255,255,0.55); border: none; font-size: 14px; color: var(--blue-600); cursor: pointer; padding: 4px 9px; line-height: 1; border-radius: 6px; font-weight: 500; }
     .wish-cat-btn.del { color: #A32D2D; background: rgba(252,235,235,0.7); font-size: 14px; }
-    .wish-cat-items { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; background: rgba(255,255,255,0.35); }
-    .wish-cat-block.open .wish-cat-items { max-height: 3000px; transition: max-height 0.5s ease-in; }
+    .wish-cat-items { max-height: 0; overflow: hidden; background: rgba(255,255,255,0.35); }
+    .wish-cat-block.open .wish-cat-items { max-height: none; }
     .wish-cat-items-inner { padding: 4px 12px 12px; }
 
     .wish-item { display: flex; align-items: center; gap: 10px; padding: 11px 14px; margin-top: 8px; background: rgba(255,255,255,0.85); border-radius: 10px; cursor: pointer; border: 0.5px solid transparent; }
@@ -1184,7 +1184,7 @@ function renderPackingHTML(){
   const total=infoData.packing.length;
   const done=infoData.packing.filter(i=>i.done).length;
   const editMode=!!window._packEditMode;
-  let h=`<div class="info-card"><div class="info-title" style="display:flex;justify-content:space-between;align-items:center"><span>📦 打包清單</span><div style="display:flex;align-items:center;gap:10px"><span style="font-size:11px;color:var(--blue-400);font-weight:400">${done}/${total} 已備齊</span><button class="pack-edit-btn ${editMode?'active':''}" onclick="togglePackEdit()">${editMode?'✓':'✏️'}</button></div></div>`;
+  let h=`<div class="info-card"><div class="info-title" style="display:flex;justify-content:space-between;align-items:center"><span>📦 打包清單</span><div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--blue-400);font-weight:400">${done}/${total} 已備齊</span><button class="pack-edit-btn" onclick="resetPackItems()" title="重置勾選">↻</button><button class="pack-edit-btn ${editMode?'active':''}" onclick="togglePackEdit()">${editMode?'✓':'✏️'}</button></div></div>`;
   infoData.packing.forEach((it,idx)=>{
     h+=`<div class="pack-item ${it.done?'done':''}">`;
     h+=`<input class="pack-text" value="${esc(it.text)}" onchange="renamePackItem(${idx},this.value)" ${editMode?'':'readonly'} />`;
@@ -1203,6 +1203,16 @@ function renderPackingHTML(){
 function togglePackEdit(){
   window._packEditMode=!window._packEditMode;
   renderInfo();
+}
+
+function resetPackItems(){
+  if(!infoData.packing||!infoData.packing.some(i=>i.done)){
+    alert('目前沒有已勾選的項目');
+    return;
+  }
+  if(!confirm('確定要重置所有勾選嗎？\n（所有項目都會變回未打包狀態）'))return;
+  infoData.packing.forEach(i=>{i.done=false;});
+  save();renderInfo();
 }
 
 function togglePackItem(idx){
@@ -1576,6 +1586,7 @@ window.renamePackItem = renamePackItem;
 window.delPackItem = delPackItem;
 window.addPackItem = addPackItem;
 window.togglePackEdit = togglePackEdit;
+window.resetPackItems = resetPackItems;
 window.openWishNew = openWishNew;
 window.openWishNewInCat = openWishNewInCat;
 window.openWishDetail = openWishDetail;
