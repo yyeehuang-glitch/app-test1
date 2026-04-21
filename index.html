@@ -579,14 +579,14 @@ function applyBg(day){
   const container=document.getElementById('dayBgContainer');
   const img=document.getElementById('dayBgImg');
   const topbar=document.querySelector('.topbar');
-  if(bgData[day]){img.src=bgData[day];container.style.display='block';topbar.classList.add('has-bg');}
+  if(window.bgData[day]){img.src=window.bgData[day];container.style.display='block';topbar.classList.add('has-bg');}
   else{container.style.display='none';img.src='';topbar.classList.remove('has-bg');}
 }
 
 function handleBgUpload(e){
   const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
-  reader.onload=function(ev){bgData[currentDay]=ev.target.result;applyBg(currentDay);window._fbSave();};
+  reader.onload=function(ev){window.bgData[currentDay]=ev.target.result;applyBg(currentDay);window._fbSave();};
   reader.readAsDataURL(file);e.target.value='';
 }
 
@@ -728,7 +728,7 @@ const db = getDatabase(fbApp);
 
 window._fbSave = function() {
   const itinerary={};
-  for(let i=0;i<7;i++) itinerary['d'+i]=window.data?window.data[i]||[]:[];
+  for(let i=0;i<7;i++) itinerary['d'+i]=window.data[i]||[];
   set(ref(db,'yongbros/itinerary'),itinerary);
   set(ref(db,'yongbros/backgrounds'),window.bgData||{});
 };
@@ -751,7 +751,6 @@ onValue(ref(db,'yongbros/backgrounds'),(snapshot)=>{
     window.applyBg(window.currentDay);
   }
 });
-</script>
 </script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js");}</script>
 </body>
