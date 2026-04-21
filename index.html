@@ -450,7 +450,7 @@
     }
     .day-bg-overlay {
       position: absolute; inset: 0;
-      background: rgba(214, 236, 255, 0.55);
+      background: rgba(10, 30, 60, 0.28);
     }
     .topbar-row, .date-banner, .day-scroll, .topbar label {
       position: relative; z-index: 1;
@@ -598,6 +598,8 @@ function handleBgUpload(e){
       canvas.getContext('2d').drawImage(img,0,0,w,h);
       const compressed=canvas.toDataURL('image/jpeg',0.7);
       window.bgData[currentDay]=compressed;
+      window._bgJustUploaded=true;
+      setTimeout(()=>{window._bgJustUploaded=false;},3000);
       applyBg(currentDay);
       window._fbSave();
     };
@@ -761,10 +763,15 @@ onValue(ref(db,'yongbros/itinerary'),(snapshot)=>{
   }
 });
 
+let _bgLocalVersion=0;
 onValue(ref(db,'yongbros/backgrounds'),(snapshot)=>{
   if(snapshot.exists()){
-    window.bgData=snapshot.val();
-    window.applyBg(window.currentDay);
+    const remote=snapshot.val();
+    // Only apply remote data if we haven't just done a local upload (within 3s)
+    if(!window._bgJustUploaded){
+      window.bgData=remote;
+      window.applyBg(window.currentDay);
+    }
   }
 });
 </script>
