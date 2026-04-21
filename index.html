@@ -46,9 +46,6 @@
       overscroll-behavior: none;
     }
     html { background: #EAEEF3; }
-    @media (prefers-color-scheme: dark) {
-      html, body { background: #0B1628; }
-    }
     html.night, html.night body { background: #0B1628 !important; }
 
     body {
@@ -392,7 +389,8 @@
       display: flex;
       border-top: none;
       box-shadow: 0 -2px 12px rgba(0,0,0,0.07);
-      padding: 8px 0 max(env(safe-area-inset-bottom), 20px);
+      padding: 8px 0 env(safe-area-inset-bottom);
+      padding-bottom: max(env(safe-area-inset-bottom), 8px);
       flex-shrink: 0;
     }
     .nb-btn { flex: 1; text-align: center; cursor: pointer; padding: 4px 0; }
