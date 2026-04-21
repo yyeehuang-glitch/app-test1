@@ -34,7 +34,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     html, body {
-      background: #e8f2fb;
+      background: #EAEEF3;
       min-height: 100vh;
       font-family: var(--font-body);
       display: flex;
@@ -47,7 +47,7 @@
       width: 100%;
       max-width: 430px;
       min-height: 100vh;
-      background: var(--blue-50);
+      background: #EAEEF3;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -56,7 +56,7 @@
 
     /* ── TOPBAR ── */
     .topbar {
-      background: var(--blue-100);
+      background: var(--blue-400);
       padding: 52px 20px 16px;
       flex-shrink: 0;
       position: relative;
@@ -65,16 +65,14 @@
     .topbar.has-bg {
       background: transparent;
     }
-    .topbar.has-bg .greeting,
-    .topbar.has-bg .trip-name,
-    .topbar.has-bg .date-lbl,
-    .topbar.has-bg .date-val,
-    .topbar.has-bg .date-badge,
-    .topbar.has-bg .day-pill .dn,
-    .topbar.has-bg .day-pill .dl { color: rgba(255,255,255,0.95); }
-    .topbar.has-bg .date-banner { background: rgba(255,255,255,0.18); border: none; }
-    .topbar.has-bg .day-pill.active { background: rgba(255,255,255,0.35); }
-    .topbar.has-bg .offline-pill { background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.9); }
+    .topbar .greeting,
+    .topbar .trip-name,
+    .topbar .date-lbl,
+    .topbar .date-val,
+    .topbar .date-badge { color: rgba(255,255,255,0.95); }
+    .topbar .date-banner { background: rgba(255,255,255,0.18); border: none; }
+    .topbar .day-pill.active { background: rgba(255,255,255,0.3); }
+    .topbar .offline-pill { background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.9); }
     .topbar-row {
       display: flex;
       justify-content: space-between;
@@ -84,7 +82,7 @@
     .greeting {
       font-family: var(--font-body);
       font-size: 12px;
-      color: var(--blue-600);
+      color: rgba(255,255,255,0.85);
       letter-spacing: 0.4px;
       margin-bottom: 3px;
     }
@@ -92,9 +90,22 @@
       font-family: var(--font-display);
       font-size: 20px;
       font-weight: 600;
-      color: var(--blue-900);
+      color: #fff;
       letter-spacing: -0.3px;
     }
+    .editable-text {
+      background: transparent;
+      border: none;
+      outline: none;
+      font: inherit;
+      color: inherit;
+      letter-spacing: inherit;
+      width: 100%;
+      cursor: text;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.15s;
+    }
+    .editable-text:focus { border-bottom-color: rgba(255,255,255,0.5); }
     .offline-pill {
       display: flex;
       align-items: center;
@@ -141,19 +152,22 @@
     }
     .day-pill .dn { font-family: var(--font-display); font-size: 16px; font-weight: 500; color: var(--blue-600); }
     .day-pill .dl { font-size: 10px; color: var(--blue-400); margin-top: 1px; }
-    .day-pill.active { background: var(--blue-400); }
-    .day-pill.active .dn { color: var(--blue-50); }
-    .day-pill.active .dl { color: var(--blue-200); }
+    .day-pill.active { background: rgba(255,255,255,0.3); }
+    .day-pill .day-num-input,
+    .day-pill.active .day-num-input { color: #fff !important; border-bottom-color: rgba(255,255,255,0.4); }
+    .day-pill .day-lbl-input,
+    .day-pill.active .day-lbl-input { color: #fff !important; }
 
     /* ── TABS ── */
     .tabs {
       background: var(--white);
       display: flex;
-      border-bottom: 0.5px solid var(--blue-200);
+      border-bottom: none;
       padding: 0 16px;
       overflow-x: auto;
       scrollbar-width: none;
       flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
     .tabs::-webkit-scrollbar { display: none; }
     .tab {
@@ -172,15 +186,15 @@
     /* ── BODY ── */
     .body {
       flex: 1;
-      background: var(--blue-50);
+      background: #EAEEF3;
       padding: 16px;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
     .sec-lbl {
       font-size: 12px;
-      color: var(--blue-600);
-      font-weight: 500;
+      color: var(--blue-800);
+      font-weight: 600;
       margin-bottom: 12px;
       letter-spacing: 0.3px;
     }
@@ -189,7 +203,8 @@
     .it-card {
       background: var(--white);
       border-radius: var(--radius-lg);
-      border: 0.5px solid var(--blue-200);
+      border: none;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
       margin-bottom: 10px;
       overflow: hidden;
     }
@@ -199,7 +214,7 @@
       flex-shrink: 0;
       text-align: center;
       padding: 16px 4px;
-      background: #EBF4FF;
+      background: #F4F7FB;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -219,7 +234,7 @@
     .it-photo-placeholder {
       width: 100%;
       height: 52px;
-      background: #EBF4FF;
+      background: #F4F7FB;
       border-radius: 10px;
       margin-bottom: 8px;
       display: flex;
@@ -228,7 +243,7 @@
       font-size: 11px;
       color: var(--blue-400);
       cursor: pointer;
-      border: 1px dashed var(--blue-200);
+      border: 1px dashed #C8D8E8;
       transition: background 0.15s;
     }
     .it-photo-placeholder:active { background: var(--blue-200); }
@@ -239,7 +254,7 @@
       font-size: 12px;
       color: #5a6a7a;
       line-height: 1.55;
-      background: var(--blue-50);
+      background: #F4F7FB;
       border-radius: 8px;
       padding: 7px 9px;
       margin-bottom: 7px;
@@ -259,8 +274,9 @@
     .ic-btn {
       width: 30px; height: 30px;
       border-radius: 50%;
-      background: #EBF4FF;
-      border: 0.5px solid var(--blue-200);
+      background: #F4F7FB;
+      border: none;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
       display: flex; align-items: center; justify-content: center;
       font-size: 14px;
       cursor: pointer;
@@ -269,13 +285,13 @@
       flex-shrink: 0;
     }
     .ic-btn:active { background: var(--blue-200); }
-    .ic-btn.edit-btn { background: var(--blue-200); }
+    .ic-btn.edit-btn { background: #EBF4FF; }
 
     .add-btn {
       width: 100%;
       padding: 14px;
       background: var(--white);
-      border: 1.5px dashed var(--blue-200);
+      border: 1.5px dashed #C8D8E8;
       border-radius: var(--radius-lg);
       font-size: 13px;
       color: var(--blue-400);
@@ -284,6 +300,7 @@
       margin-bottom: 10px;
       font-family: var(--font-body);
       transition: border-color 0.15s, color 0.15s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
     .add-btn:active { border-color: var(--blue-400); color: var(--blue-800); }
 
@@ -291,18 +308,19 @@
     .budget-card {
       background: var(--white);
       border-radius: var(--radius-lg);
-      border: 0.5px solid var(--blue-200);
+      border: none;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
       padding: 16px;
       margin-bottom: 12px;
     }
     .bud-amounts { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
     .bud-spent { font-family: var(--font-display); font-size: 26px; font-weight: 600; color: var(--blue-900); }
     .bud-total { font-size: 13px; color: var(--blue-400); }
-    .bud-bar { height: 7px; background: #D6ECFF; border-radius: 4px; margin-bottom: 4px; overflow: hidden; }
+    .bud-bar { height: 7px; background: #E0E7EF; border-radius: 4px; margin-bottom: 4px; overflow: hidden; }
     .bud-fill { height: 100%; border-radius: 4px; background: var(--blue-400); }
     .bud-pct { font-size: 11px; color: var(--blue-600); text-align: right; }
     .bud-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 14px; }
-    .bud-item { background: var(--blue-50); border-radius: var(--radius-sm); padding: 11px; }
+    .bud-item { background: #F4F7FB; border-radius: var(--radius-sm); padding: 11px; }
     .bud-cat { font-size: 11px; color: var(--blue-600); margin-bottom: 4px; }
     .bud-amt { font-family: var(--font-display); font-size: 16px; font-weight: 500; color: var(--blue-900); }
 
@@ -311,7 +329,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 10px 0;
-      border-bottom: 0.5px solid #EBF4FF;
+      border-bottom: 0.5px solid #F0F3F7;
       font-size: 13px;
     }
     .daily-row:last-child { border: none; }
@@ -322,19 +340,22 @@
     .info-card {
       background: var(--white);
       border-radius: var(--radius-lg);
-      border: 0.5px solid var(--blue-200);
+      border: none;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
       padding: 14px;
       margin-bottom: 12px;
     }
     .info-title { font-family: var(--font-display); font-size: 13px; font-weight: 500; color: var(--blue-800); margin-bottom: 10px; }
-    .info-row { display: flex; justify-content: space-between; font-size: 13px; padding: 7px 0; border-bottom: 0.5px solid #EBF4FF; }
+    .info-row { display: flex; justify-content: space-between; font-size: 13px; padding: 7px 0; border-bottom: 0.5px solid #F0F3F7; }
     .info-row:last-child { border: none; }
-    .info-l { color: var(--blue-600); }
+    .info-l { color: var(--blue-800); }
     .info-r { font-weight: 500; color: var(--blue-900); }
-    .rate-box { background: #EBF4FF; border-radius: 10px; padding: 12px; text-align: center; margin-top: 10px; }
+    .info-row input { border-bottom: none !important; }
+    .sos-row input { border-bottom: none !important; }
+    .rate-box { background: #F4F7FB; border-radius: 10px; padding: 12px; text-align: center; margin-top: 10px; }
     .rate-big { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--blue-800); }
     .rate-small { font-size: 11px; color: var(--blue-400); margin-top: 3px; }
-    .sos-card { background: #FCEBEB; border-radius: var(--radius-lg); padding: 14px; border: 0.5px solid #F7C1C1; margin-bottom: 12px; }
+    .sos-card { background: #FCEBEB; border-radius: var(--radius-lg); padding: 14px; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 12px; }
     .sos-title { font-family: var(--font-display); font-size: 13px; font-weight: 500; color: #791F1F; margin-bottom: 10px; }
     .sos-row { display: flex; justify-content: space-between; font-size: 13px; padding: 7px 0; border-bottom: 0.5px solid rgba(240,149,149,0.3); }
     .sos-row:last-child { border: none; }
@@ -343,7 +364,8 @@
     .navbar {
       background: var(--white);
       display: flex;
-      border-top: 0.5px solid var(--blue-200);
+      border-top: none;
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.07);
       padding: 8px 0 20px;
       flex-shrink: 0;
     }
@@ -372,7 +394,8 @@
       padding: 20px;
       width: 100%;
       max-width: 360px;
-      border: 0.5px solid var(--blue-200);
+      border: none;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
     }
     .modal-title { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--blue-900); margin-bottom: 16px; }
     .field-lbl { font-size: 11px; color: var(--blue-600); margin-bottom: 5px; margin-top: 12px; font-weight: 500; }
@@ -445,8 +468,8 @@
     .day-bg img {
       width: 100%; height: 100%;
       object-fit: cover;
-      filter: blur(20px) brightness(0.65);
-      transform: scale(1.15);
+      filter: blur(12px) brightness(1.0);
+      transform: scale(1.1);
     }
     .day-bg-overlay {
       position: absolute; inset: 0;
@@ -455,6 +478,35 @@
     .topbar-row, .date-banner, .day-scroll, .topbar label {
       position: relative; z-index: 1;
     }
+
+    /* ── EDIT MODE ── */
+    .topbar-edit-btn {
+      position: absolute;
+      bottom: 14px; right: 16px;
+      z-index: 2;
+      background: rgba(255,255,255,0.22);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      font-size: 14px;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-weight: 500;
+      opacity: 0.5;
+      transition: opacity 0.15s;
+    }
+    .topbar-edit-btn:active { opacity: 0.9; }
+    .topbar-bg-label { display: none; }
+    .topbar.edit-mode .topbar-bg-label { display: inline-flex; }
+    .editable-text { pointer-events: none; }
+    .topbar.edit-mode .editable-text { pointer-events: auto; }
 
     /* ── DESKTOP HINT ── */
     @media (min-width: 500px) {
@@ -478,20 +530,21 @@
     </div>
     <div class="topbar-row">
       <div>
-        <div class="greeting">Yong Bros 🗾</div>
-        <div class="trip-name">Tokyo, we're coming.</div>
+        <div class="greeting"><input class="editable-text" id="editGreeting" value="Yong Bros 🗾" readonly /></div>
+        <div class="trip-name"><input class="editable-text" id="editTripName" value="Tokyo, we're coming." readonly /></div>
       </div>
       <div class="offline-pill"><div class="offline-dot"></div>離線可用</div>
     </div>
     <div class="date-banner">
       <div>
         <div class="date-lbl">出發日期</div>
-        <div class="date-val">2025.06.10 — 06.16</div>
+        <div class="date-val" id="dateValDisplay">2025.06.10 — 06.16</div>
       </div>
       <div class="date-badge">7天6夜</div>
     </div>
     <div class="day-scroll" id="dayScroll"></div>
-    <label style="display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:rgba(255,255,255,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:0.5px solid var(--blue-200);border-radius:20px;padding:5px 11px;font-size:11px;color:var(--blue-600);font-weight:500;cursor:pointer;">🖼 設定今日背景<input type="file" accept="image/*" style="display:none" onchange="handleBgUpload(event)"/></label>
+    <label class="topbar-bg-label" style="display:none;align-items:center;gap:5px;margin-top:10px;background:rgba(255,255,255,0.22);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:none;border-radius:20px;padding:5px 11px;font-size:11px;color:#fff;font-weight:500;cursor:pointer;">🖼 設定今日背景<input type="file" accept="image/*" style="display:none" onchange="handleBgUpload(event)"/></label>
+    <button class="topbar-edit-btn" id="topbarEditBtn" onclick="toggleTopbarEdit()">✏️</button>
   </div>
 
   <div class="tabs" id="mainTabs">
@@ -516,7 +569,7 @@
 </div>
 
 <script>
-const DAYS=[{n:'10',d:'週二'},{n:'11',d:'週三'},{n:'12',d:'週四'},{n:'13',d:'週五'},{n:'14',d:'週六'},{n:'15',d:'週日'},{n:'16',d:'週一'}];
+let DAYS=[{n:'10',d:'週二'},{n:'11',d:'週三'},{n:'12',d:'週四'},{n:'13',d:'週五'},{n:'14',d:'週六'},{n:'15',d:'週日'},{n:'16',d:'週一'}];
 const TYPES={food:'美食',sight:'打卡景點',shop:'購物',transit:'交通',stay:'住宿'};
 const TAGCLS={food:'tag-food',sight:'tag-sight',shop:'tag-shop',transit:'tag-transit',stay:'tag-stay'};
 
@@ -566,6 +619,46 @@ let isNew=false;
 let nextId=200;
 let bgData={};
 
+let budgetData={
+  spent:85000,
+  total:150000,
+  cats:[
+    {icon:'✈️',name:'機票',amt:28000},
+    {icon:'🏨',name:'住宿',amt:21000},
+    {icon:'🍜',name:'餐飲',amt:14000},
+    {icon:'🚆',name:'交通',amt:8500},
+    {icon:'🛍',name:'購物',amt:9500},
+    {icon:'🎫',name:'門票',amt:4000}
+  ],
+  daily:[
+    {day:'Day 1',label:'抵達',amt:8200},
+    {day:'Day 2',label:'淺草・上野',amt:12400},
+    {day:'Day 3',label:'秋葉原・銀座',amt:15800},
+    {day:'Day 4',label:'新宿・台場',amt:18600},
+    {day:'Day 5',label:'日光一日遊',amt:11000},
+    {day:'Day 6',label:'豐洲・台場',amt:9200},
+    {day:'Day 7',label:'返程',amt:9800}
+  ]
+};
+
+let infoData={
+  tripRows:[
+    {label:'出發日',val:'2025/06/10'},
+    {label:'回程日',val:'2025/06/16'},
+    {label:'住宿',val:'新宿 Gracery Hotel'},
+    {label:'Check-in',val:'15:00'},
+    {label:'Check-out',val:'11:00'},
+    {label:'去程航班',val:'CI100 07:30'},
+    {label:'回程航班',val:'CI101 18:00'}
+  ],
+  rate:4.62,
+  sos:[
+    {label:'台灣辦事處',val:'+81-3-3280-7811'},
+    {label:'日本警察',val:'110'},
+    {label:'救護車/火警',val:'119'}
+  ]
+};
+
 // Firebase save/load placeholders (replaced by module script)
 window._fbSave = function(){};
 
@@ -573,6 +666,24 @@ function save(){ window._fbSave(); }
 function tagCls(t){return TAGCLS[t]||'tag-sight';}
 function tagName(t){return TYPES[t]||t;}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function toggleTopbarEdit(){
+  const topbar=document.querySelector('.topbar');
+  const btn=document.getElementById('topbarEditBtn');
+  const bgLabel=document.querySelector('.topbar-bg-label');
+  const inputs=[document.getElementById('editGreeting'),document.getElementById('editTripName')];
+  const isEdit=topbar.classList.toggle('edit-mode');
+  if(isEdit){
+    btn.textContent='✅';
+    bgLabel.style.display='inline-flex';
+    inputs.forEach(inp=>{inp.removeAttribute('readonly');});
+    inputs[0].focus();
+  } else {
+    btn.textContent='✏️';
+    bgLabel.style.display='none';
+    inputs.forEach(inp=>{inp.setAttribute('readonly','');});
+  }
+}
 
 function applyBg(day){
   const container=document.getElementById('dayBgContainer');
@@ -641,13 +752,40 @@ function renderItinerary(){
   document.getElementById('bodyContent').scrollTop=0;
 }
 
+function calcBudgetSpent(){return budgetData.cats.reduce((s,c)=>s+c.amt,0);}
 function renderBudget(){
-  const rows=[['Day 1','抵達','¥8,200'],['Day 2','淺草・上野','¥12,400'],['Day 3','秋葉原・銀座','¥15,800'],['Day 4','新宿・台場','¥18,600'],['Day 5','日光一日遊','¥11,000'],['Day 6','豐洲・台場','¥9,200'],['Day 7','返程','¥9,800']];
-  document.getElementById('bodyContent').innerHTML=`<div class="sec-lbl">總預算</div><div class="budget-card"><div class="bud-amounts"><span class="bud-spent">¥85,000</span><span class="bud-total">/ ¥150,000</span></div><div class="bud-bar"><div class="bud-fill" style="width:57%"></div></div><div class="bud-pct">57% 已使用</div><div class="bud-grid">${[['✈️','機票','¥28,000'],['🏨','住宿','¥21,000'],['🍜','餐飲','¥14,000'],['🚆','交通','¥8,500'],['🛍','購物','¥9,500'],['🎫','門票','¥4,000']].map(r=>`<div class="bud-item"><div class="bud-cat">${r[0]} ${r[1]}</div><div class="bud-amt">${r[2]}</div></div>`).join('')}</div></div><div class="sec-lbl">每日花費</div><div class="budget-card">${rows.map(r=>`<div class="daily-row"><span class="daily-day">${r[0]} <span style="color:#B5D4F4">·</span> ${r[1]}</span><span class="daily-amt">${r[2]}</span></div>`).join('')}</div>`;
+  const spent=calcBudgetSpent();
+  const total=budgetData.total;
+  const pct=Math.round(spent/total*100);
+  let h=`<div class="sec-lbl">總預算</div><div class="budget-card">`;
+  h+=`<div class="bud-amounts">`;
+  h+=`<span class="bud-spent">¥${spent.toLocaleString()}</span>`;
+  h+=`<span class="bud-total">/ <input type="number" value="${total}" onchange="budgetData.total=parseInt(this.value)||0;renderBudget();" style="width:80px;border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-body);font-size:13px;color:var(--blue-400);text-align:right;outline:none;" /></span>`;
+  h+=`</div>`;
+  h+=`<div class="bud-bar"><div class="bud-fill" style="width:${Math.min(pct,100)}%"></div></div>`;
+  h+=`<div class="bud-pct">${pct}% 已使用</div>`;
+  h+=`<div class="bud-grid">${budgetData.cats.map((r,i)=>`<div class="bud-item"><div class="bud-cat">${r.icon} ${r.name}</div><div class="bud-amt">¥<input type="number" value="${r.amt}" onchange="budgetData.cats[${i}].amt=parseInt(this.value)||0;renderBudget();" style="width:70px;border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-display);font-size:15px;color:var(--blue-900);outline:none;" /></div></div>`).join('')}</div>`;
+  h+=`</div>`;
+  h+=`<div class="sec-lbl">每日花費</div><div class="budget-card">`;
+  h+=budgetData.daily.map((r,i)=>`<div class="daily-row"><span class="daily-day">${r.day} <span style="color:#B5D4F4">·</span> ${r.label}</span><span class="daily-amt">¥<input type="number" value="${r.amt}" onchange="budgetData.daily[${i}].amt=parseInt(this.value)||0;" style="width:65px;border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-display);font-size:13px;font-weight:500;color:var(--blue-900);outline:none;" /></span></div>`).join('');
+  h+=`</div>`;
+  document.getElementById('bodyContent').innerHTML=h;
 }
 
 function renderInfo(){
-  document.getElementById('bodyContent').innerHTML=`<div class="info-card"><div class="info-title">旅程資訊</div>${[['出發日','2025/06/10'],['回程日','2025/06/16'],['住宿','新宿 Gracery Hotel'],['去程航班','CI100 07:30'],['回程航班','CI101 18:00']].map(r=>`<div class="info-row"><span class="info-l">${r[0]}</span><span class="info-r">${r[1]}</span></div>`).join('')}</div><div class="info-card"><div class="info-title">匯率換算</div><div class="rate-box"><div class="rate-big">1 TWD = 4.62 JPY</div><div class="rate-small">¥10,000 ≈ NT$2,165</div></div></div><div class="sos-card"><div class="sos-title">緊急聯絡</div>${[['台灣辦事處','+81-3-3280-7811'],['日本警察','110'],['救護車/火警','119']].map(r=>`<div class="sos-row"><span style="color:#791F1F;font-size:13px">${r[0]}</span><span style="font-weight:500;color:#A32D2D;font-size:13px">${r[1]}</span></div>`).join('')}</div><div class="info-card"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="width:8px;height:8px;border-radius:50%;background:#639922;display:inline-block;flex-shrink:0"></span><span style="font-family:var(--font-display);font-size:13px;font-weight:500;color:#3B6D11">Firebase 雲端同步已啟用</span></div><div style="font-size:12px;color:var(--blue-600);line-height:1.5">照片與行程即時同步，兩支手機都看得到</div></div>`;
+  const inStyle=`border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-body);font-size:13px;font-weight:500;color:var(--blue-900);outline:none;text-align:right;width:160px;`;
+  let h=`<div class="info-card"><div class="info-title">旅程資訊</div>`;
+  h+=infoData.tripRows.map((r,i)=>`<div class="info-row"><span class="info-l">${r.label}</span><input style="${inStyle}" value="${r.val}" onchange="infoData.tripRows[${i}].val=this.value;" /></div>`).join('');
+  h+=`</div>`;
+  h+=`<div class="info-card"><div class="info-title">匯率換算</div><div class="rate-box">`;
+  h+=`<div class="rate-big">1 TWD = <input type="number" step="0.01" value="${infoData.rate}" onchange="infoData.rate=parseFloat(this.value)||0;renderInfo();" style="width:60px;border:none;border-bottom:2px solid var(--blue-400);background:transparent;font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--blue-800);outline:none;text-align:center;" /> JPY</div>`;
+  h+=`<div class="rate-small">¥10,000 ≈ NT$${Math.round(10000/infoData.rate).toLocaleString()}</div>`;
+  h+=`</div></div>`;
+  h+=`<div class="sos-card"><div class="sos-title">緊急聯絡</div>`;
+  h+=infoData.sos.map((r,i)=>`<div class="sos-row"><input style="border:none;border-bottom:1px solid rgba(240,149,149,0.5);background:transparent;font-size:13px;color:#791F1F;outline:none;width:90px;" value="${r.label}" onchange="infoData.sos[${i}].label=this.value;" /><input style="border:none;border-bottom:1px solid rgba(240,149,149,0.5);background:transparent;font-size:13px;font-weight:500;color:#A32D2D;outline:none;text-align:right;width:140px;" value="${r.val}" onchange="infoData.sos[${i}].val=this.value;" /></div>`).join('');
+  h+=`</div>`;
+  h+=`<div class="info-card"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="width:8px;height:8px;border-radius:50%;background:#639922;display:inline-block;flex-shrink:0"></span><span style="font-family:var(--font-display);font-size:13px;font-weight:500;color:#3B6D11">Firebase 雲端同步已啟用</span></div><div style="font-size:12px;color:var(--blue-600);line-height:1.5">照片與行程即時同步，兩支手機都看得到</div></div>`;
+  document.getElementById('bodyContent').innerHTML=h;
 }
 
 function openEdit(i){editIdx=i;isNew=false;const p=data[currentDay][i];showModal(p.time,p.name,p.desc,p.note||'',p.type,p.map,p.photo,false);}
@@ -702,11 +840,27 @@ function switchTab(id,tabEl,nbIdx){
 // Init default data and render immediately
 for(let i=0;i<7;i++){data[i]=DEFAULT[i]?JSON.parse(JSON.stringify(DEFAULT[i])):[];}
 
+function updateDateDisplay(){
+  const first=DAYS[0].n;
+  const last=DAYS[DAYS.length-1].n;
+  document.getElementById('dateValDisplay').textContent=`2025.06.${first.padStart(2,'0')} — 06.${last.padStart(2,'0')}`;
+}
+
 const scroll=document.getElementById('dayScroll');
 DAYS.forEach((d,i)=>{
   const el=document.createElement('div');
   el.className='day-pill'+(i===0?' active':'');
-  el.innerHTML=`<div class="dn">${d.n}</div><div class="dl">${d.d}</div>`;
+  el.innerHTML=`
+    <input class="day-num-input" value="${d.n}" maxlength="2"
+      style="display:block;width:38px;font-family:var(--font-display);font-size:15px;font-weight:500;color:#fff;background:transparent;border:none;border-bottom:1.5px solid rgba(255,255,255,0.4);outline:none;text-align:center;padding:0 0 1px;"
+      onclick="event.stopPropagation();"
+      onchange="DAYS[${i}].n=this.value.trim();updateDateDisplay();if(currentTab==='itinerary')renderItinerary();"
+    />
+    <input class="day-lbl-input" value="${d.d}" maxlength="3"
+      style="display:block;width:38px;font-size:10px;color:#fff;background:transparent;border:none;outline:none;text-align:center;margin-top:1px;opacity:0.85;padding:0;"
+      onclick="event.stopPropagation();"
+      onchange="DAYS[${i}].d=this.value.trim();"
+    />`;
   el.onclick=()=>{
     document.querySelectorAll('.day-pill').forEach(p=>p.classList.remove('active'));
     el.classList.add('active');currentDay=i;window.currentDay=i;applyBg(currentDay);
