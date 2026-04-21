@@ -59,7 +59,22 @@
       background: var(--blue-100);
       padding: 52px 20px 16px;
       flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
     }
+    .topbar.has-bg {
+      background: transparent;
+    }
+    .topbar.has-bg .greeting,
+    .topbar.has-bg .trip-name,
+    .topbar.has-bg .date-lbl,
+    .topbar.has-bg .date-val,
+    .topbar.has-bg .date-badge,
+    .topbar.has-bg .day-pill .dn,
+    .topbar.has-bg .day-pill .dl { color: rgba(255,255,255,0.95); }
+    .topbar.has-bg .date-banner { background: rgba(255,255,255,0.18); border: none; }
+    .topbar.has-bg .day-pill.active { background: rgba(255,255,255,0.35); }
+    .topbar.has-bg .offline-pill { background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.9); }
     .topbar-row {
       display: flex;
       justify-content: space-between;
@@ -417,21 +432,29 @@
     .mbtn-del { background: #FCEBEB; color: #A32D2D; }
 
     /* ── DAY BACKGROUND ── */
+    .topbar {
+      position: relative;
+      overflow: hidden;
+    }
     .day-bg {
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 220px; z-index: 0; overflow: hidden; pointer-events: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 0;
+      pointer-events: none;
     }
-    .day-bg img { width:100%; height:100%; object-fit:cover; filter:blur(18px) brightness(0.7); transform:scale(1.1); }
-    .day-bg-overlay { position:absolute; inset:0; background:linear-gradient(to bottom, rgba(214,236,255,0.45) 0%, rgba(240,247,255,0.95) 100%); }
-    .topbar { position:relative; z-index:1; }
-    .bg-upload-btn {
-      position:absolute; bottom:14px; right:16px; z-index:10;
-      background:rgba(255,255,255,0.75); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-      border:0.5px solid var(--blue-200); border-radius:20px; padding:5px 11px;
-      font-size:11px; color:var(--blue-600); font-weight:500; cursor:pointer;
-      display:flex; align-items:center; gap:5px;
+    .day-bg img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: blur(20px) brightness(0.65);
+      transform: scale(1.15);
     }
-    .bg-upload-btn:active { background:rgba(255,255,255,0.95); }
+    .day-bg-overlay {
+      position: absolute; inset: 0;
+      background: rgba(214, 236, 255, 0.55);
+    }
+    .topbar-row, .date-banner, .day-scroll, .topbar label {
+      position: relative; z-index: 1;
+    }
 
     /* ── DESKTOP HINT ── */
     @media (min-width: 500px) {
@@ -493,7 +516,7 @@
   </div>
 </div>
 
-<script type="module">
+<script>
 const DAYS=[{n:'10',d:'週二'},{n:'11',d:'週三'},{n:'12',d:'週四'},{n:'13',d:'週五'},{n:'14',d:'週六'},{n:'15',d:'週日'},{n:'16',d:'週一'}];
 const TYPES={food:'美食',sight:'打卡景點',shop:'購物',transit:'交通',stay:'住宿'};
 const TAGCLS={food:'tag-food',sight:'tag-sight',shop:'tag-shop',transit:'tag-transit',stay:'tag-stay'};
@@ -531,13 +554,165 @@ const DEFAULT={
   ],
   6:[
     {id:19,time:'09:00',name:'新宿高野水果行',desc:'購買最後伴手禮',note:'',type:'shop',map:'https://maps.google.com/?q=Shinjuku+Takano+Fruit+Parlor',photo:''},
-    {id:20,time:'11:30',name:'搭成田特快 N\'EX',desc:'新宿直達成田機場，約90分鐘',note:'',type:'transit',map:'https://maps.google.com/?q=Shinjuku+Station',photo:''},
+    {id:20,time:'11:30',name:"搭成田特快 N'EX",desc:'新宿直達成田機場，約90分鐘',note:'',type:'transit',map:'https://maps.google.com/?q=Shinjuku+Station',photo:''},
     {id:21,time:'14:00',name:'成田機場出境',desc:'辦理登機、免稅店購物',note:'',type:'transit',map:'https://maps.google.com/?q=Narita+International+Airport',photo:''},
   ],
 };
 
-// ── FIREBASE SYNC ──
-const FB_VERSION = "10.12.0";
+let data={};
+let currentDay=0;
+let currentTab='itinerary';
+let editIdx=null;
+let isNew=false;
+let nextId=200;
+let bgData={};
+
+// Firebase save/load placeholders (replaced by module script)
+window._fbSave = function(){};
+
+function save(){ window._fbSave(); }
+function tagCls(t){return TAGCLS[t]||'tag-sight';}
+function tagName(t){return TYPES[t]||t;}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function applyBg(day){
+  const container=document.getElementById('dayBgContainer');
+  const img=document.getElementById('dayBgImg');
+  const topbar=document.querySelector('.topbar');
+  if(bgData[day]){img.src=bgData[day];container.style.display='block';topbar.classList.add('has-bg');}
+  else{container.style.display='none';img.src='';topbar.classList.remove('has-bg');}
+}
+
+function handleBgUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){bgData[currentDay]=ev.target.result;applyBg(currentDay);window._fbSave();};
+  reader.readAsDataURL(file);e.target.value='';
+}
+
+function handleModalPhoto(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    document.getElementById('m-photo').value=ev.target.result;
+    const preview=document.getElementById('m-photo-preview');
+    if(preview.tagName==='IMG'){preview.src=ev.target.result;}
+    else{const img=document.createElement('img');img.id='m-photo-preview';img.src=ev.target.result;img.style.cssText='width:60px;height:44px;object-fit:cover;border-radius:8px;border:0.5px solid var(--blue-200)';preview.replaceWith(img);}
+  };
+  reader.readAsDataURL(file);e.target.value='';
+}
+
+function handlePlacePhoto(e,idx){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){data[currentDay][idx].photo=ev.target.result;window._fbSave();renderItinerary();};
+  reader.readAsDataURL(file);e.target.value='';
+}
+
+function renderItinerary(){
+  const places=data[currentDay]||[];
+  let h=`<div class="sec-lbl">Day ${currentDay+1} — 6月${DAYS[currentDay].n}日（${DAYS[currentDay].d}）</div>`;
+  places.forEach((p,i)=>{
+    const noteHTML=p.note?`<div class="it-note">📝 ${esc(p.note)}</div>`:'';
+    const photoHTML=p.photo
+      ?`<div style="position:relative"><img class="it-photo" src="${esc(p.photo)}" onerror="this.style.display='none'" loading="lazy"/><label style="position:absolute;bottom:6px;right:6px;background:rgba(255,255,255,0.82);border-radius:12px;padding:3px 8px;font-size:10px;color:var(--blue-600);cursor:pointer" for="placePhoto_${i}">🔄 換圖<input type="file" id="placePhoto_${i}" accept="image/*" style="display:none" onchange="handlePlacePhoto(event,${i})"/></label></div>`
+      :`<label class="it-photo-placeholder" for="placePhoto_${i}" style="cursor:pointer">📷 上傳照片<input type="file" id="placePhoto_${i}" accept="image/*" style="display:none" onchange="handlePlacePhoto(event,${i})"/></label>`;
+    h+=`<div class="it-card"><div class="it-row"><div class="it-time-col"><div class="it-time">${esc(p.time)}</div><div class="it-dot"></div></div><div class="it-body">${photoHTML}<div class="it-name">${esc(p.name)}</div><div class="it-desc">${esc(p.desc)}</div>${noteHTML}<div class="it-foot"><span class="tag ${tagCls(p.type)}">${tagName(p.type)}</span><div class="it-actions"><span class="ic-btn edit-btn" onclick="openEdit(${i})">✏️</span><a class="ic-btn" href="${esc(p.map||'#')}" target="_blank" rel="noopener">🧭</a></div></div></div></div></div>`;
+  });
+  h+=`<div class="add-btn" onclick="openNew()">＋ 新增地點</div>`;
+  document.getElementById('bodyContent').innerHTML=h;
+  document.getElementById('bodyContent').scrollTop=0;
+}
+
+function renderBudget(){
+  const rows=[['Day 1','抵達','¥8,200'],['Day 2','淺草・上野','¥12,400'],['Day 3','秋葉原・銀座','¥15,800'],['Day 4','新宿・台場','¥18,600'],['Day 5','日光一日遊','¥11,000'],['Day 6','豐洲・台場','¥9,200'],['Day 7','返程','¥9,800']];
+  document.getElementById('bodyContent').innerHTML=`<div class="sec-lbl">總預算</div><div class="budget-card"><div class="bud-amounts"><span class="bud-spent">¥85,000</span><span class="bud-total">/ ¥150,000</span></div><div class="bud-bar"><div class="bud-fill" style="width:57%"></div></div><div class="bud-pct">57% 已使用</div><div class="bud-grid">${[['✈️','機票','¥28,000'],['🏨','住宿','¥21,000'],['🍜','餐飲','¥14,000'],['🚆','交通','¥8,500'],['🛍','購物','¥9,500'],['🎫','門票','¥4,000']].map(r=>`<div class="bud-item"><div class="bud-cat">${r[0]} ${r[1]}</div><div class="bud-amt">${r[2]}</div></div>`).join('')}</div></div><div class="sec-lbl">每日花費</div><div class="budget-card">${rows.map(r=>`<div class="daily-row"><span class="daily-day">${r[0]} <span style="color:#B5D4F4">·</span> ${r[1]}</span><span class="daily-amt">${r[2]}</span></div>`).join('')}</div>`;
+}
+
+function renderInfo(){
+  document.getElementById('bodyContent').innerHTML=`<div class="info-card"><div class="info-title">旅程資訊</div>${[['出發日','2025/06/10'],['回程日','2025/06/16'],['住宿','新宿 Gracery Hotel'],['去程航班','CI100 07:30'],['回程航班','CI101 18:00']].map(r=>`<div class="info-row"><span class="info-l">${r[0]}</span><span class="info-r">${r[1]}</span></div>`).join('')}</div><div class="info-card"><div class="info-title">匯率換算</div><div class="rate-box"><div class="rate-big">1 TWD = 4.62 JPY</div><div class="rate-small">¥10,000 ≈ NT$2,165</div></div></div><div class="sos-card"><div class="sos-title">緊急聯絡</div>${[['台灣辦事處','+81-3-3280-7811'],['日本警察','110'],['救護車/火警','119']].map(r=>`<div class="sos-row"><span style="color:#791F1F;font-size:13px">${r[0]}</span><span style="font-weight:500;color:#A32D2D;font-size:13px">${r[1]}</span></div>`).join('')}</div><div class="info-card"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="width:8px;height:8px;border-radius:50%;background:#639922;display:inline-block;flex-shrink:0"></span><span style="font-family:var(--font-display);font-size:13px;font-weight:500;color:#3B6D11">Firebase 雲端同步已啟用</span></div><div style="font-size:12px;color:var(--blue-600);line-height:1.5">照片與行程即時同步，兩支手機都看得到</div></div>`;
+}
+
+function openEdit(i){editIdx=i;isNew=false;const p=data[currentDay][i];showModal(p.time,p.name,p.desc,p.note||'',p.type,p.map,p.photo,false);}
+function openNew(){editIdx=null;isNew=true;showModal('','','','','food','','',true);}
+
+function showModal(time,name,desc,note,type,map,photo,isNewMode){
+  const app=document.getElementById('app');
+  const old=app.querySelector('.overlay');if(old)old.remove();
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="modal"><div class="modal-title">${isNewMode?'＋ 新增地點':'✏️ 編輯地點'}</div><div class="field-lbl">時間</div><input class="minput" id="m-time" type="time" value="${esc(time)}"/><div class="field-lbl">地點名稱</div><input class="minput" id="m-name" value="${esc(name)}" placeholder="地點名稱"/><div class="field-lbl">簡短描述</div><input class="minput" id="m-desc" value="${esc(desc)}" placeholder="一行簡介"/><div class="field-lbl">備注（可多行）</div><textarea class="mtextarea" id="m-note" placeholder="例如：要排隊、記得帶現金、推薦必點 xx...">${esc(note)}</textarea><div class="field-lbl">類別</div><select class="mselect" id="m-type">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}"${k===type?' selected':''}>${v}</option>`).join('')}</select><div class="field-lbl">Google Maps 連結</div><input class="minput" id="m-map" value="${esc(map)}" placeholder="貼入 Google Maps 網址"/><div class="field-lbl">照片</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">${photo?`<img id="m-photo-preview" src="${esc(photo)}" style="width:60px;height:44px;object-fit:cover;border-radius:8px;border:0.5px solid var(--blue-200)"/>`:`<div id="m-photo-preview" style="width:60px;height:44px;background:#EBF4FF;border-radius:8px;border:0.5px solid var(--blue-200);display:flex;align-items:center;justify-content:center;font-size:18px">🏙</div>`}<label style="flex:1;padding:10px;background:#EBF4FF;border-radius:var(--radius-sm);border:0.5px dashed var(--blue-400);text-align:center;font-size:13px;color:var(--blue-600);cursor:pointer" for="m-photo-file">📷 ${photo?'換一張照片':'從相簿上傳'}<input type="file" id="m-photo-file" accept="image/*" style="display:none" onchange="handleModalPhoto(event)"/></label></div><input type="hidden" id="m-photo" value="${esc(photo)}"/><div class="modal-btns">${!isNewMode?`<button class="mbtn mbtn-del" onclick="deletePlace()">刪除</button>`:''}<button class="mbtn mbtn-cancel" onclick="closeModal()">取消</button><button class="mbtn mbtn-save" onclick="savePlace()">儲存</button></div></div>`;
+  app.appendChild(ov);
+}
+
+function closeModal(){const ov=document.getElementById('app').querySelector('.overlay');if(ov)ov.remove();}
+
+function savePlace(){
+  const time=document.getElementById('m-time').value.trim();
+  const name=document.getElementById('m-name').value.trim();
+  const desc=document.getElementById('m-desc').value.trim();
+  const note=document.getElementById('m-note').value.trim();
+  const type=document.getElementById('m-type').value;
+  const map=document.getElementById('m-map').value.trim();
+  const photo=document.getElementById('m-photo').value;
+  if(!name){alert('請輸入地點名稱');return;}
+  if(isNew){data[currentDay].push({id:nextId++,time,name,desc,note,type,map,photo});}
+  else{data[currentDay][editIdx]={...data[currentDay][editIdx],time,name,desc,note,type,map,photo};}
+  data[currentDay].sort((a,b)=>a.time.localeCompare(b.time));
+  window._fbSave();closeModal();renderItinerary();
+}
+
+function deletePlace(){
+  if(!confirm('確定要刪除「'+data[currentDay][editIdx].name+'」嗎？'))return;
+  data[currentDay].splice(editIdx,1);
+  window._fbSave();closeModal();renderItinerary();
+}
+
+function switchTab(id,tabEl,nbIdx){
+  currentTab=id;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nb-btn').forEach(b=>b.classList.remove('active'));
+  const tabMap={itinerary:0,budget:1,info:2};
+  const tabs=document.querySelectorAll('.tab');
+  if(tabEl)tabEl.classList.add('active');
+  else if(tabs[tabMap[id]])tabs[tabMap[id]].classList.add('active');
+  const nb=document.getElementById('nb'+(nbIdx!=null?nbIdx:tabMap[id]));
+  if(nb)nb.classList.add('active');
+  if(id==='itinerary')renderItinerary();
+  else if(id==='budget')renderBudget();
+  else renderInfo();
+}
+
+// Init default data and render immediately
+for(let i=0;i<7;i++){data[i]=DEFAULT[i]?JSON.parse(JSON.stringify(DEFAULT[i])):[];}
+
+const scroll=document.getElementById('dayScroll');
+DAYS.forEach((d,i)=>{
+  const el=document.createElement('div');
+  el.className='day-pill'+(i===0?' active':'');
+  el.innerHTML=`<div class="dn">${d.n}</div><div class="dl">${d.d}</div>`;
+  el.onclick=()=>{
+    document.querySelectorAll('.day-pill').forEach(p=>p.classList.remove('active'));
+    el.classList.add('active');currentDay=i;applyBg(currentDay);
+    if(currentTab==='itinerary')renderItinerary();
+  };
+  scroll.appendChild(el);
+});
+
+renderItinerary();
+
+// Expose shared state for Firebase module
+window.data = data;
+window.bgData = bgData;
+window.currentTab = currentTab;
+window.currentDay = currentDay;
+window.renderItinerary = renderItinerary;
+window.applyBg = applyBg;
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
 const fbConfig = {
   apiKey: "AIzaSyCIOLBhCJnzfxReb6jOm-xB18C6oODaLhw",
   authDomain: "apptest-120af.firebaseapp.com",
@@ -548,294 +723,35 @@ const fbConfig = {
   appId: "1:406268083750:web:d4d07bd22b1882c0a2f0e7"
 };
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
 const fbApp = initializeApp(fbConfig);
 const db = getDatabase(fbApp);
 
-function fbSave() {
-  set(ref(db, 'yongbros/itinerary'), data);
-  set(ref(db, 'yongbros/backgrounds'), bgData);
-}
+window._fbSave = function() {
+  const itinerary={};
+  for(let i=0;i<7;i++) itinerary['d'+i]=window.data?window.data[i]||[]:[];
+  set(ref(db,'yongbros/itinerary'),itinerary);
+  set(ref(db,'yongbros/backgrounds'),window.bgData||{});
+};
 
-function fbLoad() {
-  onValue(ref(db, 'yongbros/itinerary'), (snapshot) => {
-    if (snapshot.exists()) {
-      const remote = snapshot.val();
-      for (let i = 0; i < 7; i++) {
-        if (remote[i]) data[i] = remote[i];
-      }
-    } else {
-      for (let i = 0; i < 7; i++) {
-        if (!data[i]) data[i] = DEFAULT[i] ? JSON.parse(JSON.stringify(DEFAULT[i])) : [];
-      }
-      fbSave();
+onValue(ref(db,'yongbros/itinerary'),(snapshot)=>{
+  if(snapshot.exists()){
+    const remote=snapshot.val();
+    for(let i=0;i<7;i++){
+      if(remote['d'+i]) window.data[i]=remote['d'+i];
     }
-    if (currentTab === 'itinerary') renderItinerary();
-  });
-  onValue(ref(db, 'yongbros/backgrounds'), (snapshot) => {
-    if (snapshot.exists()) {
-      bgData = snapshot.val();
-      applyBg(currentDay);
-    }
-  });
-}
-
-// ── DAY BACKGROUND ──
-let bgData = {};
-function applyBg(day) {
-  const container = document.getElementById('dayBgContainer');
-  const img = document.getElementById('dayBgImg');
-  if (bgData[day]) { img.src = bgData[day]; container.style.display = 'block'; }
-  else { container.style.display = 'none'; img.src = ''; }
-}
-function handleBgUpload(e) {
-  const file = e.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    bgData[currentDay] = ev.target.result;
-    applyBg(currentDay);
-    fbSave();
-  };
-  reader.readAsDataURL(file); e.target.value = '';
-}
-
-function handleModalPhoto(e) {
-  const file = e.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    document.getElementById('m-photo').value = ev.target.result;
-    const preview = document.getElementById('m-photo-preview');
-    if (preview.tagName === 'IMG') { preview.src = ev.target.result; }
-    else { const img = document.createElement('img'); img.id = 'm-photo-preview'; img.src = ev.target.result; img.style.cssText = 'width:60px;height:44px;object-fit:cover;border-radius:8px;border:0.5px solid var(--blue-200)'; preview.replaceWith(img); }
-  };
-  reader.readAsDataURL(file); e.target.value = '';
-}
-
-function handlePlacePhoto(e, idx) {
-  const file = e.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    data[currentDay][idx].photo = ev.target.result;
-    fbSave(); renderItinerary();
-  };
-  reader.readAsDataURL(file); e.target.value = '';
-}
-
-let data = {};
-let currentDay = 0;
-let currentTab = 'itinerary';
-let editIdx = null;
-let isNew = false;
-let nextId = 200;
-
-function save() { fbSave(); }
-function tagCls(t) { return TAGCLS[t] || 'tag-sight'; }
-function tagName(t) { return TYPES[t] || t; }
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-function renderItinerary() {
-  const places = data[currentDay] || [];
-  let h = `<div class="sec-lbl">Day ${currentDay+1} — 6月${DAYS[currentDay].n}日（${DAYS[currentDay].d}）</div>`;
-  places.forEach((p, i) => {
-    const noteHTML = p.note ? `<div class="it-note">📝 ${esc(p.note)}</div>` : '';
-    const photoHTML = p.photo
-      ? `<div style="position:relative">
-          <img class="it-photo" src="${esc(p.photo)}" onerror="this.style.display='none'" loading="lazy"/>
-          <label style="position:absolute;bottom:6px;right:6px;background:rgba(255,255,255,0.82);border-radius:12px;padding:3px 8px;font-size:10px;color:var(--blue-600);cursor:pointer" for="placePhoto_${i}">🔄 換圖<input type="file" id="placePhoto_${i}" accept="image/*" style="display:none" onchange="handlePlacePhoto(event,${i})"/></label>
-        </div>`
-      : `<label class="it-photo-placeholder" for="placePhoto_${i}" style="cursor:pointer">📷 上傳照片<input type="file" id="placePhoto_${i}" accept="image/*" style="display:none" onchange="handlePlacePhoto(event,${i})"/></label>`;
-    h += `<div class="it-card">
-      <div class="it-row">
-        <div class="it-time-col"><div class="it-time">${esc(p.time)}</div><div class="it-dot"></div></div>
-        <div class="it-body">
-          ${photoHTML}
-          <div class="it-name">${esc(p.name)}</div>
-          <div class="it-desc">${esc(p.desc)}</div>
-          ${noteHTML}
-          <div class="it-foot">
-            <span class="tag ${tagCls(p.type)}">${tagName(p.type)}</span>
-            <div class="it-actions">
-              <span class="ic-btn edit-btn" onclick="openEdit(${i})">✏️</span>
-              <a class="ic-btn" href="${esc(p.map||'#')}" target="_blank" rel="noopener">🧭</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>`;
-  });
-  h += `<div class="add-btn" onclick="openNew()">＋ 新增地點</div>`;
-  document.getElementById('bodyContent').innerHTML = h;
-  document.getElementById('bodyContent').scrollTop = 0;
-}
-
-function renderBudget(){
-  const rows=[['Day 1','抵達','¥8,200'],['Day 2','淺草・上野','¥12,400'],['Day 3','秋葉原・銀座','¥15,800'],['Day 4','新宿・台場','¥18,600'],['Day 5','日光一日遊','¥11,000'],['Day 6','豐洲・台場','¥9,200'],['Day 7','返程','¥9,800']];
-  document.getElementById('bodyContent').innerHTML=`
-    <div class="sec-lbl">總預算</div>
-    <div class="budget-card">
-      <div class="bud-amounts"><span class="bud-spent">¥85,000</span><span class="bud-total">/ ¥150,000</span></div>
-      <div class="bud-bar"><div class="bud-fill" style="width:57%"></div></div>
-      <div class="bud-pct">57% 已使用</div>
-      <div class="bud-grid">
-        ${[['✈️','機票','¥28,000'],['🏨','住宿','¥21,000'],['🍜','餐飲','¥14,000'],['🚆','交通','¥8,500'],['🛍','購物','¥9,500'],['🎫','門票','¥4,000']].map(r=>`<div class="bud-item"><div class="bud-cat">${r[0]} ${r[1]}</div><div class="bud-amt">${r[2]}</div></div>`).join('')}
-      </div>
-    </div>
-    <div class="sec-lbl">每日花費</div>
-    <div class="budget-card">
-      ${rows.map(r=>`<div class="daily-row"><span class="daily-day">${r[0]} <span style="color:#B5D4F4">·</span> ${r[1]}</span><span class="daily-amt">${r[2]}</span></div>`).join('')}
-    </div>`;
-}
-
-function renderInfo(){
-  document.getElementById('bodyContent').innerHTML=`
-    <div class="info-card">
-      <div class="info-title">旅程資訊</div>
-      ${[['出發日','2025/06/10'],['回程日','2025/06/16'],['住宿','新宿 Gracery Hotel'],['去程航班','CI100 07:30'],['回程航班','CI101 18:00']].map(r=>`<div class="info-row"><span class="info-l">${r[0]}</span><span class="info-r">${r[1]}</span></div>`).join('')}
-    </div>
-    <div class="info-card">
-      <div class="info-title">匯率換算</div>
-      <div class="rate-box">
-        <div class="rate-big">1 TWD = 4.62 JPY</div>
-        <div class="rate-small">¥10,000 ≈ NT$2,165</div>
-      </div>
-    </div>
-    <div class="sos-card">
-      <div class="sos-title">緊急聯絡</div>
-      ${[['台灣辦事處','+81-3-3280-7811'],['日本警察','110'],['救護車/火警','119']].map(r=>`<div class="sos-row"><span style="color:#791F1F;font-size:13px">${r[0]}</span><span style="font-weight:500;color:#A32D2D;font-size:13px">${r[1]}</span></div>`).join('')}
-    </div>
-    <div class="info-card">
-      <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
-        <span style="width:8px;height:8px;border-radius:50%;background:#639922;display:inline-block;flex-shrink:0"></span>
-        <span style="font-family:var(--font-display);font-size:13px;font-weight:500;color:#3B6D11">Firebase 雲端同步已啟用</span>
-      </div>
-      <div style="font-size:12px;color:var(--blue-600);line-height:1.5">照片與行程即時同步，兩支手機都看得到</div>
-    </div>`;
-}
-
-function openEdit(i) {
-  editIdx = i; isNew = false;
-  const p = data[currentDay][i];
-  showModal(p.time, p.name, p.desc, p.note||'', p.type, p.map, p.photo, false);
-}
-function openNew() {
-  editIdx = null; isNew = true;
-  showModal('','','','','food','','', true);
-}
-
-function showModal(time,name,desc,note,type,map,photo,isNewMode) {
-  const app = document.getElementById('app');
-  const old = app.querySelector('.overlay');
-  if (old) old.remove();
-  const ov = document.createElement('div');
-  ov.className = 'overlay';
-  ov.innerHTML = `
-    <div class="modal">
-      <div class="modal-title">${isNewMode ? '＋ 新增地點' : '✏️ 編輯地點'}</div>
-      <div class="field-lbl">時間</div>
-      <input class="minput" id="m-time" type="time" value="${esc(time)}"/>
-      <div class="field-lbl">地點名稱</div>
-      <input class="minput" id="m-name" value="${esc(name)}" placeholder="地點名稱"/>
-      <div class="field-lbl">簡短描述</div>
-      <input class="minput" id="m-desc" value="${esc(desc)}" placeholder="一行簡介"/>
-      <div class="field-lbl">備注（可多行）</div>
-      <textarea class="mtextarea" id="m-note" placeholder="例如：要排隊、記得帶現金、推薦必點 xx...">${esc(note)}</textarea>
-      <div class="field-lbl">類別</div>
-      <select class="mselect" id="m-type">
-        ${Object.entries(TYPES).map(([k,v])=>`<option value="${k}"${k===type?' selected':''}>${v}</option>`).join('')}
-      </select>
-      <div class="field-lbl">Google Maps 連結</div>
-      <input class="minput" id="m-map" value="${esc(map)}" placeholder="貼入 Google Maps 網址"/>
-      <div class="field-lbl">照片</div>
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-        ${photo ? `<img id="m-photo-preview" src="${esc(photo)}" style="width:60px;height:44px;object-fit:cover;border-radius:8px;border:0.5px solid var(--blue-200)"/>` : `<div id="m-photo-preview" style="width:60px;height:44px;background:#EBF4FF;border-radius:8px;border:0.5px solid var(--blue-200);display:flex;align-items:center;justify-content:center;font-size:18px">🏙</div>`}
-        <label style="flex:1;padding:10px;background:#EBF4FF;border-radius:var(--radius-sm);border:0.5px dashed var(--blue-400);text-align:center;font-size:13px;color:var(--blue-600);cursor:pointer" for="m-photo-file">
-          📷 ${photo ? '換一張照片' : '從相簿上傳'}
-          <input type="file" id="m-photo-file" accept="image/*" style="display:none" onchange="handleModalPhoto(event)"/>
-        </label>
-      </div>
-      <input type="hidden" id="m-photo" value="${esc(photo)}"/>
-      <div class="modal-btns">
-        ${!isNewMode ? `<button class="mbtn mbtn-del" onclick="deletePlace()">刪除</button>` : ''}
-        <button class="mbtn mbtn-cancel" onclick="closeModal()">取消</button>
-        <button class="mbtn mbtn-save" onclick="savePlace()">儲存</button>
-      </div>
-    </div>`;
-  app.appendChild(ov);
-}
-
-function closeModal() {
-  const ov = document.getElementById('app').querySelector('.overlay');
-  if (ov) ov.remove();
-}
-
-function savePlace() {
-  const time = document.getElementById('m-time').value.trim();
-  const name = document.getElementById('m-name').value.trim();
-  const desc = document.getElementById('m-desc').value.trim();
-  const note = document.getElementById('m-note').value.trim();
-  const type = document.getElementById('m-type').value;
-  const map = document.getElementById('m-map').value.trim();
-  const photo = document.getElementById('m-photo').value;
-  if (!name) { alert('請輸入地點名稱'); return; }
-  if (isNew) {
-    data[currentDay].push({id: nextId++, time, name, desc, note, type, map, photo});
+    if(window.currentTab==='itinerary') window.renderItinerary();
   } else {
-    data[currentDay][editIdx] = {...data[currentDay][editIdx], time, name, desc, note, type, map, photo};
+    window._fbSave();
   }
-  data[currentDay].sort((a,b) => a.time.localeCompare(b.time));
-  fbSave(); closeModal(); renderItinerary();
-}
-
-function deletePlace() {
-  if (!confirm('確定要刪除「'+data[currentDay][editIdx].name+'」嗎？')) return;
-  data[currentDay].splice(editIdx, 1);
-  fbSave(); closeModal(); renderItinerary();
-}
-
-function switchTab(id, tabEl, nbIdx) {
-  currentTab = id;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.nb-btn').forEach(b => b.classList.remove('active'));
-  const tabMap = {itinerary:0, budget:1, info:2};
-  const tabs = document.querySelectorAll('.tab');
-  if (tabEl) tabEl.classList.add('active');
-  else if (tabs[tabMap[id]]) tabs[tabMap[id]].classList.add('active');
-  const nb = document.getElementById('nb'+(nbIdx != null ? nbIdx : tabMap[id]));
-  if (nb) nb.classList.add('active');
-  if (id === 'itinerary') renderItinerary();
-  else if (id === 'budget') renderBudget();
-  else renderInfo();
-}
-
-const scroll = document.getElementById('dayScroll');
-DAYS.forEach((d, i) => {
-  const el = document.createElement('div');
-  el.className = 'day-pill' + (i === 0 ? ' active' : '');
-  el.innerHTML = `<div class="dn">${d.n}</div><div class="dl">${d.d}</div>`;
-  el.onclick = () => {
-    document.querySelectorAll('.day-pill').forEach(p => p.classList.remove('active'));
-    el.classList.add('active');
-    currentDay = i;
-    applyBg(currentDay);
-    if (currentTab === 'itinerary') renderItinerary();
-  };
-  scroll.appendChild(el);
 });
 
-fbLoad();
-
-// Expose functions to global scope for HTML onclick handlers
-window.openEdit = openEdit;
-window.openNew = openNew;
-window.closeModal = closeModal;
-window.savePlace = savePlace;
-window.deletePlace = deletePlace;
-window.switchTab = switchTab;
-window.handleModalPhoto = handleModalPhoto;
-window.handlePlacePhoto = handlePlacePhoto;
-window.handleBgUpload = handleBgUpload;
+onValue(ref(db,'yongbros/backgrounds'),(snapshot)=>{
+  if(snapshot.exists()){
+    window.bgData=snapshot.val();
+    window.applyBg(window.currentDay);
+  }
+});
+</script>
 </script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js");}</script>
 </body>
