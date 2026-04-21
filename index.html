@@ -383,16 +383,17 @@
 
     /* ── NAVBAR ── */
     .navbar {
+    .navbar {
       background: var(--white);
       display: flex;
       border-top: none;
       box-shadow: 0 -2px 12px rgba(0,0,0,0.07);
-      padding-top: 8px;
-      padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
+      padding-top: 0;
+      padding-bottom: calc(env(safe-area-inset-bottom) - 8px);
       flex-shrink: 0;
     }
-    .nb-btn { flex: 1; text-align: center; cursor: pointer; padding: 4px 0; }
-    .nb-icon { font-size: 20px; display: block; margin-bottom: 3px; }
+    .nb-btn { flex: 1; text-align: center; cursor: pointer; padding: 2px 0 0; }
+    .nb-icon { font-size: 20px; display: block; margin-bottom: 2px; }
     .nb-lbl { font-size: 10px; color: var(--blue-400); }
     .nb-btn.active .nb-lbl { color: var(--blue-800); font-weight: 500; }
     .nb-active-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--blue-400); margin: 3px auto 0; opacity: 0; }
@@ -498,23 +499,36 @@
     .pack-edit-btn.active { background: var(--blue-400); color: #fff; }
 
     /* ── WISH LIST ── */
-    .wish-cat-block { margin-bottom: 14px; }
-    .wish-cat-head { display: flex; align-items: center; justify-content: space-between; padding: 4px 4px 10px; }
-    .wish-cat-title { font-size: 14px; font-weight: 600; color: var(--blue-800); font-family: var(--font-display); display: flex; align-items: center; gap: 8px; }
-    .wish-row-wrap { position: relative; overflow: hidden; border-radius: var(--radius-lg); margin-bottom: 8px; }
-    .wish-row { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.06); cursor: pointer; transition: transform 0.2s; }
-    .wish-row.done { opacity: 0.55; }
-    .wish-row.done .wish-name { text-decoration: line-through; }
-    .wish-thumb { width: 48px; height: 48px; border-radius: 10px; background: #EBF4FF; flex-shrink: 0; object-fit: cover; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--blue-400); }
-    .wish-info { flex: 1; min-width: 0; }
-    .wish-name { font-size: 14px; font-weight: 500; color: var(--blue-900); font-family: var(--font-display); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .wish-meta { font-size: 11px; color: var(--blue-600); display: flex; align-items: center; gap: 6px; }
-    .wish-menu-btn { background: transparent; border: none; color: var(--blue-400); font-size: 18px; cursor: pointer; padding: 4px 8px; flex-shrink: 0; letter-spacing: 2px; }
-    .wish-cat-btn { background: transparent; border: none; font-size: 16px; color: var(--blue-600); cursor: pointer; padding: 2px 6px; line-height: 1; }
-    .wish-cat-btn.del { color: #A32D2D; font-size: 14px; }
-    .wish-add-cat { width: 100%; padding: 13px; background: var(--white); border: 1.5px dashed var(--blue-400); border-radius: var(--radius-lg); font-size: 13px; color: var(--blue-600); cursor: pointer; font-family: var(--font-body); margin-bottom: 12px; }
-    .wish-row.dragging { opacity: 0.5; }
-    .wish-cat-block.drag-over .wish-cat-head { border-top: 2px solid var(--blue-400); padding-top: 8px; }
+    .wish-page-head { display: flex; justify-content: space-between; align-items: center; padding: 0 4px 12px; }
+    .wish-page-title { font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--blue-800); }
+    .wish-edit-btn { background: transparent; border: none; font-size: 16px; cursor: pointer; padding: 6px 10px; color: var(--blue-600); border-radius: 8px; line-height: 1; }
+    .wish-edit-btn.active { background: var(--blue-400); color: #fff; }
+
+    .wish-cat-block { margin-bottom: 10px; border-radius: var(--radius-lg); overflow: hidden; background: linear-gradient(135deg, #DAE8F7 0%, #C8DCEF 100%); box-shadow: 0 2px 10px rgba(55,138,221,0.12); }
+    .wish-cat-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer; user-select: none; }
+    .wish-cat-chevron { font-size: 11px; color: var(--blue-600); transition: transform 0.3s ease; display: inline-block; flex-shrink: 0; width: 12px; }
+    .wish-cat-block.open .wish-cat-chevron { transform: rotate(90deg); }
+    .wish-cat-title-text { flex: 1; font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--blue-900); min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .wish-cat-title-input { flex: 1; border: none; background: rgba(255,255,255,0.65); border-radius: 6px; font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--blue-900); outline: none; padding: 4px 10px; min-width: 0; }
+    .wish-cat-actions { display: flex; gap: 4px; flex-shrink: 0; align-items: center; }
+    .wish-cat-btn { background: rgba(255,255,255,0.55); border: none; font-size: 14px; color: var(--blue-600); cursor: pointer; padding: 4px 9px; line-height: 1; border-radius: 6px; font-weight: 500; }
+    .wish-cat-btn.del { color: #A32D2D; background: rgba(252,235,235,0.7); font-size: 14px; }
+    .wish-cat-items { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; background: rgba(255,255,255,0.35); }
+    .wish-cat-block.open .wish-cat-items { max-height: 3000px; transition: max-height 0.5s ease-in; }
+    .wish-cat-items-inner { padding: 4px 12px 12px; }
+
+    .wish-item { display: flex; align-items: center; gap: 10px; padding: 11px 14px; margin-top: 8px; background: rgba(255,255,255,0.85); border-radius: 10px; cursor: pointer; border: 0.5px solid transparent; }
+    .wish-item:active { background: #EBF4FF; }
+    .wish-item.done { opacity: 0.55; }
+    .wish-item.done .wish-item-name { text-decoration: line-through; }
+    .wish-item-check { font-size: 13px; color: #0F6E56; flex-shrink: 0; width: 14px; font-weight: 600; }
+    .wish-item-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--blue-900); font-family: var(--font-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .wish-item-name.empty { color: var(--blue-400); font-weight: 400; font-style: italic; }
+    .wish-item-del { background: transparent; border: none; color: #A32D2D; font-size: 18px; cursor: pointer; padding: 2px 8px; font-weight: 500; line-height: 1; flex-shrink: 0; }
+    .wish-add-item-card { margin-top: 8px; padding: 12px 14px; border: 1px dashed var(--blue-400); border-radius: 10px; text-align: center; font-size: 13px; color: var(--blue-600); background: rgba(235,244,255,0.7); cursor: pointer; font-family: var(--font-body); }
+    .wish-empty-hint { padding: 14px 0 4px; text-align: center; color: var(--blue-400); font-size: 12px; }
+    .wish-add-cat { width: 100%; padding: 13px; background: var(--white); border: 1.5px dashed var(--blue-400); border-radius: var(--radius-lg); font-size: 13px; color: var(--blue-600); cursor: pointer; font-family: var(--font-body); margin-top: 4px; margin-bottom: 12px; }
+
     .wish-detail { padding: 0 4px; }
     .wish-detail-photos { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 12px; scroll-snap-type: x mandatory; }
     .wish-detail-photos::-webkit-scrollbar { display: none; }
@@ -605,21 +619,50 @@
     .app.night .pack-edit-btn { color: #9FC5FF; }
     .app.night .pack-edit-btn.active { background: #5FA8FF; color: #0B1628; }
 
-    .app.night .wish-cat-title { color: #E8F1FC; }
-    .app.night .wish-cat-btn { color: #9FC5FF; }
-    .app.night .wish-cat-btn.del { color: #F4B3B3; }
-    .app.night .wish-row { background: #1A2A44; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-    .app.night .wish-thumb { background: #223555; color: #9FC5FF; }
-    .app.night .wish-name { color: #F2F6FC; }
-    .app.night .wish-meta { color: #9FB8D9; }
-    .app.night .wish-menu-btn { color: #9FB8D9; }
+    .app.night .wish-page-title { color: #E8F1FC; }
+    .app.night .wish-edit-btn { color: #9FC5FF; }
+    .app.night .wish-edit-btn.active { background: #5FA8FF; color: #0B1628; }
+    .app.night .wish-cat-block { background: linear-gradient(135deg, #1F3357 0%, #172A49 100%); box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+    .app.night .wish-cat-head { background: transparent; }
+    .app.night .wish-cat-title-text { color: #F2F6FC; }
+    .app.night .wish-cat-title-input { color: #F2F6FC; background: rgba(255,255,255,0.08); }
+    .app.night .wish-cat-chevron { color: #9FC5FF; }
+    .app.night .wish-cat-btn { color: #9FC5FF; background: rgba(255,255,255,0.08); }
+    .app.night .wish-cat-btn.del { color: #F4B3B3; background: rgba(163,45,45,0.2); }
+    .app.night .wish-cat-items { background: rgba(0,0,0,0.15); }
+    .app.night .wish-item { background: rgba(255,255,255,0.08); }
+    .app.night .wish-item:active { background: rgba(255,255,255,0.15); }
+    .app.night .wish-item-name { color: #F2F6FC; }
+    .app.night .wish-item-name.empty { color: #6B8AAF; }
+    .app.night .wish-item-check { color: #9FE1CB; }
+    .app.night .wish-item-del { color: #F4B3B3; }
+    .app.night .wish-empty-hint { color: #6B8AAF; }
+    .app.night .wish-add-item-card { background: rgba(95,168,255,0.12); border-color: rgba(95,168,255,0.4); color: #9FC5FF; }
     .app.night .wish-add-cat { background: #1A2A44; color: #9FC5FF; border-color: rgba(95,168,255,0.4); }
+
+    .app.night .overlay { background: rgba(0,0,0,0.65); }
+    .app.night .modal { background: #1A2A44; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+    .app.night .modal-title { color: #F2F6FC; }
+    .app.night .field-lbl { color: #9FC5FF; }
+    .app.night .minput, .app.night .mtextarea, .app.night .mselect { background: #0F1E33; border-color: rgba(95,168,255,0.2); color: #F2F6FC; }
+    .app.night .minput::placeholder, .app.night .mtextarea::placeholder { color: #6B8AAF; }
+    .app.night .mbtn-cancel { background: #223555; color: #9FC5FF; }
+    .app.night .mbtn-save { background: #5FA8FF; color: #0B1628; }
+    .app.night .mbtn-del { background: rgba(163,45,45,0.25); color: #F4B3B3; }
     .app.night .wish-detail-photo { background: #223555; border-color: rgba(95,168,255,0.3); }
     .app.night .wish-detail-add { background: rgba(95,168,255,0.12); color: #9FC5FF; border-color: rgba(95,168,255,0.4); }
     .app.night .wish-detail-note { background: #0F1E33; border-color: rgba(95,168,255,0.2); color: #F2F6FC; }
     .app.night .wish-detail-link { background: rgba(95,168,255,0.15); color: #9FC5FF; }
     .app.night .wish-detail-bought-btn { background: rgba(30,158,117,0.2); color: #9FE1CB; }
     .app.night .wish-detail-bought-btn.done { background: rgba(163,45,45,0.2); color: #F4B3B3; }
+    .app.night .modal { background: #142236 !important; color: #F2F6FC; }
+    .app.night .modal-title { color: #F2F6FC !important; }
+    .app.night .field-lbl { color: #9FB8D9 !important; }
+    .app.night .minput, .app.night .mtextarea, .app.night .mselect { background: #0F1E33 !important; color: #F2F6FC !important; border-color: rgba(95,168,255,0.2) !important; }
+    .app.night .mbtn-cancel { background: rgba(95,168,255,0.15) !important; color: #9FC5FF !important; }
+    .app.night .mbtn-save { background: #5FA8FF !important; color: #0B1628 !important; }
+    .app.night .mbtn-del { background: rgba(163,45,45,0.2) !important; color: #F4B3B3 !important; }
+    .app.night .overlay { background: rgba(0,0,0,0.6); }
     .app.night .day-bg-overlay { background: rgba(0,0,0,0.45); }
     .night-toggle {
       width: 100%;
@@ -1195,41 +1238,71 @@ function ensureWish(){
 
 function renderWish(){
   ensureWish();
-  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:0 4px"><div class="info-title" style="margin:0;font-size:14px">待買清單</div><button onclick="openWishNew()" style="padding:7px 14px;background:var(--blue-400);color:#fff;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer">＋ 新增</button></div>`;
+  const editMode=!!window._wishEditMode;
+  if(!window._wishOpenCats)window._wishOpenCats={};
+  let h=`<div class="${editMode?'wish-edit-mode':''}">`;
+  h+=`<div class="wish-page-head"><div class="wish-page-title">待買清單</div><button class="wish-edit-btn ${editMode?'active':''}" onclick="toggleWishEdit()">${editMode?'✓':'✏️'}</button></div>`;
   infoData.wishCats.forEach((cat,ci)=>{
-    h+=`<div class="wish-cat-block" data-cat-id="${cat.id}">`;
-    h+=`<div class="wish-cat-head">`;
-    h+=`<div class="wish-cat-title">🏷️ <input class="pack-cat-name" value="${esc(cat.name)}" onchange="renameWishCat('${cat.id}',this.value)" /></div>`;
-    h+=`<div class="pack-cat-actions">`;
-    h+=`<button class="wish-cat-btn" onclick="moveWishCat('${cat.id}',-1)" ${ci===0?'disabled style="opacity:0.3"':''}>↑</button>`;
-    h+=`<button class="wish-cat-btn" onclick="moveWishCat('${cat.id}',1)" ${ci===infoData.wishCats.length-1?'disabled style="opacity:0.3"':''}>↓</button>`;
-    h+=`<button class="wish-cat-btn del" onclick="delWishCat('${cat.id}')">✕</button>`;
-    h+=`</div></div>`;
-    if(cat.items.length===0){
-      h+=`<div style="padding:12px;text-align:center;color:var(--blue-400);font-size:12px;background:rgba(0,0,0,0.02);border-radius:8px;margin-bottom:8px">這個分類還沒有項目</div>`;
+    const isOpen=!!window._wishOpenCats[cat.id];
+    h+=`<div class="wish-cat-block ${isOpen?'open':''}" data-cat-id="${cat.id}">`;
+    h+=`<div class="wish-cat-head" onclick="toggleWishCat('${cat.id}',event)">`;
+    h+=`<span class="wish-cat-chevron">▶</span>`;
+    if(editMode){
+      h+=`<input class="wish-cat-title-input" value="${esc(cat.name)}" onclick="event.stopPropagation()" onchange="renameWishCat('${cat.id}',this.value)" placeholder="分類名稱" />`;
+      h+=`<div class="wish-cat-actions" onclick="event.stopPropagation()">`;
+      h+=`<button class="wish-cat-btn" onclick="moveWishCat('${cat.id}',-1)" ${ci===0?'disabled style="opacity:0.3"':''}>↑</button>`;
+      h+=`<button class="wish-cat-btn" onclick="moveWishCat('${cat.id}',1)" ${ci===infoData.wishCats.length-1?'disabled style="opacity:0.3"':''}>↓</button>`;
+      h+=`<button class="wish-cat-btn del" onclick="delWishCat('${cat.id}')">✕</button>`;
+      h+=`</div>`;
     } else {
-      cat.items.forEach(it=>{
-        const firstPhoto=(it.photos&&it.photos[0])||'';
-        const thumbHTML=firstPhoto?`<img class="wish-thumb" src="${firstPhoto}" alt="" />`:`<div class="wish-thumb">🛍️</div>`;
-        const noteLen=(it.note||'').length;
-        const photoCount=(it.photos||[]).length;
-        const meta=[];
-        if(photoCount>0)meta.push(`📷 ${photoCount}`);
-        if(noteLen>0)meta.push(`📝 ${noteLen>20?'備註':'有備註'}`);
-        if(it.bought)meta.push('✓ 已購買');
-        h+=`<div class="wish-row-wrap">`;
-        h+=`<div class="wish-row ${it.bought?'done':''}" onclick="openWishDetail('${cat.id}','${it.id}')">`;
-        h+=thumbHTML;
-        h+=`<div class="wish-info"><div class="wish-name">${esc(it.name||'（未命名）')}</div>`;
-        h+=`<div class="wish-meta">${meta.length?meta.join(' · '):'點擊編輯內容'}</div></div>`;
-        h+=`<button class="wish-menu-btn" onclick="event.stopPropagation();openWishRowMenu('${cat.id}','${it.id}')">•••</button>`;
-        h+=`</div></div>`;
-      });
+      h+=`<div class="wish-cat-title-text">${esc(cat.name||'（未命名分類）')}</div>`;
     }
     h+=`</div>`;
+    h+=`<div class="wish-cat-items"><div class="wish-cat-items-inner">`;
+    cat.items.forEach(it=>{
+      const emptyName=!it.name||!it.name.trim();
+      const clickAction=editMode?'':`onclick="openWishDetail('${cat.id}','${it.id}')"`;
+      h+=`<div class="wish-item ${it.bought?'done':''}" ${clickAction}>`;
+      if(it.bought)h+=`<span class="wish-item-check">✓</span>`;
+      h+=`<div class="wish-item-name ${emptyName?'empty':''}">${emptyName?'（未命名）':esc(it.name)}</div>`;
+      if(editMode){
+        h+=`<button class="wish-item-del" onclick="event.stopPropagation();delWishItem('${cat.id}','${it.id}')">✕</button>`;
+      }
+      h+=`</div>`;
+    });
+    if(!editMode){
+      h+=`<div class="wish-add-item-card" onclick="openWishNewInCat('${cat.id}')">＋ 新增項目</div>`;
+    }
+    h+=`</div></div></div>`;
   });
-  h+=`<button class="wish-add-cat" onclick="addWishCat()">＋ 新增分類</button>`;
+  if(editMode){
+    h+=`<button class="wish-add-cat" onclick="addWishCat()">＋ 新增分類</button>`;
+  }
+  h+=`</div>`;
   document.getElementById('bodyContent').innerHTML=h;
+}
+
+function toggleWishEdit(){
+  window._wishEditMode=!window._wishEditMode;
+  renderWish();
+}
+
+function toggleWishCat(cid,e){
+  if(window._wishEditMode)return;
+  if(!window._wishOpenCats)window._wishOpenCats={};
+  window._wishOpenCats[cid]=!window._wishOpenCats[cid];
+  const block=document.querySelector(`.wish-cat-block[data-cat-id="${cid}"]`);
+  if(block)block.classList.toggle('open',window._wishOpenCats[cid]);
+}
+
+function openWishNewInCat(cid){
+  const cat=infoData.wishCats.find(c=>c.id===cid);if(!cat)return;
+  const newItem={id:genId('wi_'),name:'',photos:[],note:'',bought:false};
+  cat.items.push(newItem);
+  if(!window._wishOpenCats)window._wishOpenCats={};
+  window._wishOpenCats[cid]=true;
+  save();
+  openWishDetail(cid,newItem.id);
 }
 
 function openWishRowMenu(cid,iid){
@@ -1507,8 +1580,11 @@ window.delPackItem = delPackItem;
 window.addPackItem = addPackItem;
 window.togglePackEdit = togglePackEdit;
 window.openWishNew = openWishNew;
+window.openWishNewInCat = openWishNewInCat;
 window.openWishDetail = openWishDetail;
 window.openWishRowMenu = openWishRowMenu;
+window.toggleWishEdit = toggleWishEdit;
+window.toggleWishCat = toggleWishCat;
 window.addWishCat = addWishCat;
 window.renameWishCat = renameWishCat;
 window.delWishCat = delWishCat;
