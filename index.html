@@ -12,7 +12,7 @@
   <title>Yong Bros — Tokyo, we're coming.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;1,400&family=Syne:wght@500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;1,400&family=Poppins:wght@700;800&family=Syne:wght@500;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --blue-50: #F0F7FF;
@@ -81,16 +81,17 @@
       margin-bottom: 14px;
     }
     .greeting {
-      font-family: var(--font-body);
-      font-size: 12px;
-      color: rgba(255,255,255,0.85);
-      letter-spacing: 0.4px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.2px;
       margin-bottom: 3px;
     }
     .trip-name {
-      font-family: var(--font-display);
-      font-size: 20px;
-      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
       color: #fff;
       letter-spacing: -0.3px;
     }
@@ -455,6 +456,88 @@
     .mbtn-save { background: var(--blue-400); color: var(--white); }
     .mbtn-del { background: #FCEBEB; color: #A32D2D; }
 
+    /* ── NIGHT MODE ── */
+    .app.night { background: #0B1628; }
+    .app.night html, .app.night body { background: #0B1628; }
+    .app.night .body { background: #0B1628; }
+    .app.night .tabs { background: #142236; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+    .app.night .tab { color: #6B8AAF; }
+    .app.night .tab.active { color: #E8F1FC; border-bottom-color: #5FA8FF; }
+    .app.night .navbar { background: #142236; box-shadow: 0 -2px 12px rgba(0,0,0,0.4); }
+    .app.night .nb-lbl { color: #6B8AAF; }
+    .app.night .nb-btn.active .nb-lbl { color: #E8F1FC; }
+    .app.night .nb-active-dot { background: #5FA8FF; }
+    .app.night .sec-lbl { color: #9FB8D9; }
+    .app.night .it-card { background: #1A2A44; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+    .app.night .it-time-col { background: #223555; }
+    .app.night .it-time { color: #E8F1FC; }
+    .app.night .it-dot { background: #5FA8FF; }
+    .app.night .it-name { color: #F2F6FC !important; }
+    .app.night .it-desc { color: #B8CCE8 !important; }
+    .app.night .it-note-box { background: rgba(255,255,255,0.04); color: #B8CCE8; }
+    .app.night .info-card { background: #1A2A44; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+    .app.night .info-title { color: #E8F1FC; }
+    .app.night .info-row { border-bottom-color: rgba(255,255,255,0.08); }
+    .app.night .info-l { color: #9FB8D9; }
+    .app.night .info-r, .app.night .info-card input { color: #F2F6FC !important; }
+    .app.night .info-card input { border-bottom-color: rgba(95,168,255,0.3) !important; }
+    .app.night .rate-box { background: #223555; }
+    .app.night .rate-big { color: #E8F1FC; }
+    .app.night .rate-big input { color: #E8F1FC !important; border-bottom-color: #5FA8FF !important; }
+    .app.night .rate-small { color: #9FB8D9; }
+    .app.night .sos-card { background: #3A1F2A; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+    .app.night .sos-title { color: #F4B3B3; }
+    .app.night .sos-row { border-bottom-color: rgba(244,179,179,0.15); }
+    .app.night .sos-row input { color: #F4B3B3 !important; }
+    .app.night .bud-grid .bud-item { background: #223555; }
+    .app.night .bud-cat, .app.night .bud-amt, .app.night .bud-spent, .app.night .bud-total, .app.night .daily-amt, .app.night .daily-lbl { color: #E8F1FC !important; }
+    .app.night .bud-item input { color: #E8F1FC !important; }
+    .app.night .budget-card { background: #1A2A44; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+    .app.night .bud-spent { color: #F2F6FC !important; }
+    .app.night .bud-total { color: #9FB8D9 !important; }
+    .app.night .bud-total input { color: #9FB8D9 !important; border-bottom-color: rgba(95,168,255,0.3) !important; }
+    .app.night .bud-bar { background: #0B1628; }
+    .app.night .bud-fill { background: #5FA8FF; }
+    .app.night .bud-pct { color: #9FB8D9; }
+    .app.night .bud-cat { color: #9FC5FF !important; }
+    .app.night .daily-row { border-bottom-color: rgba(255,255,255,0.08); }
+    .app.night .daily-day { color: #9FC5FF !important; }
+    .app.night .daily-amt input { color: #E8F1FC !important; border-bottom-color: rgba(95,168,255,0.3) !important; }
+    .app.night .day-pill { color: #9FB8D9; }
+    .app.night .day-pill.active { background: rgba(95,168,255,0.25); color: #F2F6FC; }
+    .app.night .day-pill .dn, .app.night .day-pill .dl { color: inherit !important; }
+    .app.night .date-banner { background: rgba(255,255,255,0.08); }
+    .app.night .tag-food { background: rgba(239,159,39,0.2); color: #F5C787; }
+    .app.night .tag-sight { background: rgba(95,168,255,0.2); color: #9FC5FF; }
+    .app.night .tag-shop { background: rgba(212,83,126,0.2); color: #ED93B1; }
+    .app.night .tag-transit { background: rgba(159,225,203,0.15); color: #9FE1CB; }
+    .app.night .tag-stay { background: rgba(175,169,236,0.2); color: #CECBF6; }
+    .app.night .add-btn { background: #1A2A44; color: #5FA8FF; border-color: #5FA8FF; }
+    .app.night .edit-btn, .app.night .map-btn { background: #223555; color: #E8F1FC; }
+    .app.night .day-bg-overlay { background: rgba(0,0,0,0.45); }
+    .night-toggle {
+      width: 100%;
+      padding: 14px 16px;
+      margin-top: 4px;
+      background: var(--blue-50);
+      border: 1px solid var(--blue-200);
+      border-radius: var(--radius-lg);
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--blue-800);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .app.night .night-toggle {
+      background: #223555;
+      border-color: rgba(95,168,255,0.3);
+      color: #F5C787;
+    }
+
     /* ── DAY BACKGROUND ── */
     .topbar {
       position: relative;
@@ -543,7 +626,6 @@
         <div class="date-lbl">出發日期</div>
         <div class="date-val" id="dateValDisplay">2025.06.10 — 06.16</div>
       </div>
-      <div class="date-badge">7天6夜</div>
     </div>
     <div class="day-scroll" id="dayScroll"></div>
     <label class="topbar-bg-label" style="display:none;align-items:center;gap:5px;margin-top:10px;background:rgba(255,255,255,0.22);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:none;border-radius:20px;padding:5px 11px;font-size:11px;color:#fff;font-weight:500;cursor:pointer;">🖼 設定今日背景<input type="file" accept="image/*" style="display:none" onchange="handleBgUpload(event)"/></label>
@@ -552,8 +634,9 @@
 
   <div class="tabs" id="mainTabs">
     <div class="tab active" onclick="switchTab('itinerary',this,0)">行程</div>
-    <div class="tab" onclick="switchTab('budget',this,1)">預算</div>
-    <div class="tab" onclick="switchTab('info',this,2)">資訊</div>
+    <div class="tab" onclick="switchTab('hotel',this,1)">住宿</div>
+    <div class="tab" onclick="switchTab('budget',this,2)">預算</div>
+    <div class="tab" onclick="switchTab('info',this,3)">資訊</div>
   </div>
 
   <div class="body" id="bodyContent"></div>
@@ -562,10 +645,13 @@
     <div class="nb-btn active" id="nb0" onclick="switchTab('itinerary',null,0)">
       <span class="nb-icon">📅</span><div class="nb-lbl">行程</div><div class="nb-active-dot"></div>
     </div>
-    <div class="nb-btn" id="nb1" onclick="switchTab('budget',null,1)">
+    <div class="nb-btn" id="nb1" onclick="switchTab('hotel',null,1)">
+      <span class="nb-icon">🏨</span><div class="nb-lbl">住宿</div><div class="nb-active-dot"></div>
+    </div>
+    <div class="nb-btn" id="nb2" onclick="switchTab('budget',null,2)">
       <span class="nb-icon">💰</span><div class="nb-lbl">預算</div><div class="nb-active-dot"></div>
     </div>
-    <div class="nb-btn" id="nb2" onclick="switchTab('info',null,2)">
+    <div class="nb-btn" id="nb3" onclick="switchTab('info',null,3)">
       <span class="nb-icon">ℹ️</span><div class="nb-lbl">我的</div><div class="nb-active-dot"></div>
     </div>
   </div>
@@ -647,15 +733,16 @@ let budgetData={
 let infoData={
   tripRows:[
     {label:'出發日',val:'2025/06/10'},
-    {label:'回程日',val:'2025/06/16'},
-    {label:'住宿',val:'新宿 Gracery Hotel'},
-    {label:'Check-in',val:'15:00'},
-    {label:'Check-out',val:'11:00'},
     {label:'去程航班',val:'CI100 07:30'},
+    {label:'回程日',val:'2025/06/16'},
     {label:'回程航班',val:'CI101 18:00'}
+  ],
+  hotels:[
+    {name:'新宿 Gracery Hotel',range:'2025/06/10 – 06/16',checkIn:'15:00',checkOut:'11:00'}
   ],
   rate:4.62,
   rateMyr:29.5,
+  nightMode:false,
   sos:[
     {label:'台灣辦事處',val:'+81-3-3280-7811'},
     {label:'日本警察',val:'110'},
@@ -780,6 +867,32 @@ function renderBudget(){
 }
 
 function renderInfo(){
+  if(infoData.tripRows&&infoData.tripRows.some(r=>['住宿','Check-in','Check-out'].includes(r.label))){
+    if(!infoData.hotels||!Array.isArray(infoData.hotels)){
+      const oldHotel=infoData.tripRows.find(r=>r.label==='住宿');
+      const oldCheckIn=infoData.tripRows.find(r=>r.label==='Check-in');
+      const oldCheckOut=infoData.tripRows.find(r=>r.label==='Check-out');
+      infoData.hotels=[{
+        name:oldHotel?oldHotel.val:'新宿 Gracery Hotel',
+        range:'2025/06/10 – 06/16',
+        checkIn:oldCheckIn?oldCheckIn.val:'15:00',
+        checkOut:oldCheckOut?oldCheckOut.val:'11:00'
+      }];
+    }
+    infoData.tripRows=infoData.tripRows.filter(r=>!['住宿','Check-in','Check-out'].includes(r.label));
+    save();
+  }
+  if(infoData.tripRows){
+    const desiredOrder=['出發日','去程航班','回程日','回程航班'];
+    const current=infoData.tripRows.map(r=>r.label).join(',');
+    const sorted=[...infoData.tripRows].sort((a,b)=>{
+      const ia=desiredOrder.indexOf(a.label);
+      const ib=desiredOrder.indexOf(b.label);
+      return (ia<0?99:ia)-(ib<0?99:ib);
+    });
+    const after=sorted.map(r=>r.label).join(',');
+    if(current!==after){infoData.tripRows=sorted;save();}
+  }
   const inStyle=`border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-body);font-size:13px;font-weight:500;color:var(--blue-900);outline:none;text-align:right;width:160px;`;
   let h=`<div class="info-card"><div class="info-title">旅程資訊</div>`;
   h+=infoData.tripRows.map((r,i)=>`<div class="info-row"><span class="info-l">${r.label}</span><input style="${inStyle}" value="${r.val}" onchange="infoData.tripRows[${i}].val=this.value;" /></div>`).join('');
@@ -795,8 +908,65 @@ function renderInfo(){
   h+=`<div class="sos-card"><div class="sos-title">緊急聯絡</div>`;
   h+=infoData.sos.map((r,i)=>`<div class="sos-row"><input style="border:none;border-bottom:1px solid rgba(240,149,149,0.5);background:transparent;font-size:13px;color:#791F1F;outline:none;width:90px;" value="${r.label}" onchange="infoData.sos[${i}].label=this.value;" /><input style="border:none;border-bottom:1px solid rgba(240,149,149,0.5);background:transparent;font-size:13px;font-weight:500;color:#A32D2D;outline:none;text-align:right;width:140px;" value="${r.val}" onchange="infoData.sos[${i}].val=this.value;" /></div>`).join('');
   h+=`</div>`;
+  h+=`<button class="night-toggle" onclick="toggleNightMode()"><span style="font-size:16px">${infoData.nightMode?'☀️':'🌙'}</span><span>${infoData.nightMode?'日間模式':'夜間模式'}</span></button>`;
   h+=`<div class="info-card"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="width:8px;height:8px;border-radius:50%;background:#639922;display:inline-block;flex-shrink:0"></span><span style="font-family:var(--font-display);font-size:13px;font-weight:500;color:#3B6D11">Firebase 雲端同步已啟用</span></div><div style="font-size:12px;color:var(--blue-600);line-height:1.5">照片與行程即時同步，兩支手機都看得到</div></div>`;
   document.getElementById('bodyContent').innerHTML=h;
+}
+
+function renderHotel(){
+  if(!infoData.hotels||!Array.isArray(infoData.hotels)){
+    infoData.hotels=[{name:'新宿 Gracery Hotel',range:'2025/06/10 – 06/16',checkIn:'15:00',checkOut:'11:00'}];
+    if(infoData.tripRows){
+      const oldHotel=infoData.tripRows.find(r=>r.label==='住宿');
+      const oldCheckIn=infoData.tripRows.find(r=>r.label==='Check-in');
+      const oldCheckOut=infoData.tripRows.find(r=>r.label==='Check-out');
+      if(oldHotel)infoData.hotels[0].name=oldHotel.val;
+      if(oldCheckIn)infoData.hotels[0].checkIn=oldCheckIn.val;
+      if(oldCheckOut)infoData.hotels[0].checkOut=oldCheckOut.val;
+      infoData.tripRows=infoData.tripRows.filter(r=>!['住宿','Check-in','Check-out'].includes(r.label));
+    }
+    save();
+  }
+  const inStyle=`border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-body);font-size:13px;font-weight:500;color:var(--blue-900);outline:none;text-align:right;width:170px;`;
+  const nameStyle=`border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--blue-900);outline:none;width:100%;padding:4px 0;`;
+  let h='';
+  infoData.hotels.forEach((ht,i)=>{
+    h+=`<div class="info-card" style="position:relative">`;
+    h+=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div class="info-title" style="margin:0">住宿${infoData.hotels.length>1?' '+(i+1):''}</div><button onclick="deleteHotel(${i})" style="border:none;background:transparent;color:#A32D2D;font-size:12px;cursor:pointer;padding:2px 6px">刪除</button></div>`;
+    h+=`<div style="margin-bottom:10px"><div style="font-size:11px;color:var(--blue-600);margin-bottom:3px">名稱</div><input style="${nameStyle}" value="${ht.name}" onchange="infoData.hotels[${i}].name=this.value;save();" placeholder="住宿名稱" /></div>`;
+    h+=`<div class="info-row"><span class="info-l">住宿區間</span><input style="${inStyle}" value="${ht.range}" onchange="infoData.hotels[${i}].range=this.value;save();" placeholder="2025/06/10 – 06/16" /></div>`;
+    h+=`<div class="info-row"><span class="info-l">📅 入住 · Check-in</span><input style="${inStyle}" value="${ht.checkIn}" onchange="infoData.hotels[${i}].checkIn=this.value;save();" placeholder="15:00" /></div>`;
+    h+=`<div class="info-row"><span class="info-l">📅 退房 · Check-out</span><input style="${inStyle}" value="${ht.checkOut}" onchange="infoData.hotels[${i}].checkOut=this.value;save();" placeholder="11:00" /></div>`;
+    h+=`</div>`;
+  });
+  h+=`<button onclick="addHotel()" style="width:100%;padding:14px;margin-top:4px;background:#EBF4FF;border:1px dashed var(--blue-400);border-radius:var(--radius-lg);font-family:var(--font-display);font-size:14px;font-weight:500;color:var(--blue-600);cursor:pointer">＋ 新增住宿</button>`;
+  document.getElementById('bodyContent').innerHTML=h;
+}
+
+function addHotel(){
+  infoData.hotels.push({name:'',range:'',checkIn:'',checkOut:''});
+  save();renderHotel();
+}
+
+function deleteHotel(i){
+  if(!confirm('確定要刪除這間住宿嗎？'))return;
+  infoData.hotels.splice(i,1);
+  if(infoData.hotels.length===0)infoData.hotels.push({name:'',range:'',checkIn:'',checkOut:''});
+  save();renderHotel();
+}
+
+function applyNightMode(){
+  const app=document.getElementById('app');
+  if(!app)return;
+  if(infoData.nightMode)app.classList.add('night');
+  else app.classList.remove('night');
+}
+
+function toggleNightMode(){
+  infoData.nightMode=!infoData.nightMode;
+  applyNightMode();
+  save();
+  renderInfo();
 }
 
 function openEdit(i){editIdx=i;isNew=false;const p=data[currentDay][i];showModal(p.time,p.name,p.desc,p.note||'',p.type,p.map,p.photo,false);}
@@ -837,13 +1007,14 @@ function switchTab(id,tabEl,nbIdx){
   currentTab=id;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nb-btn').forEach(b=>b.classList.remove('active'));
-  const tabMap={itinerary:0,budget:1,info:2};
+  const tabMap={itinerary:0,hotel:1,budget:2,info:3};
   const tabs=document.querySelectorAll('.tab');
   if(tabEl)tabEl.classList.add('active');
   else if(tabs[tabMap[id]])tabs[tabMap[id]].classList.add('active');
   const nb=document.getElementById('nb'+(nbIdx!=null?nbIdx:tabMap[id]));
   if(nb)nb.classList.add('active');
   if(id==='itinerary')renderItinerary();
+  else if(id==='hotel')renderHotel();
   else if(id==='budget')renderBudget();
   else renderInfo();
 }
@@ -880,6 +1051,7 @@ DAYS.forEach((d,i)=>{
   scroll.appendChild(el);
 });
 
+applyNightMode();
 renderItinerary();
 
 // Expose shared state for Firebase module
@@ -888,6 +1060,13 @@ window.bgData = bgData;
 window.currentTab = currentTab;
 window.currentDay = currentDay;
 window.renderItinerary = renderItinerary;
+window.renderHotel = renderHotel;
+window.renderInfo = renderInfo;
+window.addHotel = addHotel;
+window.deleteHotel = deleteHotel;
+window.toggleNightMode = toggleNightMode;
+window.applyNightMode = applyNightMode;
+window.infoData = infoData;
 window.applyBg = applyBg;
 </script>
 
@@ -913,6 +1092,7 @@ window._fbSave = function() {
   for(let i=0;i<7;i++) itinerary['d'+i]=window.data[i]||[];
   set(ref(db,'yongbros/itinerary'),itinerary);
   set(ref(db,'yongbros/backgrounds'),window.bgData||{});
+  set(ref(db,'yongbros/info'),window.infoData||{});
 };
 
 onValue(ref(db,'yongbros/itinerary'),(snapshot)=>{
@@ -924,6 +1104,16 @@ onValue(ref(db,'yongbros/itinerary'),(snapshot)=>{
     if(window.currentTab==='itinerary') window.renderItinerary();
   } else {
     window._fbSave();
+  }
+});
+
+onValue(ref(db,'yongbros/info'),(snapshot)=>{
+  if(snapshot.exists()){
+    const remote=snapshot.val();
+    Object.assign(window.infoData,remote);
+    window.applyNightMode();
+    if(window.currentTab==='info') window.renderInfo&&window.renderInfo();
+    else if(window.currentTab==='hotel') window.renderHotel();
   }
 });
 
