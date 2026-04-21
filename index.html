@@ -383,13 +383,12 @@
 
     /* ── NAVBAR ── */
     .navbar {
-    .navbar {
       background: var(--white);
       display: flex;
       border-top: none;
       box-shadow: 0 -2px 12px rgba(0,0,0,0.07);
-      padding-top: 0;
-      padding-bottom: calc(env(safe-area-inset-bottom) - 8px);
+      padding-top: 4px;
+      padding-bottom: env(safe-area-inset-bottom);
       flex-shrink: 0;
     }
     .nb-btn { flex: 1; text-align: center; cursor: pointer; padding: 2px 0 0; }
@@ -655,14 +654,6 @@
     .app.night .wish-detail-link { background: rgba(95,168,255,0.15); color: #9FC5FF; }
     .app.night .wish-detail-bought-btn { background: rgba(30,158,117,0.2); color: #9FE1CB; }
     .app.night .wish-detail-bought-btn.done { background: rgba(163,45,45,0.2); color: #F4B3B3; }
-    .app.night .modal { background: #142236 !important; color: #F2F6FC; }
-    .app.night .modal-title { color: #F2F6FC !important; }
-    .app.night .field-lbl { color: #9FB8D9 !important; }
-    .app.night .minput, .app.night .mtextarea, .app.night .mselect { background: #0F1E33 !important; color: #F2F6FC !important; border-color: rgba(95,168,255,0.2) !important; }
-    .app.night .mbtn-cancel { background: rgba(95,168,255,0.15) !important; color: #9FC5FF !important; }
-    .app.night .mbtn-save { background: #5FA8FF !important; color: #0B1628 !important; }
-    .app.night .mbtn-del { background: rgba(163,45,45,0.2) !important; color: #F4B3B3 !important; }
-    .app.night .overlay { background: rgba(0,0,0,0.6); }
     .app.night .day-bg-overlay { background: rgba(0,0,0,0.45); }
     .night-toggle {
       width: 100%;
