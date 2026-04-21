@@ -709,7 +709,7 @@ DAYS.forEach((d,i)=>{
   el.innerHTML=`<div class="dn">${d.n}</div><div class="dl">${d.d}</div>`;
   el.onclick=()=>{
     document.querySelectorAll('.day-pill').forEach(p=>p.classList.remove('active'));
-    el.classList.add('active');currentDay=i;applyBg(currentDay);
+    el.classList.add('active');currentDay=i;window.currentDay=i;applyBg(currentDay);
     if(currentTab==='itinerary')renderItinerary();
   };
   scroll.appendChild(el);
@@ -762,15 +762,13 @@ onValue(ref(db,'yongbros/itinerary'),(snapshot)=>{
   }
 });
 
-let _bgLocalVersion=0;
+let _bgLoaded=false;
 onValue(ref(db,'yongbros/backgrounds'),(snapshot)=>{
+  if(_bgLoaded) return;
+  _bgLoaded=true;
   if(snapshot.exists()){
-    const remote=snapshot.val();
-    // Only apply remote data if we haven't just done a local upload (within 3s)
-    if(!window._bgJustUploaded){
-      window.bgData=remote;
-      window.applyBg(window.currentDay);
-    }
+    window.bgData=snapshot.val();
+    window.applyBg(window.currentDay);
   }
 });
 </script>
