@@ -54,7 +54,7 @@
     body {
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: stretch;
     }
 
     .app {
@@ -202,13 +202,21 @@
 
     /* ── BODY ── */
     .body {
-      flex: 1;
+      flex: 1 0 auto;
       background: #EAEEF3;
       padding: 16px;
+      min-height: 300px;
+    }
+    .app.night .body { background: #0B1628; }
+    .scroll-area {
+      flex: 1;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
+      display: flex;
+      flex-direction: column;
     }
+    .app.night .scroll-area { background: #0B1628; }
     .sec-lbl {
       font-size: 12px;
       color: var(--blue-800);
@@ -712,6 +720,7 @@
 </head>
 <body>
 <div class="app" id="app">
+  <div class="scroll-area" id="scrollArea">
   <div class="topbar">
     <div id="dayBgContainer" class="day-bg" style="display:none">
       <img id="dayBgImg" src="" alt=""/>
@@ -743,6 +752,7 @@
   </div>
 
   <div class="body" id="bodyContent"></div>
+  </div>
 
   <div class="navbar">
     <div class="nb-btn active" id="nb0" onclick="switchTab('itinerary',null,0)">
