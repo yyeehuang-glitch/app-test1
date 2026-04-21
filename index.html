@@ -456,6 +456,55 @@
     .mbtn-save { background: var(--blue-400); color: var(--white); }
     .mbtn-del { background: #FCEBEB; color: #A32D2D; }
 
+    /* ── PACKING LIST ── */
+    .pack-cat-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; margin-bottom: 4px; }
+    .pack-cat-title { font-size: 13px; font-weight: 600; color: var(--blue-800); font-family: var(--font-display); display: flex; align-items: center; gap: 8px; }
+    .pack-cat-name { outline: none; border: none; background: transparent; font: inherit; color: inherit; min-width: 80px; }
+    .pack-cat-actions { display: flex; gap: 6px; }
+    .pack-sm-btn { background: transparent; border: none; font-size: 16px; color: var(--blue-600); cursor: pointer; padding: 2px 6px; line-height: 1; }
+    .pack-sm-btn.del { color: #A32D2D; font-size: 14px; }
+    .pack-cat-card { background: var(--white); border-radius: var(--radius-lg); padding: 8px 4px; margin-bottom: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .pack-item { display: flex; align-items: center; padding: 9px 12px; gap: 10px; border-bottom: 0.5px solid #F0F3F7; }
+    .pack-item:last-child { border-bottom: none; }
+    .pack-check { width: 20px; height: 20px; border: 1.5px solid var(--blue-400); border-radius: 50%; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: transparent; transition: all 0.15s; }
+    .pack-check.done { background: #639922; border-color: #639922; }
+    .pack-check.done::after { content: '✓'; color: #fff; font-size: 12px; font-weight: bold; }
+    .pack-text { flex: 1; border: none; background: transparent; font-size: 14px; color: var(--blue-900); outline: none; font-family: var(--font-body); padding: 2px 0; }
+    .pack-item.done .pack-text { text-decoration: line-through; color: var(--blue-400); }
+    .pack-item-del { background: transparent; border: none; color: #A32D2D; font-size: 12px; cursor: pointer; padding: 4px 6px; opacity: 0.7; }
+    .pack-add-item { width: calc(100% - 24px); margin: 4px 12px 6px; padding: 9px 12px; background: #EBF4FF; border: 1px dashed var(--blue-400); border-radius: 8px; font-size: 12px; color: var(--blue-600); cursor: pointer; font-family: var(--font-body); }
+    .pack-add-cat { width: 100%; padding: 13px; background: var(--white); border: 1.5px dashed var(--blue-400); border-radius: var(--radius-lg); font-size: 13px; color: var(--blue-600); cursor: pointer; font-family: var(--font-body); margin-bottom: 12px; }
+
+    /* ── WISH LIST ── */
+    .wish-cat-block { margin-bottom: 14px; }
+    .wish-cat-head { display: flex; align-items: center; justify-content: space-between; padding: 4px 4px 10px; }
+    .wish-cat-title { font-size: 14px; font-weight: 600; color: var(--blue-800); font-family: var(--font-display); display: flex; align-items: center; gap: 8px; }
+    .wish-row-wrap { position: relative; overflow: hidden; border-radius: var(--radius-lg); margin-bottom: 8px; }
+    .wish-row { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.06); cursor: pointer; transition: transform 0.2s; }
+    .wish-row.done { opacity: 0.55; }
+    .wish-row.done .wish-name { text-decoration: line-through; }
+    .wish-thumb { width: 48px; height: 48px; border-radius: 10px; background: #EBF4FF; flex-shrink: 0; object-fit: cover; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--blue-400); }
+    .wish-info { flex: 1; min-width: 0; }
+    .wish-name { font-size: 14px; font-weight: 500; color: var(--blue-900); font-family: var(--font-display); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .wish-meta { font-size: 11px; color: var(--blue-600); display: flex; align-items: center; gap: 6px; }
+    .wish-menu-btn { background: transparent; border: none; color: var(--blue-400); font-size: 18px; cursor: pointer; padding: 4px 8px; flex-shrink: 0; letter-spacing: 2px; }
+    .wish-cat-btn { background: transparent; border: none; font-size: 16px; color: var(--blue-600); cursor: pointer; padding: 2px 6px; line-height: 1; }
+    .wish-cat-btn.del { color: #A32D2D; font-size: 14px; }
+    .wish-add-cat { width: 100%; padding: 13px; background: var(--white); border: 1.5px dashed var(--blue-400); border-radius: var(--radius-lg); font-size: 13px; color: var(--blue-600); cursor: pointer; font-family: var(--font-body); margin-bottom: 12px; }
+    .wish-row.dragging { opacity: 0.5; }
+    .wish-cat-block.drag-over .wish-cat-head { border-top: 2px solid var(--blue-400); padding-top: 8px; }
+    .wish-detail { padding: 0 4px; }
+    .wish-detail-photos { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 12px; scroll-snap-type: x mandatory; }
+    .wish-detail-photos::-webkit-scrollbar { display: none; }
+    .wish-detail-photo { width: 85%; max-width: 320px; aspect-ratio: 4/3; border-radius: 12px; object-fit: cover; flex-shrink: 0; scroll-snap-align: center; background: #EBF4FF; cursor: pointer; }
+    .wish-detail-photo.empty { display: flex; align-items: center; justify-content: center; color: var(--blue-400); font-size: 14px; border: 1px dashed var(--blue-200); }
+    .wish-detail-add { display: inline-flex; align-items: center; justify-content: center; padding: 6px 14px; background: #EBF4FF; border: 1px dashed var(--blue-400); border-radius: 8px; color: var(--blue-600); font-size: 12px; cursor: pointer; margin-bottom: 12px; }
+    .wish-detail-note { width: 100%; min-height: 80px; padding: 12px; border: 1px solid var(--blue-100); border-radius: 10px; background: #F8FAFC; font-family: var(--font-body); font-size: 13px; color: var(--blue-900); resize: vertical; outline: none; line-height: 1.6; }
+    .wish-detail-links { margin-top: 8px; }
+    .wish-detail-link { display: inline-block; margin: 4px 6px 0 0; padding: 5px 10px; background: #EBF4FF; color: var(--blue-600); font-size: 12px; border-radius: 6px; text-decoration: none; word-break: break-all; }
+    .wish-detail-bought-btn { width: 100%; padding: 12px; margin-top: 12px; background: #E1F5EE; color: #0F6E56; border: none; border-radius: 10px; font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .wish-detail-bought-btn.done { background: #FCEBEB; color: #A32D2D; }
+
     /* ── NIGHT MODE ── */
     .app.night { background: #0B1628; }
     .app.night html, .app.night body { background: #0B1628; }
@@ -518,6 +567,35 @@
     .app.night .ic-btn.edit-btn { background: #223555; }
     .app.night .ic-btn:active { background: #334A6E; }
     .app.night .add-btn { background: #1A2A44; color: #9FC5FF; border-color: rgba(95,168,255,0.35); }
+
+    .app.night .pack-cat-card { background: #1A2A44; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+    .app.night .pack-cat-title { color: #E8F1FC; }
+    .app.night .pack-sm-btn { color: #9FC5FF; }
+    .app.night .pack-sm-btn.del { color: #F4B3B3; }
+    .app.night .pack-item { border-bottom-color: rgba(255,255,255,0.08); }
+    .app.night .pack-text { color: #F2F6FC; }
+    .app.night .pack-item.done .pack-text { color: #6B8AAF; }
+    .app.night .pack-check { border-color: #5FA8FF; }
+    .app.night .pack-check.done { background: #639922; border-color: #639922; }
+    .app.night .pack-item-del { color: #F4B3B3; }
+    .app.night .pack-add-item { background: rgba(95,168,255,0.12); color: #9FC5FF; border-color: rgba(95,168,255,0.4); }
+    .app.night .pack-add-cat { background: #1A2A44; color: #9FC5FF; border-color: rgba(95,168,255,0.4); }
+
+    .app.night .wish-cat-title { color: #E8F1FC; }
+    .app.night .wish-cat-btn { color: #9FC5FF; }
+    .app.night .wish-cat-btn.del { color: #F4B3B3; }
+    .app.night .wish-row { background: #1A2A44; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+    .app.night .wish-thumb { background: #223555; color: #9FC5FF; }
+    .app.night .wish-name { color: #F2F6FC; }
+    .app.night .wish-meta { color: #9FB8D9; }
+    .app.night .wish-menu-btn { color: #9FB8D9; }
+    .app.night .wish-add-cat { background: #1A2A44; color: #9FC5FF; border-color: rgba(95,168,255,0.4); }
+    .app.night .wish-detail-photo { background: #223555; border-color: rgba(95,168,255,0.3); }
+    .app.night .wish-detail-add { background: rgba(95,168,255,0.12); color: #9FC5FF; border-color: rgba(95,168,255,0.4); }
+    .app.night .wish-detail-note { background: #0F1E33; border-color: rgba(95,168,255,0.2); color: #F2F6FC; }
+    .app.night .wish-detail-link { background: rgba(95,168,255,0.15); color: #9FC5FF; }
+    .app.night .wish-detail-bought-btn { background: rgba(30,158,117,0.2); color: #9FE1CB; }
+    .app.night .wish-detail-bought-btn.done { background: rgba(163,45,45,0.2); color: #F4B3B3; }
     .app.night .day-bg-overlay { background: rgba(0,0,0,0.45); }
     .night-toggle {
       width: 100%;
@@ -640,7 +718,8 @@
     <div class="tab active" onclick="switchTab('itinerary',this,0)">行程</div>
     <div class="tab" onclick="switchTab('hotel',this,1)">住宿</div>
     <div class="tab" onclick="switchTab('budget',this,2)">預算</div>
-    <div class="tab" onclick="switchTab('info',this,3)">資訊</div>
+    <div class="tab" onclick="switchTab('wish',this,3)">待買</div>
+    <div class="tab" onclick="switchTab('info',this,4)">資訊</div>
   </div>
 
   <div class="body" id="bodyContent"></div>
@@ -655,7 +734,10 @@
     <div class="nb-btn" id="nb2" onclick="switchTab('budget',null,2)">
       <span class="nb-icon">💰</span><div class="nb-lbl">預算</div><div class="nb-active-dot"></div>
     </div>
-    <div class="nb-btn" id="nb3" onclick="switchTab('info',null,3)">
+    <div class="nb-btn" id="nb3" onclick="switchTab('wish',null,3)">
+      <span class="nb-icon">🛒</span><div class="nb-lbl">待買</div><div class="nb-active-dot"></div>
+    </div>
+    <div class="nb-btn" id="nb4" onclick="switchTab('info',null,4)">
       <span class="nb-icon">ℹ️</span><div class="nb-lbl">我的</div><div class="nb-active-dot"></div>
     </div>
   </div>
@@ -747,6 +829,31 @@ let infoData={
   rate:4.62,
   rateMyr:29.5,
   nightMode:false,
+  packing:[
+    {id:'p1',name:'文件證件',items:[
+      {id:'p1a',text:'護照',done:false},
+      {id:'p1b',text:'健保卡',done:false},
+      {id:'p1c',text:'現金/信用卡',done:false}
+    ]},
+    {id:'p2',name:'電子產品',items:[
+      {id:'p2a',text:'充電頭',done:false},
+      {id:'p2b',text:'充電線',done:false},
+      {id:'p2c',text:'萬國轉接頭',done:false},
+      {id:'p2d',text:'耳機',done:false}
+    ]},
+    {id:'p3',name:'生活用品',items:[
+      {id:'p3a',text:'雨傘',done:false},
+      {id:'p3b',text:'保溫瓶',done:false},
+      {id:'p3c',text:'換洗衣物',done:false},
+      {id:'p3d',text:'盥洗用品',done:false},
+      {id:'p3e',text:'隨身藥品',done:false}
+    ]}
+  ],
+  wishCats:[
+    {id:'w1',name:'藥品',items:[]},
+    {id:'w2',name:'生活用品',items:[]},
+    {id:'w3',name:'零食',items:[]}
+  ],
   sos:[
     {label:'台灣辦事處',val:'+81-3-3280-7811'},
     {label:'日本警察',val:'110'},
@@ -899,8 +1006,9 @@ function renderInfo(){
   }
   const inStyle=`border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-body);font-size:13px;font-weight:500;color:var(--blue-900);outline:none;text-align:right;width:160px;`;
   let h=`<div class="info-card"><div class="info-title">旅程資訊</div>`;
-  h+=infoData.tripRows.map((r,i)=>`<div class="info-row"><span class="info-l">${r.label}</span><input style="${inStyle}" value="${r.val}" onchange="infoData.tripRows[${i}].val=this.value;" /></div>`).join('');
+  h+=infoData.tripRows.map((r,i)=>`<div class="info-row"><span class="info-l">${r.label}</span><input style="${inStyle}" value="${r.val}" onchange="infoData.tripRows[${i}].val=this.value;save();" /></div>`).join('');
   h+=`</div>`;
+  h+=renderPackingHTML();
   h+=`<div class="info-card"><div class="info-title">匯率換算</div><div class="rate-box">`;
   h+=`<div class="rate-big">1 TWD = <input type="number" step="0.01" value="${infoData.rate}" onchange="infoData.rate=parseFloat(this.value)||0;renderInfo();" style="width:60px;border:none;border-bottom:2px solid var(--blue-400);background:transparent;font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--blue-800);outline:none;text-align:center;" /> JPY</div>`;
   h+=`<div class="rate-small">¥10,000 ≈ NT$${Math.round(10000/infoData.rate).toLocaleString()}</div>`;
@@ -910,7 +1018,7 @@ function renderInfo(){
   h+=`<div class="rate-small">¥10,000 ≈ RM${(10000/infoData.rateMyr).toFixed(2)}</div>`;
   h+=`</div></div>`;
   h+=`<div class="sos-card"><div class="sos-title">緊急聯絡</div>`;
-  h+=infoData.sos.map((r,i)=>`<div class="sos-row"><input style="border:none;border-bottom:1px solid rgba(240,149,149,0.5);background:transparent;font-size:13px;color:#791F1F;outline:none;width:90px;" value="${r.label}" onchange="infoData.sos[${i}].label=this.value;" /><input style="border:none;border-bottom:1px solid rgba(240,149,149,0.5);background:transparent;font-size:13px;font-weight:500;color:#A32D2D;outline:none;text-align:right;width:140px;" value="${r.val}" onchange="infoData.sos[${i}].val=this.value;" /></div>`).join('');
+  h+=infoData.sos.map((r,i)=>`<div class="sos-row"><input style="border:none;border-bottom:1px solid rgba(240,149,149,0.5);background:transparent;font-size:13px;color:#791F1F;outline:none;width:90px;" value="${r.label}" onchange="infoData.sos[${i}].label=this.value;save();" /><input style="border:none;border-bottom:1px solid rgba(240,149,149,0.5);background:transparent;font-size:13px;font-weight:500;color:#A32D2D;outline:none;text-align:right;width:140px;" value="${r.val}" onchange="infoData.sos[${i}].val=this.value;save();" /></div>`).join('');
   h+=`</div>`;
   h+=`<button class="night-toggle" onclick="toggleNightMode()"><span style="font-size:16px">${infoData.nightMode?'☀️':'🌙'}</span><span>${infoData.nightMode?'日間模式':'夜間模式'}</span></button>`;
   h+=`<div class="info-card"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="width:8px;height:8px;border-radius:50%;background:#639922;display:inline-block;flex-shrink:0"></span><span style="font-family:var(--font-display);font-size:13px;font-weight:500;color:#3B6D11">Firebase 雲端同步已啟用</span></div><div style="font-size:12px;color:var(--blue-600);line-height:1.5">照片與行程即時同步，兩支手機都看得到</div></div>`;
@@ -973,6 +1081,332 @@ function toggleNightMode(){
   renderInfo();
 }
 
+function genId(prefix){return prefix+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+
+function ensurePacking(){
+  if(!infoData.packing||!Array.isArray(infoData.packing)){
+    infoData.packing=[
+      {id:'p1',name:'文件證件',items:[
+        {id:'p1a',text:'護照',done:false},
+        {id:'p1b',text:'健保卡',done:false},
+        {id:'p1c',text:'現金/信用卡',done:false}
+      ]},
+      {id:'p2',name:'電子產品',items:[
+        {id:'p2a',text:'充電頭',done:false},
+        {id:'p2b',text:'充電線',done:false},
+        {id:'p2c',text:'萬國轉接頭',done:false},
+        {id:'p2d',text:'耳機',done:false}
+      ]},
+      {id:'p3',name:'生活用品',items:[
+        {id:'p3a',text:'雨傘',done:false},
+        {id:'p3b',text:'保溫瓶',done:false},
+        {id:'p3c',text:'換洗衣物',done:false},
+        {id:'p3d',text:'盥洗用品',done:false},
+        {id:'p3e',text:'隨身藥品',done:false}
+      ]}
+    ];
+    save();
+  }
+}
+
+function renderPackingHTML(){
+  ensurePacking();
+  let h=`<div style="margin-bottom:14px"><div class="info-title" style="padding:0 4px 8px;display:flex;justify-content:space-between;align-items:center"><span>打包清單</span><span style="font-size:11px;color:var(--blue-400);font-weight:400">${countPackingDone()}/${countPackingTotal()} 已備齊</span></div>`;
+  infoData.packing.forEach((cat,ci)=>{
+    h+=`<div class="pack-cat-card">`;
+    h+=`<div class="pack-cat-head">`;
+    h+=`<div class="pack-cat-title">📦 <input class="pack-cat-name" value="${esc(cat.name)}" onchange="renamePackCat('${cat.id}',this.value)" /></div>`;
+    h+=`<div class="pack-cat-actions">`;
+    h+=`<button class="pack-sm-btn" onclick="movePackCat('${cat.id}',-1)" ${ci===0?'disabled style="opacity:0.3"':''}>↑</button>`;
+    h+=`<button class="pack-sm-btn" onclick="movePackCat('${cat.id}',1)" ${ci===infoData.packing.length-1?'disabled style="opacity:0.3"':''}>↓</button>`;
+    h+=`<button class="pack-sm-btn del" onclick="delPackCat('${cat.id}')">✕</button>`;
+    h+=`</div></div>`;
+    cat.items.forEach(it=>{
+      h+=`<div class="pack-item ${it.done?'done':''}">`;
+      h+=`<div class="pack-check ${it.done?'done':''}" onclick="togglePackItem('${cat.id}','${it.id}')"></div>`;
+      h+=`<input class="pack-text" value="${esc(it.text)}" onchange="renamePackItem('${cat.id}','${it.id}',this.value)" />`;
+      h+=`<button class="pack-item-del" onclick="delPackItem('${cat.id}','${it.id}')">刪除</button>`;
+      h+=`</div>`;
+    });
+    h+=`<button class="pack-add-item" onclick="addPackItem('${cat.id}')">＋ 新增項目</button>`;
+    h+=`</div>`;
+  });
+  h+=`<button class="pack-add-cat" onclick="addPackCat()">＋ 新增分類</button>`;
+  h+=`</div>`;
+  return h;
+}
+
+function countPackingTotal(){return infoData.packing.reduce((s,c)=>s+c.items.length,0);}
+function countPackingDone(){return infoData.packing.reduce((s,c)=>s+c.items.filter(i=>i.done).length,0);}
+
+function togglePackItem(cid,iid){
+  const cat=infoData.packing.find(c=>c.id===cid);if(!cat)return;
+  const it=cat.items.find(i=>i.id===iid);if(!it)return;
+  it.done=!it.done;save();renderInfo();
+}
+function renamePackItem(cid,iid,val){
+  const cat=infoData.packing.find(c=>c.id===cid);if(!cat)return;
+  const it=cat.items.find(i=>i.id===iid);if(!it)return;
+  it.text=val;save();
+}
+function delPackItem(cid,iid){
+  if(!confirm('確定要刪除這個項目嗎？'))return;
+  const cat=infoData.packing.find(c=>c.id===cid);if(!cat)return;
+  cat.items=cat.items.filter(i=>i.id!==iid);save();renderInfo();
+}
+function addPackItem(cid){
+  const cat=infoData.packing.find(c=>c.id===cid);if(!cat)return;
+  cat.items.push({id:genId('pi_'),text:'',done:false});save();renderInfo();
+}
+function renamePackCat(cid,val){
+  const cat=infoData.packing.find(c=>c.id===cid);if(!cat)return;
+  cat.name=val;save();
+}
+function delPackCat(cid){
+  if(!confirm('確定要刪除這個分類嗎？（分類內所有項目會一起刪除）'))return;
+  infoData.packing=infoData.packing.filter(c=>c.id!==cid);
+  save();renderInfo();
+}
+function addPackCat(){
+  infoData.packing.push({id:genId('pc_'),name:'新分類',items:[]});save();renderInfo();
+}
+function movePackCat(cid,dir){
+  const idx=infoData.packing.findIndex(c=>c.id===cid);if(idx<0)return;
+  const newIdx=idx+dir;if(newIdx<0||newIdx>=infoData.packing.length)return;
+  const arr=infoData.packing;
+  [arr[idx],arr[newIdx]]=[arr[newIdx],arr[idx]];save();renderInfo();
+}
+
+function ensureWish(){
+  if(!infoData.wishCats||!Array.isArray(infoData.wishCats)){
+    infoData.wishCats=[
+      {id:'w1',name:'藥品',items:[]},
+      {id:'w2',name:'生活用品',items:[]},
+      {id:'w3',name:'零食',items:[]}
+    ];
+    save();
+  }
+}
+
+function renderWish(){
+  ensureWish();
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:0 4px"><div class="info-title" style="margin:0;font-size:14px">待買清單</div><button onclick="openWishNew()" style="padding:7px 14px;background:var(--blue-400);color:#fff;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer">＋ 新增</button></div>`;
+  infoData.wishCats.forEach((cat,ci)=>{
+    h+=`<div class="wish-cat-block" data-cat-id="${cat.id}">`;
+    h+=`<div class="wish-cat-head">`;
+    h+=`<div class="wish-cat-title">🏷️ <input class="pack-cat-name" value="${esc(cat.name)}" onchange="renameWishCat('${cat.id}',this.value)" /></div>`;
+    h+=`<div class="pack-cat-actions">`;
+    h+=`<button class="wish-cat-btn" onclick="moveWishCat('${cat.id}',-1)" ${ci===0?'disabled style="opacity:0.3"':''}>↑</button>`;
+    h+=`<button class="wish-cat-btn" onclick="moveWishCat('${cat.id}',1)" ${ci===infoData.wishCats.length-1?'disabled style="opacity:0.3"':''}>↓</button>`;
+    h+=`<button class="wish-cat-btn del" onclick="delWishCat('${cat.id}')">✕</button>`;
+    h+=`</div></div>`;
+    if(cat.items.length===0){
+      h+=`<div style="padding:12px;text-align:center;color:var(--blue-400);font-size:12px;background:rgba(0,0,0,0.02);border-radius:8px;margin-bottom:8px">這個分類還沒有項目</div>`;
+    } else {
+      cat.items.forEach(it=>{
+        const firstPhoto=(it.photos&&it.photos[0])||'';
+        const thumbHTML=firstPhoto?`<img class="wish-thumb" src="${firstPhoto}" alt="" />`:`<div class="wish-thumb">🛍️</div>`;
+        const noteLen=(it.note||'').length;
+        const photoCount=(it.photos||[]).length;
+        const meta=[];
+        if(photoCount>0)meta.push(`📷 ${photoCount}`);
+        if(noteLen>0)meta.push(`📝 ${noteLen>20?'備註':'有備註'}`);
+        if(it.bought)meta.push('✓ 已購買');
+        h+=`<div class="wish-row-wrap">`;
+        h+=`<div class="wish-row ${it.bought?'done':''}" onclick="openWishDetail('${cat.id}','${it.id}')">`;
+        h+=thumbHTML;
+        h+=`<div class="wish-info"><div class="wish-name">${esc(it.name||'（未命名）')}</div>`;
+        h+=`<div class="wish-meta">${meta.length?meta.join(' · '):'點擊編輯內容'}</div></div>`;
+        h+=`<button class="wish-menu-btn" onclick="event.stopPropagation();openWishRowMenu('${cat.id}','${it.id}')">•••</button>`;
+        h+=`</div></div>`;
+      });
+    }
+    h+=`</div>`;
+  });
+  h+=`<button class="wish-add-cat" onclick="addWishCat()">＋ 新增分類</button>`;
+  document.getElementById('bodyContent').innerHTML=h;
+}
+
+function openWishRowMenu(cid,iid){
+  const choice=prompt('輸入數字選擇動作：\n1 = 刪除\n2 = 移到其他分類\n\n（取消請直接關閉）');
+  if(!choice)return;
+  if(choice==='1'){delWishItem(cid,iid);}
+  else if(choice==='2'){
+    const names=infoData.wishCats.filter(c=>c.id!==cid).map((c,i)=>`${i+1} = ${c.name}`).join('\n');
+    const target=prompt('移到哪個分類？\n'+names);
+    if(!target)return;
+    const targetIdx=parseInt(target)-1;
+    const others=infoData.wishCats.filter(c=>c.id!==cid);
+    if(targetIdx<0||targetIdx>=others.length){alert('無效選擇');return;}
+    moveWishItem(cid,iid,others[targetIdx].id);
+  }
+}
+
+function addWishCat(){
+  infoData.wishCats.push({id:genId('wc_'),name:'新分類',items:[]});save();renderWish();
+}
+function renameWishCat(cid,val){
+  const cat=infoData.wishCats.find(c=>c.id===cid);if(!cat)return;
+  cat.name=val;save();
+}
+function delWishCat(cid){
+  const cat=infoData.wishCats.find(c=>c.id===cid);if(!cat)return;
+  const hasItems=cat.items.length>0;
+  if(!confirm(`確定要刪除分類「${cat.name}」嗎？${hasItems?`\n（分類內的 ${cat.items.length} 個項目會一起刪除）`:''}`))return;
+  infoData.wishCats=infoData.wishCats.filter(c=>c.id!==cid);save();renderWish();
+}
+function moveWishCat(cid,dir){
+  const idx=infoData.wishCats.findIndex(c=>c.id===cid);if(idx<0)return;
+  const newIdx=idx+dir;if(newIdx<0||newIdx>=infoData.wishCats.length)return;
+  const arr=infoData.wishCats;
+  [arr[idx],arr[newIdx]]=[arr[newIdx],arr[idx]];save();renderWish();
+}
+function delWishItem(cid,iid){
+  if(!confirm('確定要刪除這個項目嗎？'))return;
+  const cat=infoData.wishCats.find(c=>c.id===cid);if(!cat)return;
+  cat.items=cat.items.filter(i=>i.id!==iid);save();renderWish();
+}
+function moveWishItem(fromCid,iid,toCid){
+  const from=infoData.wishCats.find(c=>c.id===fromCid);
+  const to=infoData.wishCats.find(c=>c.id===toCid);
+  if(!from||!to)return;
+  const item=from.items.find(i=>i.id===iid);if(!item)return;
+  from.items=from.items.filter(i=>i.id!==iid);
+  to.items.push(item);
+  save();renderWish();
+}
+function toggleWishBought(cid,iid){
+  const cat=infoData.wishCats.find(c=>c.id===cid);if(!cat)return;
+  const it=cat.items.find(i=>i.id===iid);if(!it)return;
+  it.bought=!it.bought;save();renderWishDetailInPlace(cid,iid);renderWish();
+}
+
+let _currentWish={cid:null,iid:null};
+
+function openWishNew(){
+  if(!infoData.wishCats||infoData.wishCats.length===0){alert('請先新增一個分類');return;}
+  const firstCat=infoData.wishCats[0];
+  const newItem={id:genId('wi_'),name:'',photos:[],note:'',bought:false};
+  firstCat.items.push(newItem);
+  save();
+  openWishDetail(firstCat.id,newItem.id);
+}
+
+function openWishDetail(cid,iid){
+  _currentWish={cid,iid};
+  const cat=infoData.wishCats.find(c=>c.id===cid);if(!cat)return;
+  const it=cat.items.find(i=>i.id===iid);if(!it)return;
+  const app=document.getElementById('app');
+  const old=app.querySelector('.overlay');if(old)old.remove();
+  const ov=document.createElement('div');ov.className='overlay';
+  ov.innerHTML=`<div class="modal" id="wishDetailModal"></div>`;
+  app.appendChild(ov);
+  renderWishDetailInPlace(cid,iid);
+}
+
+function extractLinks(text){
+  const urlRe=/(https?:\/\/[^\s]+)/g;
+  return (text||'').match(urlRe)||[];
+}
+
+function renderWishDetailInPlace(cid,iid){
+  const cat=infoData.wishCats.find(c=>c.id===cid);if(!cat)return;
+  const it=cat.items.find(i=>i.id===iid);if(!it)return;
+  const modal=document.getElementById('wishDetailModal');if(!modal)return;
+  const links=extractLinks(it.note);
+  let photoHTML='';
+  if(it.photos&&it.photos.length>0){
+    it.photos.forEach((p,pi)=>{
+      photoHTML+=`<div style="position:relative;flex-shrink:0" class="wish-detail-photo-wrap"><img class="wish-detail-photo" src="${p}" onclick="removeWishPhoto(${pi})" title="點擊刪除"/></div>`;
+    });
+  } else {
+    photoHTML=`<div class="wish-detail-photo empty">還沒有照片</div>`;
+  }
+  const catOpts=infoData.wishCats.map(c=>`<option value="${c.id}" ${c.id===cid?'selected':''}>${esc(c.name)}</option>`).join('');
+  modal.innerHTML=`
+    <div class="modal-title">🛍️ 商品詳情</div>
+    <div class="field-lbl">名稱</div>
+    <input class="minput" id="wd-name" value="${esc(it.name)}" placeholder="商品名稱" />
+    <div class="field-lbl">分類</div>
+    <select class="mselect" id="wd-cat" onchange="changeWishItemCat('${cid}','${iid}',this.value)">${catOpts}</select>
+    <div class="field-lbl">照片（點照片可刪除，可加多張）</div>
+    <div class="wish-detail-photos">${photoHTML}</div>
+    <label class="wish-detail-add" for="wd-photo-file">📷 新增一張照片<input type="file" id="wd-photo-file" accept="image/*" style="display:none" onchange="handleWishPhoto(event)"/></label>
+    <div class="field-lbl">備註 / 連結（IG、TikTok 連結會自動變可點擊）</div>
+    <textarea class="wish-detail-note" id="wd-note" placeholder="貼上網址或寫備註...">${esc(it.note||'')}</textarea>
+    ${links.length?`<div class="wish-detail-links">${links.map(u=>`<a class="wish-detail-link" href="${esc(u)}" target="_blank" rel="noopener">🔗 ${esc(u.length>30?u.slice(0,30)+'...':u)}</a>`).join('')}</div>`:''}
+    <button class="wish-detail-bought-btn ${it.bought?'done':''}" onclick="toggleWishBought('${cid}','${iid}')">${it.bought?'↺ 標記為未購買':'✓ 標記為已購買'}</button>
+    <div class="modal-btns" style="margin-top:14px">
+      <button class="mbtn mbtn-del" onclick="delWishItemFromModal()">刪除</button>
+      <button class="mbtn mbtn-cancel" onclick="closeWishDetail()">關閉</button>
+      <button class="mbtn mbtn-save" onclick="saveWishDetail()">儲存</button>
+    </div>
+  `;
+}
+
+function saveWishDetail(){
+  const {cid,iid}=_currentWish;
+  const cat=infoData.wishCats.find(c=>c.id===cid);if(!cat){closeWishDetail();return;}
+  const it=cat.items.find(i=>i.id===iid);if(!it){closeWishDetail();return;}
+  it.name=document.getElementById('wd-name').value.trim();
+  it.note=document.getElementById('wd-note').value;
+  save();closeWishDetail();renderWish();
+}
+
+function closeWishDetail(){
+  const ov=document.getElementById('app').querySelector('.overlay');if(ov)ov.remove();
+  _currentWish={cid:null,iid:null};
+}
+
+function delWishItemFromModal(){
+  const {cid,iid}=_currentWish;
+  if(!confirm('確定要刪除這個項目嗎？'))return;
+  const cat=infoData.wishCats.find(c=>c.id===cid);if(cat){cat.items=cat.items.filter(i=>i.id!==iid);}
+  save();closeWishDetail();renderWish();
+}
+
+function changeWishItemCat(fromCid,iid,toCid){
+  if(fromCid===toCid)return;
+  moveWishItem(fromCid,iid,toCid);
+  _currentWish={cid:toCid,iid};
+}
+
+function handleWishPhoto(e){
+  const file=e.target.files[0];if(!file)return;
+  const {cid,iid}=_currentWish;
+  const cat=infoData.wishCats.find(c=>c.id===cid);if(!cat)return;
+  const it=cat.items.find(i=>i.id===iid);if(!it)return;
+  if(!it.photos)it.photos=[];
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    const img=new Image();
+    img.onload=function(){
+      const canvas=document.createElement('canvas');
+      const MAX=800;
+      let w=img.width,h=img.height;
+      if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}
+      else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      const compressed=canvas.toDataURL('image/jpeg',0.75);
+      it.photos.push(compressed);
+      save();
+      renderWishDetailInPlace(cid,iid);
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);e.target.value='';
+}
+
+function removeWishPhoto(pi){
+  if(!confirm('確定要刪除這張照片嗎？'))return;
+  const {cid,iid}=_currentWish;
+  const cat=infoData.wishCats.find(c=>c.id===cid);if(!cat)return;
+  const it=cat.items.find(i=>i.id===iid);if(!it||!it.photos)return;
+  it.photos.splice(pi,1);
+  save();renderWishDetailInPlace(cid,iid);
+}
+
 function openEdit(i){editIdx=i;isNew=false;const p=data[currentDay][i];showModal(p.time,p.name,p.desc,p.note||'',p.type,p.map,p.photo,false);}
 function openNew(){editIdx=null;isNew=true;showModal('','','','','food','','',true);}
 
@@ -1011,7 +1445,7 @@ function switchTab(id,tabEl,nbIdx){
   currentTab=id;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nb-btn').forEach(b=>b.classList.remove('active'));
-  const tabMap={itinerary:0,hotel:1,budget:2,info:3};
+  const tabMap={itinerary:0,hotel:1,budget:2,wish:3,info:4};
   const tabs=document.querySelectorAll('.tab');
   if(tabEl)tabEl.classList.add('active');
   else if(tabs[tabMap[id]])tabs[tabMap[id]].classList.add('active');
@@ -1020,6 +1454,7 @@ function switchTab(id,tabEl,nbIdx){
   if(id==='itinerary')renderItinerary();
   else if(id==='hotel')renderHotel();
   else if(id==='budget')renderBudget();
+  else if(id==='wish')renderWish();
   else renderInfo();
 }
 
@@ -1066,11 +1501,35 @@ window.currentDay = currentDay;
 window.renderItinerary = renderItinerary;
 window.renderHotel = renderHotel;
 window.renderInfo = renderInfo;
+window.renderWish = renderWish;
 window.addHotel = addHotel;
 window.deleteHotel = deleteHotel;
 window.toggleNightMode = toggleNightMode;
 window.applyNightMode = applyNightMode;
 window.infoData = infoData;
+window.togglePackItem = togglePackItem;
+window.renamePackItem = renamePackItem;
+window.delPackItem = delPackItem;
+window.addPackItem = addPackItem;
+window.renamePackCat = renamePackCat;
+window.delPackCat = delPackCat;
+window.addPackCat = addPackCat;
+window.movePackCat = movePackCat;
+window.openWishNew = openWishNew;
+window.openWishDetail = openWishDetail;
+window.openWishRowMenu = openWishRowMenu;
+window.addWishCat = addWishCat;
+window.renameWishCat = renameWishCat;
+window.delWishCat = delWishCat;
+window.moveWishCat = moveWishCat;
+window.delWishItem = delWishItem;
+window.toggleWishBought = toggleWishBought;
+window.saveWishDetail = saveWishDetail;
+window.closeWishDetail = closeWishDetail;
+window.delWishItemFromModal = delWishItemFromModal;
+window.changeWishItemCat = changeWishItemCat;
+window.handleWishPhoto = handleWishPhoto;
+window.removeWishPhoto = removeWishPhoto;
 window.applyBg = applyBg;
 </script>
 
@@ -1118,6 +1577,7 @@ onValue(ref(db,'yongbros/info'),(snapshot)=>{
     window.applyNightMode();
     if(window.currentTab==='info') window.renderInfo&&window.renderInfo();
     else if(window.currentTab==='hotel') window.renderHotel();
+    else if(window.currentTab==='wish') window.renderWish();
   }
 });
 
