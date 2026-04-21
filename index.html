@@ -424,6 +424,7 @@
     .field-lbl:first-of-type { margin-top: 0; }
     .minput {
       width: 100%;
+      box-sizing: border-box;
       padding: 10px 12px;
       border-radius: var(--radius-sm);
       border: 0.5px solid var(--blue-200);
@@ -432,10 +433,14 @@
       color: var(--blue-900);
       font-family: var(--font-body);
       outline: none;
+      min-width: 0;
+      max-width: 100%;
     }
+    .minput[type="time"] { -webkit-appearance: none; appearance: none; text-align: center; }
     .minput:focus { border-color: var(--blue-400); background: var(--white); }
     .mtextarea {
       width: 100%;
+      box-sizing: border-box;
       padding: 10px 12px;
       border-radius: var(--radius-sm);
       border: 0.5px solid var(--blue-200);
@@ -451,6 +456,7 @@
     .mtextarea:focus { border-color: var(--blue-400); background: var(--white); }
     .mselect {
       width: 100%;
+      box-sizing: border-box;
       padding: 10px 12px;
       border-radius: var(--radius-sm);
       border: 0.5px solid var(--blue-200);
