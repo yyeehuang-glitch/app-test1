@@ -1,5 +1,3 @@
-# Yong Bros Tokyo — 部署說明
-
 ## 檔案清單
 - `index.html` — 主要 App 頁面
 - `manifest.json` — PWA 設定（讓手機可加入主畫面）
