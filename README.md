@@ -1,5 +1,5 @@
 ## 檔案清單
-- `index.html` — 主要 App 頁面
+- `index.html` — 主要 App 頁面 
 - `manifest.json` — PWA 設定（讓手機可加入主畫面）
 - `sw.js` — Service Worker（離線模式）
 
