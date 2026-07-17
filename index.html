@@ -7,13 +7,13 @@
   <meta name="color-scheme" content="light"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="Yong Bros Tokyo"/>
+  <meta name="apple-mobile-web-app-title" content="Yong Bros Seoul"/>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
-  <title>Yong Bros — Tokyo, we're coming.</title>
+  <title>Yong Bros — Seoul, we're coming.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;1,400&family=Poppins:wght@700;800&family=Syne:wght@500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=Fredoka:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@700;800&family=Syne:wght@500;600;700&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --blue-50: #F0F7FF;
@@ -151,13 +151,13 @@
       border-radius: 20px;
     }
 
-    .day-scroll { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+    .day-scroll { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
     .day-scroll::-webkit-scrollbar { display: none; }
     .day-pill {
-      flex-shrink: 0;
-      width: 46px;
+      flex: 1 1 0;
+      min-width: 0;
       text-align: center;
-      padding: 7px 4px;
+      padding: 7px 2px;
       border-radius: var(--radius-md);
       cursor: pointer;
       transition: background 0.15s;
@@ -546,6 +546,88 @@
     .wish-detail-bought-btn { width: 100%; padding: 12px; margin-top: 12px; background: #E1F5EE; color: #0F6E56; border: none; border-radius: 10px; font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; }
     .wish-detail-bought-btn.done { background: #FCEBEB; color: #A32D2D; }
 
+    /* ═══ DAY MODE — COZY ANIMAL CROSSING (dotted cream) ═══ */
+    html:not(.night), body:not(.night){ background:#F3EBD1 !important; }
+    .app:not(.night){
+      --white:#FBF6E9;          /* cards -> cream */
+      --gray-50:#F3EBD1;
+      --blue-50:#EDF6E1;        /* soft green tint */
+      --blue-100:#DDEFCB;
+      --blue-200:#CBE3AE;       /* soft green border */
+      --blue-400:#6FBF73;       /* accent green */
+      --blue-600:#8A7A5E;       /* muted brown text */
+      --blue-800:#5A4B36;       /* ink headings */
+      --blue-900:#4A3D2B;       /* darkest ink */
+      --font-body:'Fredoka', sans-serif;
+      --font-display:'Baloo 2', sans-serif;
+      background-color:#F3EBD1;
+      background-image: radial-gradient(#E6D9B2 1.7px, transparent 1.8px);
+      background-size: 18px 18px;
+    }
+    .app:not(.night) .body{ background:transparent; }
+    .app:not(.night) .scroll-area{ background:transparent; }
+
+    /* topbar blends into the dotted cream */
+    .app:not(.night) .topbar{ background:transparent !important; }
+    .app:not(.night) .topbar .greeting{ color:#8A7A5E; }
+    .app:not(.night) .topbar .trip-name{ color:#4A3D2B; font-family:'Baloo 2',sans-serif; }
+    .app:not(.night) .greeting{ font-family:'Baloo 2',sans-serif; }
+    .app:not(.night) .topbar .date-lbl{ color:#8A7A5E; }
+    .app:not(.night) .topbar .date-val{ color:#4A3D2B; }
+    .app:not(.night) .editable-text:focus{ border-bottom-color:rgba(90,75,54,0.4); }
+    .app:not(.night) .topbar-edit-btn{ background:#F2B441; color:#fff; opacity:1; box-shadow:0 3px 0 #c98f1f, 0 5px 12px rgba(0,0,0,0.15); }
+    .app:not(.night) .topbar .date-banner{ background:#FBF6E9; border:2px solid #fff; box-shadow:0 4px 0 rgba(120,100,60,0.10); }
+    .app:not(.night) .topbar .day-pill{ background:#FBF6E9; box-shadow:0 3px 0 rgba(120,100,60,0.13); }
+    .app:not(.night) .topbar .day-pill.active{ background:linear-gradient(180deg,#7ECB82,#5AAA63); box-shadow:0 3px 0 #3d8047; }
+    .app:not(.night) .day-pill .day-num-input{ color:#4A3D2B !important; border-bottom-color:transparent !important; }
+    .app:not(.night) .day-pill .day-lbl-input{ color:#8A7A5E !important; }
+    .app:not(.night) .day-pill.active .day-num-input,
+    .app:not(.night) .day-pill.active .day-lbl-input{ color:#fff !important; }
+
+    /* tabs blend */
+    .app:not(.night) .tabs{ background:transparent; box-shadow:none; }
+    .app:not(.night) .tab{ color:#9A8A6E; }
+    .app:not(.night) .tab.active{ color:#4A3D2B; border-bottom-color:#6FBF73; }
+    .app:not(.night) .sec-lbl{ color:#4A3D2B; }
+
+    /* chunky cozy cards */
+    .app:not(.night) .it-card,
+    .app:not(.night) .info-card,
+    .app:not(.night) .budget-card,
+    .app:not(.night) .pack-cat-card,
+    .app:not(.night) .sos-card{
+      box-shadow:0 5px 0 rgba(120,100,60,0.10), 0 10px 20px rgba(120,100,60,0.10);
+      border:2px solid rgba(255,255,255,0.75);
+    }
+    .app:not(.night) .it-time-col{ background:#EFE6CC; }
+    .app:not(.night) .it-time{ color:#4A3D2B; }
+    .app:not(.night) .it-dot{ background:#6FBF73; box-shadow:0 0 0 3px rgba(111,191,115,0.28); }
+    .app:not(.night) .it-note{ background:#EDF6E1; border-left-color:#8FCB7E; color:#5b7038; }
+    .app:not(.night) .it-photo-placeholder{ background:#F1EAD6; border-color:#D8C9A0; color:#8A7A5E; }
+    .app:not(.night) .tag-transit{ color:#3E6DA0; }
+
+    /* round buttons chunky */
+    .app:not(.night) .ic-btn{ background:#EFE6CC; box-shadow:0 3px 0 rgba(120,100,60,0.14); }
+    .app:not(.night) .ic-btn.edit-btn{ background:#F2B441; box-shadow:0 3px 0 #c98f1f; }
+
+    /* internals warm */
+    .app:not(.night) .bud-item{ background:#F1EAD6; }
+    .app:not(.night) .bud-bar{ background:#E6DAB8; }
+    .app:not(.night) .bud-fill{ background:linear-gradient(90deg,#8FD693,#6FBF73); }
+    .app:not(.night) .rate-box{ background:#F1EAD6; }
+    .app:not(.night) .pack-add-item,
+    .app:not(.night) .wish-add-item-card,
+    .app:not(.night) .wish-detail-add{ background:#EDF6E1; border-color:#8FCB7E; color:#4E9E5A; }
+    .app:not(.night) .wish-cat-block{ background:linear-gradient(135deg,#FBF6E9,#F1EAD6); box-shadow:0 4px 0 rgba(120,100,60,0.10); }
+
+    /* cozy bottom nav with green pill on active */
+    .app:not(.night) .navbar{ background:#FBF6E9; box-shadow:0 -4px 16px rgba(120,100,60,0.10); border-top:2px solid rgba(255,255,255,0.7); }
+    .app:not(.night) .nb-icon{ display:inline-flex; align-items:center; justify-content:center; width:44px; height:32px; border-radius:13px; margin:0 auto 2px; transition:background .15s; }
+    .app:not(.night) .nb-btn.active .nb-icon{ background:linear-gradient(180deg,#8FD693,#6FBF73); }
+    .app:not(.night) .nb-lbl{ color:#9A8A6E; }
+    .app:not(.night) .nb-btn.active .nb-lbl{ color:#4E9E5A; font-weight:600; }
+    .app:not(.night) .nb-active-dot{ display:none; }
+
     /* ── NIGHT MODE ── */
     .app.night { background: #0B1628; }
     .app.night html, .app.night body { background: #0B1628; }
@@ -661,6 +743,183 @@
     .app.night .wish-detail-bought-btn { background: rgba(30,158,117,0.2); color: #9FE1CB; }
     .app.night .wish-detail-bought-btn.done { background: rgba(163,45,45,0.2); color: #F4B3B3; }
     .app.night .day-bg-overlay { background: rgba(0,0,0,0.45); }
+
+    /* ═══ NIGHT MODE v2 — PURPLE GLASS (overrides above) ═══ */
+    .app.night{
+      --accent:#8B7DF7; --accent-2:#6B5EA2;
+      --glass:rgba(255,255,255,0.055); --glass-2:rgba(255,255,255,0.09);
+      --brd:rgba(255,255,255,0.10); --txt:#F4F4FA; --muted:#9AA0B4;
+      --font-body:'Outfit', sans-serif;
+      background:
+        radial-gradient(120% 55% at 50% -6%, rgba(139,125,247,0.26), rgba(139,125,247,0.04) 42%, transparent 68%),
+        radial-gradient(85% 45% at 92% 12%, rgba(107,94,162,0.18), transparent 55%),
+        linear-gradient(180deg,#12102A 0%,#0a0917 32%,#05060D 100%) !important;
+    }
+    html.night, html.night body, body.night{ background:#05060D !important; }
+    .app.night .body{ background:transparent; }
+    .app.night .scroll-area{ background:transparent; }
+
+    /* topbar blends into the gradient */
+    .app.night .topbar{ background:transparent !important; }
+    .app.night .topbar .greeting{ color:var(--muted); }
+    .app.night .topbar .trip-name{ color:var(--txt); font-family:'Syne',sans-serif; }
+    .app.night .topbar .date-val{ color:var(--txt); }
+    .app.night .topbar .date-lbl{ color:var(--muted); }
+    .app.night .topbar-edit-btn{ background:var(--glass-2); border:1px solid var(--brd); }
+
+    /* date banner glass */
+    .app.night .date-banner{
+      background:var(--glass); border:1px solid var(--brd);
+      backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3);
+      box-shadow:0 8px 30px rgba(0,0,0,0.28);
+    }
+
+    /* day pills glass */
+    .app.night .day-pill{ background:var(--glass); border:1px solid var(--brd); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+    .app.night .day-pill.active{
+      background:linear-gradient(160deg, rgba(139,125,247,0.92), rgba(107,94,162,0.85));
+      border-color:rgba(139,125,247,0.6); box-shadow:0 6px 20px rgba(124,111,232,0.45);
+    }
+    .app.night .day-pill .day-num-input{ color:var(--txt) !important; border-bottom-color:transparent !important; }
+    .app.night .day-pill .day-lbl-input{ color:var(--muted) !important; }
+    .app.night .day-pill.active .day-num-input,
+    .app.night .day-pill.active .day-lbl-input{ color:#fff !important; }
+
+    /* tabs */
+    .app.night .tabs{ background:transparent; box-shadow:none; border-bottom:1px solid rgba(255,255,255,0.07); }
+    .app.night .tab{ color:var(--muted); }
+    .app.night .tab.active{ color:var(--txt); border-bottom-color:var(--accent); }
+    .app.night .sec-lbl{ color:var(--txt); }
+
+    /* itinerary card glass */
+    .app.night .it-card{
+      background:var(--glass); border:1px solid var(--brd);
+      backdrop-filter:blur(18px) saturate(1.2); -webkit-backdrop-filter:blur(18px) saturate(1.2);
+      box-shadow:0 12px 40px rgba(0,0,0,0.38);
+    }
+    .app.night .it-time-col{ background:rgba(255,255,255,0.04); border-right:1px solid rgba(255,255,255,0.06); }
+    .app.night .it-time{ color:var(--txt); }
+    .app.night .it-dot{ background:var(--accent); box-shadow:0 0 12px rgba(139,125,247,0.85); }
+    .app.night .it-name{ color:var(--txt) !important; font-family:'Syne',sans-serif; }
+    .app.night .it-desc{ color:var(--muted) !important; }
+    .app.night .it-note{ background:rgba(139,125,247,0.12); color:#D6D2F0; border:1px solid rgba(139,125,247,0.22); border-left:2.5px solid var(--accent); }
+    .app.night .it-photo-placeholder{ background:rgba(255,255,255,0.03); color:var(--muted); border:1px dashed rgba(255,255,255,0.16); }
+
+    /* tags — translucent tints */
+    .app.night .tag-food{ background:rgba(237,147,177,0.14); color:#F0A9C0; border:1px solid rgba(237,147,177,0.25); }
+    .app.night .tag-sight{ background:rgba(139,125,247,0.16); color:#C3B9FF; border:1px solid rgba(139,125,247,0.30); }
+    .app.night .tag-shop{ background:rgba(159,197,255,0.14); color:#AFD0FF; border:1px solid rgba(159,197,255,0.25); }
+    .app.night .tag-transit{ background:rgba(95,168,255,0.15); color:#9FCBFF; border:1px solid rgba(95,168,255,0.28); }
+    .app.night .tag-stay{ background:rgba(245,199,135,0.14); color:#F5C787; border:1px solid rgba(245,199,135,0.25); }
+
+    /* round icon buttons + add button glass */
+    .app.night .ic-btn{ background:var(--glass-2); border:1px solid var(--brd); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); box-shadow:none; color:var(--txt); }
+    .app.night .ic-btn.edit-btn{ background:rgba(139,125,247,0.20); border-color:rgba(139,125,247,0.38); }
+    .app.night .ic-btn:active{ background:rgba(255,255,255,0.16); }
+    .app.night .add-btn{ background:var(--glass); color:#C3B9FF; border:1.5px dashed rgba(139,125,247,0.42); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); box-shadow:0 6px 22px rgba(0,0,0,0.25); }
+
+    /* info / budget / packing cards glass */
+    .app.night .info-card, .app.night .budget-card, .app.night .pack-cat-card{
+      background:var(--glass); border:1px solid var(--brd);
+      backdrop-filter:blur(16px) saturate(1.2); -webkit-backdrop-filter:blur(16px) saturate(1.2);
+      box-shadow:0 10px 34px rgba(0,0,0,0.32);
+    }
+    .app.night .info-title{ color:var(--txt); }
+    .app.night .info-row{ border-bottom-color:rgba(255,255,255,0.08); }
+    .app.night .info-l{ color:var(--muted); }
+    .app.night .info-r, .app.night .info-card input{ color:var(--txt) !important; }
+    .app.night .info-card input{ border-bottom-color:rgba(139,125,247,0.35) !important; }
+    .app.night .rate-box{ background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); }
+    .app.night .rate-big{ color:var(--txt); }
+    .app.night .rate-big input{ color:var(--txt) !important; border-bottom-color:var(--accent) !important; }
+    .app.night .rate-small{ color:var(--muted); }
+
+    /* SOS card — red-tinted glass */
+    .app.night .sos-card{ background:rgba(163,45,45,0.15); border:1px solid rgba(244,179,179,0.20); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); box-shadow:0 10px 34px rgba(0,0,0,0.30); }
+    .app.night .sos-title{ color:#F4B3B3; }
+    .app.night .sos-row{ border-bottom-color:rgba(244,179,179,0.15); }
+    .app.night .sos-row input{ color:#F4B3B3 !important; }
+
+    /* budget internals */
+    .app.night .bud-spent{ color:var(--txt) !important; font-family:'Syne',sans-serif; }
+    .app.night .bud-total, .app.night .bud-total input{ color:var(--muted) !important; }
+    .app.night .bud-total input{ border-bottom-color:rgba(139,125,247,0.3) !important; }
+    .app.night .bud-bar{ background:rgba(255,255,255,0.08); }
+    .app.night .bud-fill{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); }
+    .app.night .bud-pct{ color:var(--muted); }
+    .app.night .bud-grid .bud-item{ background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); }
+    .app.night .bud-cat{ color:#C3B9FF !important; }
+    .app.night .bud-amt, .app.night .bud-item input{ color:var(--txt) !important; }
+    .app.night .daily-row{ border-bottom-color:rgba(255,255,255,0.08); }
+    .app.night .daily-day{ color:var(--muted) !important; }
+    .app.night .daily-amt, .app.night .daily-amt input{ color:var(--txt) !important; }
+    .app.night .daily-amt input{ border-bottom-color:rgba(139,125,247,0.3) !important; }
+
+    /* frosted bottom nav */
+    .app.night .navbar{ background:rgba(10,9,23,0.55); backdrop-filter:blur(22px) saturate(1.3); -webkit-backdrop-filter:blur(22px) saturate(1.3); border-top:1px solid rgba(255,255,255,0.08); box-shadow:0 -4px 24px rgba(0,0,0,0.4); }
+    .app.night .nb-lbl{ color:var(--muted); }
+    .app.night .nb-btn.active .nb-lbl{ color:var(--txt); }
+    .app.night .nb-active-dot{ background:var(--accent); }
+
+    /* packing */
+    .app.night .pack-cat-title{ color:var(--txt); }
+    .app.night .pack-sm-btn{ color:#C3B9FF; }
+    .app.night .pack-sm-btn.del{ color:#F4B3B3; }
+    .app.night .pack-item{ border-bottom-color:rgba(255,255,255,0.08); }
+    .app.night .pack-text{ color:var(--txt); }
+    .app.night .pack-item.done .pack-text{ color:var(--muted); }
+    .app.night .pack-check{ border-color:var(--accent); }
+    .app.night .pack-check.done{ background:var(--accent); border-color:var(--accent); }
+    .app.night .pack-item-del{ color:#F4B3B3; }
+    .app.night .pack-add-item{ background:rgba(139,125,247,0.12); color:#C3B9FF; border:1px dashed rgba(139,125,247,0.4); }
+    .app.night .pack-add-cat{ background:var(--glass); color:#C3B9FF; border-color:rgba(139,125,247,0.4); }
+    .app.night .pack-edit-btn{ color:#C3B9FF; }
+    .app.night .pack-edit-btn.active{ background:var(--accent); color:#0B1020; }
+
+    /* wish */
+    .app.night .wish-page-title{ color:var(--txt); }
+    .app.night .wish-edit-btn{ color:#C3B9FF; }
+    .app.night .wish-edit-btn.active{ background:var(--accent); color:#0B1020; }
+    .app.night .wish-cat-block{ background:var(--glass); border:1px solid var(--brd); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); box-shadow:0 10px 30px rgba(0,0,0,0.3); }
+    .app.night .wish-cat-head{ background:transparent; }
+    .app.night .wish-cat-title-text{ color:var(--txt); }
+    .app.night .wish-cat-title-input{ color:var(--txt); background:rgba(255,255,255,0.08); }
+    .app.night .wish-cat-chevron{ color:#C3B9FF; }
+    .app.night .wish-cat-btn{ color:#C3B9FF; background:rgba(255,255,255,0.08); }
+    .app.night .wish-cat-btn.del{ color:#F4B3B3; background:rgba(163,45,45,0.2); }
+    .app.night .wish-cat-items{ background:rgba(0,0,0,0.12); }
+    .app.night .wish-item{ background:rgba(255,255,255,0.06); border:0.5px solid var(--brd); }
+    .app.night .wish-item:active{ background:rgba(255,255,255,0.12); }
+    .app.night .wish-item-name{ color:var(--txt); }
+    .app.night .wish-item-name.empty{ color:var(--muted); }
+    .app.night .wish-item-check{ color:#9FE1CB; }
+    .app.night .wish-item-del{ color:#F4B3B3; }
+    .app.night .wish-empty-hint{ color:var(--muted); }
+    .app.night .wish-add-item-card{ background:rgba(139,125,247,0.12); border:1px dashed rgba(139,125,247,0.4); color:#C3B9FF; }
+    .app.night .wish-add-cat{ background:var(--glass); color:#C3B9FF; border-color:rgba(139,125,247,0.4); }
+
+    /* modal glass */
+    .app.night .overlay{ background:rgba(3,4,10,0.55); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
+    .app.night .modal{ background:rgba(20,18,42,0.85); border:1px solid var(--brd); backdrop-filter:blur(28px) saturate(1.3); -webkit-backdrop-filter:blur(28px) saturate(1.3); box-shadow:0 20px 60px rgba(0,0,0,0.5); }
+    .app.night .modal-title{ color:var(--txt); }
+    .app.night .field-lbl{ color:#C3B9FF; }
+    .app.night .minput, .app.night .mtextarea, .app.night .mselect{ background:rgba(255,255,255,0.05); border:1px solid var(--brd); color:var(--txt); }
+    .app.night .minput::placeholder, .app.night .mtextarea::placeholder{ color:var(--muted); }
+    .app.night .minput:focus, .app.night .mtextarea:focus, .app.night .mselect:focus{ border-color:var(--accent); background:rgba(255,255,255,0.08); }
+    .app.night .mbtn-cancel{ background:rgba(255,255,255,0.08); color:#C3B9FF; }
+    .app.night .mbtn-save{ background:var(--accent); color:#0B1020; }
+    .app.night .mbtn-del{ background:rgba(163,45,45,0.25); color:#F4B3B3; }
+
+    /* wish detail */
+    .app.night .wish-detail-photo{ background:rgba(255,255,255,0.06); border-color:var(--brd); }
+    .app.night .wish-detail-add{ background:rgba(139,125,247,0.12); color:#C3B9FF; border-color:rgba(139,125,247,0.4); }
+    .app.night .wish-detail-note{ background:rgba(255,255,255,0.05); border-color:var(--brd); color:var(--txt); }
+    .app.night .wish-detail-link{ background:rgba(139,125,247,0.15); color:#C3B9FF; }
+    .app.night .wish-detail-bought-btn{ background:rgba(30,158,117,0.2); color:#9FE1CB; }
+    .app.night .wish-detail-bought-btn.done{ background:rgba(163,45,45,0.2); color:#F4B3B3; }
+    .app.night .mphoto-upload{ background:rgba(139,125,247,0.14) !important; border:0.5px dashed rgba(139,125,247,0.45) !important; color:#C3B9FF !important; }
+    .app.night .mphoto-prev{ background:rgba(255,255,255,0.05) !important; border:0.5px solid var(--brd) !important; }
+
     .night-toggle {
       width: 100%;
       padding: 14px 16px;
@@ -679,8 +938,9 @@
       gap: 8px;
     }
     .app.night .night-toggle {
-      background: #223555;
-      border-color: rgba(95,168,255,0.3);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
       color: #F5C787;
     }
 
@@ -712,7 +972,7 @@
     /* ── EDIT MODE ── */
     .topbar-edit-btn {
       position: absolute;
-      bottom: 14px; right: 16px;
+      top: max(env(safe-area-inset-top), 44px); right: 16px;
       z-index: 2;
       background: rgba(255,255,255,0.22);
       backdrop-filter: blur(8px);
@@ -741,6 +1001,14 @@
     .topbar.edit-mode .day-num-input,
     .topbar.edit-mode .day-lbl-input { pointer-events: auto; }
 
+    /* ── GLOBAL EDIT LOCK ── */
+    .app:not(.editing) .edit-only { display: none !important; }
+    input.view-locked, textarea.view-locked, select.view-locked {
+      border-bottom-color: transparent !important;
+      cursor: default !important;
+    }
+    select.view-locked { -webkit-appearance: none; appearance: none; background-image: none; }
+
     /* ── DESKTOP HINT ── */
     @media (min-width: 500px) {
       body { padding: 24px 0; align-items: flex-start; }
@@ -764,14 +1032,14 @@
     </div>
     <div class="topbar-row">
       <div>
-        <div class="greeting"><input class="editable-text" id="editGreeting" value="Yong Bros 🗾" readonly /></div>
-        <div class="trip-name"><input class="editable-text" id="editTripName" value="Tokyo, we're coming." readonly /></div>
+        <div class="greeting"><input class="editable-text" id="editGreeting" value="Yong Bros 🇰🇷" readonly onchange="infoData.greeting=this.value;save();" /></div>
+        <div class="trip-name"><input class="editable-text" id="editTripName" value="Seoul, we're coming." readonly onchange="infoData.tripName=this.value;save();" /></div>
       </div>
     </div>
     <div class="date-banner">
-      <div>
+      <div style="width:100%">
         <div class="date-lbl">出發日期</div>
-        <div class="date-val" id="dateValDisplay">2025.06.10 — 06.16</div>
+        <input class="editable-text date-val" id="dateValInput" value="2025.06.10 — 06.16" readonly onchange="infoData.dateRange=this.value;save();" />
       </div>
     </div>
     <div class="day-scroll" id="dayScroll"></div>
@@ -810,45 +1078,59 @@
 </div>
 
 <script>
-let DAYS=[{n:'10',d:'週二'},{n:'11',d:'週三'},{n:'12',d:'週四'},{n:'13',d:'週五'},{n:'14',d:'週六'},{n:'15',d:'週日'},{n:'16',d:'週一'}];
+const SEOUL_DAYS=[{n:'18',d:'週五'},{n:'19',d:'週六'},{n:'20',d:'週日'},{n:'21',d:'週一'},{n:'22',d:'週二'},{n:'23',d:'週三'},{n:'24',d:'週四'},{n:'25',d:'週五'}];
+let DAYS=JSON.parse(JSON.stringify(SEOUL_DAYS));
 const TYPES={food:'美食',sight:'打卡景點',shop:'購物',transit:'交通',stay:'住宿'};
 const TAGCLS={food:'tag-food',sight:'tag-sight',shop:'tag-shop',transit:'tag-transit',stay:'tag-stay'};
 
 const DEFAULT={
   0:[
-    {id:1,time:'08:00',name:'築地場外市場',desc:'早餐、新鮮海鮮丼、玉子燒',note:'',type:'food',map:'https://maps.google.com/?q=Tsukiji+Outer+Market',photo:''},
-    {id:2,time:'10:30',name:'淺草寺 × 仲見世通',desc:'東京最古老寺廟，打卡雷門',note:'',type:'sight',map:'https://maps.google.com/?q=Senso-ji+Temple',photo:''},
-    {id:3,time:'14:00',name:'上野阿美橫丁',desc:'生鮮市集、購物血拼',note:'',type:'shop',map:'https://maps.google.com/?q=Ameyoko+Market',photo:''},
-    {id:4,time:'19:00',name:'思い出横丁',desc:'回憶橫丁居酒屋體驗',note:'記得空腹去！強推炸雞和串燒',type:'food',map:'https://maps.google.com/?q=Omoide+Yokocho',photo:''},
+    {id:1,time:'14:00',name:'仁川國際機場入境',desc:'抵達首爾，辦理入境、領行李',note:'記得買一張 T-money 交通卡',type:'transit',map:'https://maps.google.com/?q=Incheon+International+Airport',photo:''},
+    {id:2,time:'16:30',name:'AREX 機場快線進市區',desc:'直達首爾站，約60分鐘',note:'',type:'transit',map:'https://maps.google.com/?q=Seoul+Station',photo:''},
+    {id:3,time:'18:00',name:'明洞商圈',desc:'首爾必逛購物區、美妝天堂',note:'',type:'shop',map:'https://maps.google.com/?q=Myeongdong+Seoul',photo:''},
+    {id:4,time:'19:30',name:'明洞街頭美食',desc:'烤龍蝦、辣炒年糕、雞蛋糕',note:'空腹來吃！攤販晚上最熱鬧',type:'food',map:'https://maps.google.com/?q=Myeongdong+Street+Food',photo:''},
   ],
   1:[
-    {id:5,time:'09:00',name:'明治神宮',desc:'莊嚴神社，穿越原始森林參道',note:'',type:'sight',map:'https://maps.google.com/?q=Meiji+Shrine',photo:''},
-    {id:6,time:'11:30',name:'竹下通',desc:'原宿青春風格街道',note:'',type:'shop',map:'https://maps.google.com/?q=Takeshita+Street',photo:''},
-    {id:7,time:'19:00',name:'新宿居酒屋',desc:'炸雞、串燒配生啤',note:'',type:'food',map:'https://maps.google.com/?q=Shinjuku+Izakaya',photo:''},
+    {id:5,time:'09:00',name:'景福宮',desc:'朝鮮王朝正宮，穿韓服免費入場',note:'看守門將換崗儀式（10:00 / 14:00）',type:'sight',map:'https://maps.google.com/?q=Gyeongbokgung+Palace',photo:''},
+    {id:6,time:'11:30',name:'北村韓屋村',desc:'傳統韓屋巷弄，超好拍',note:'居民住宅區，請小聲參觀',type:'sight',map:'https://maps.google.com/?q=Bukchon+Hanok+Village',photo:''},
+    {id:7,time:'13:00',name:'三清洞午餐',desc:'文青咖啡與傳統韓食小店',note:'',type:'food',map:'https://maps.google.com/?q=Samcheong-dong',photo:''},
+    {id:8,time:'15:30',name:'仁寺洞',desc:'傳統工藝、伴手禮、茶館',note:'',type:'shop',map:'https://maps.google.com/?q=Insadong',photo:''},
+    {id:9,time:'18:30',name:'廣藏市場',desc:'綠豆煎餅、生牛肉、麻藥紫菜飯捲',note:'',type:'food',map:'https://maps.google.com/?q=Gwangjang+Market',photo:''},
   ],
   2:[
-    {id:8,time:'10:00',name:'秋葉原電器街',desc:'動漫、電玩、電器天堂',note:'',type:'shop',map:'https://maps.google.com/?q=Akihabara+Electric+Town',photo:''},
-    {id:9,time:'13:00',name:'銀座六丁目',desc:'UNIQLO旗艦店、高端購物',note:'',type:'shop',map:'https://maps.google.com/?q=Ginza+Six+Tokyo',photo:''},
-    {id:10,time:'17:00',name:'築地外市場晚餐',desc:'新鮮海鮮丼、玉子燒',note:'',type:'food',map:'https://maps.google.com/?q=Tsukiji+Outer+Market',photo:''},
+    {id:10,time:'10:30',name:'弘大商圈',desc:'年輕潮流、街頭藝人、個性小店',note:'',type:'shop',map:'https://maps.google.com/?q=Hongdae+Seoul',photo:''},
+    {id:11,time:'13:00',name:'新村烤肉',desc:'韓式烤五花肉配燒酒',note:'',type:'food',map:'https://maps.google.com/?q=Sinchon+Korean+BBQ',photo:''},
+    {id:12,time:'15:30',name:'延南洞咖啡街',desc:'京義線林蔭道旁的網美咖啡廳',note:'',type:'food',map:'https://maps.google.com/?q=Yeonnam-dong',photo:''},
+    {id:13,time:'19:00',name:'弘大街頭表演',desc:'夜晚的 busking 演出',note:'',type:'sight',map:'https://maps.google.com/?q=Hongdae+Street+Performance',photo:''},
   ],
   3:[
-    {id:11,time:'09:00',name:'新宿御苑',desc:'優雅日式庭園',note:'',type:'sight',map:'https://maps.google.com/?q=Shinjuku+Gyoen',photo:''},
-    {id:12,time:'14:00',name:'teamLab Planets',desc:'沉浸式數位藝術空間，必體驗',note:'需提前在官網購票！',type:'sight',map:'https://maps.google.com/?q=teamLab+Planets+Toyosu',photo:''},
-    {id:13,time:'19:00',name:'台場 DiverCity',desc:'等比鋼彈、購物、晚餐',note:'',type:'shop',map:'https://maps.google.com/?q=DiverCity+Tokyo+Plaza',photo:''},
+    {id:14,time:'10:00',name:'COEX Mall 星空圖書館',desc:'超巨大書牆，江南地標打卡點',note:'',type:'sight',map:'https://maps.google.com/?q=Starfield+Library+COEX',photo:''},
+    {id:15,time:'13:00',name:'江南站美食',desc:'江南地下街購物與午餐',note:'',type:'food',map:'https://maps.google.com/?q=Gangnam+Station',photo:''},
+    {id:16,time:'15:30',name:'樂天世界塔 Seoul Sky',desc:'首爾最高觀景台，看整座城市',note:'建議傍晚上去看日落＋夜景',type:'sight',map:'https://maps.google.com/?q=Lotte+World+Tower+Seoul+Sky',photo:''},
+    {id:17,time:'19:00',name:'石村湖散步',desc:'塔下湖畔夜景，季節限定超美',note:'',type:'sight',map:'https://maps.google.com/?q=Seokchon+Lake',photo:''},
   ],
   4:[
-    {id:14,time:'07:30',name:'搭 JR 前往日光',desc:'新宿出發，約2小時',note:'',type:'transit',map:'https://maps.google.com/?q=Shinjuku+Station',photo:''},
-    {id:15,time:'10:00',name:'東照宮',desc:'德川家康靈廟，精緻木造建築',note:'',type:'sight',map:'https://maps.google.com/?q=Nikko+Toshogu+Shrine',photo:''},
-    {id:16,time:'15:00',name:'華嚴瀑布',desc:'日本三大瀑布之一',note:'',type:'sight',map:'https://maps.google.com/?q=Kegon+Falls+Nikko',photo:''},
+    {id:18,time:'10:00',name:'南山首爾塔 N Seoul Tower',desc:'搭南山纜車上山，情侶掛鎖',note:'',type:'sight',map:'https://maps.google.com/?q=N+Seoul+Tower',photo:''},
+    {id:19,time:'13:00',name:'梨泰院午餐',desc:'異國料理與經理團路咖啡',note:'',type:'food',map:'https://maps.google.com/?q=Itaewon',photo:''},
+    {id:20,time:'16:00',name:'東大門設計廣場 DDP',desc:'未來感建築、LED 玫瑰花海',note:'',type:'sight',map:'https://maps.google.com/?q=Dongdaemun+Design+Plaza',photo:''},
+    {id:21,time:'19:00',name:'東大門購物',desc:'不夜城血拼，逛到凌晨',note:'',type:'shop',map:'https://maps.google.com/?q=Dongdaemun+Market',photo:''},
   ],
   5:[
-    {id:17,time:'10:00',name:'台場海濱公園',desc:'眺望彩虹橋與東京鐵塔',note:'',type:'sight',map:'https://maps.google.com/?q=Odaiba+Seaside+Park',photo:''},
-    {id:18,time:'13:00',name:'豐洲市場',desc:'超新鮮海鮮、看鮪魚拍賣',note:'需提前預約！早上很早就要去',type:'food',map:'https://maps.google.com/?q=Toyosu+Market+Tokyo',photo:''},
+    {id:22,time:'08:30',name:'搭車前往南怡島',desc:'首爾出發約 1.5 小時',note:'可搭 ITX 到加平站再轉接駁',type:'transit',map:'https://maps.google.com/?q=Gapyeong+Station',photo:''},
+    {id:23,time:'10:30',name:'南怡島',desc:'冬季戀歌場景，水杉林蔭道',note:'',type:'sight',map:'https://maps.google.com/?q=Nami+Island',photo:''},
+    {id:24,time:'14:00',name:'小法國村 / 晨靜樹木園',desc:'童話小鎮與絕美庭園',note:'',type:'sight',map:'https://maps.google.com/?q=Petite+France+Korea',photo:''},
+    {id:25,time:'19:30',name:'回市區晚餐',desc:'回首爾吃部隊鍋暖胃',note:'',type:'food',map:'https://maps.google.com/?q=Seoul+Budae+Jjigae',photo:''},
   ],
   6:[
-    {id:19,time:'09:00',name:'新宿高野水果行',desc:'購買最後伴手禮',note:'',type:'shop',map:'https://maps.google.com/?q=Shinjuku+Takano+Fruit+Parlor',photo:''},
-    {id:20,time:'11:30',name:"搭成田特快 N'EX",desc:'新宿直達成田機場，約90分鐘',note:'',type:'transit',map:'https://maps.google.com/?q=Shinjuku+Station',photo:''},
-    {id:21,time:'14:00',name:'成田機場出境',desc:'辦理登機、免稅店購物',note:'',type:'transit',map:'https://maps.google.com/?q=Narita+International+Airport',photo:''},
+    {id:26,time:'10:00',name:'聖水洞咖啡街',desc:'首爾布魯克林，工業風咖啡與選物店',note:'',type:'food',map:'https://maps.google.com/?q=Seongsu-dong+Cafe+Street',photo:''},
+    {id:27,time:'13:00',name:'首爾林 Seoul Forest',desc:'城市綠洲，梅花鹿生態林',note:'',type:'sight',map:'https://maps.google.com/?q=Seoul+Forest',photo:''},
+    {id:28,time:'16:00',name:'汝矣島漢江公園',desc:'漢江邊野餐、看夕陽，可叫外送炸雞',note:'傍晚超美，記得帶野餐墊',type:'sight',map:'https://maps.google.com/?q=Yeouido+Hangang+Park',photo:''},
+    {id:29,time:'19:00',name:'The Hyundai Seoul',desc:'超大百貨、室內花園、最後血拼',note:'',type:'shop',map:'https://maps.google.com/?q=The+Hyundai+Seoul',photo:''},
+  ],
+  7:[
+    {id:30,time:'09:30',name:'明洞採買伴手禮',desc:'美妝、海苔、辛拉麵最後補貨',note:'',type:'shop',map:'https://maps.google.com/?q=Myeongdong+Seoul',photo:''},
+    {id:31,time:'12:00',name:'AREX 前往仁川機場',desc:'首爾站直達，約60分鐘',note:'',type:'transit',map:'https://maps.google.com/?q=Seoul+Station',photo:''},
+    {id:32,time:'14:30',name:'仁川機場出境',desc:'辦理登機、免稅店購物',note:'',type:'transit',map:'https://maps.google.com/?q=Incheon+International+Airport',photo:''},
   ],
 };
 
@@ -859,55 +1141,61 @@ let editIdx=null;
 let isNew=false;
 let nextId=200;
 let bgData={};
+let editMode=false;
 
-let budgetData={
-  spent:85000,
-  total:150000,
+const DEFAULT_BUDGET={
+  total:3000000,
   cats:[
-    {icon:'✈️',name:'機票',amt:28000},
-    {icon:'🏨',name:'住宿',amt:21000},
-    {icon:'🍜',name:'餐飲',amt:14000},
-    {icon:'🚆',name:'交通',amt:8500},
-    {icon:'🛍',name:'購物',amt:9500},
-    {icon:'🎫',name:'門票',amt:4000}
+    {icon:'✈️',name:'機票',amt:900000},
+    {icon:'🏨',name:'住宿',amt:700000},
+    {icon:'🍜',name:'餐飲',amt:450000},
+    {icon:'🚆',name:'交通',amt:150000},
+    {icon:'🛍',name:'購物',amt:520000},
+    {icon:'🎫',name:'門票',amt:130000}
   ],
   daily:[
-    {day:'Day 1',label:'抵達',amt:8200},
-    {day:'Day 2',label:'淺草・上野',amt:12400},
-    {day:'Day 3',label:'秋葉原・銀座',amt:15800},
-    {day:'Day 4',label:'新宿・台場',amt:18600},
-    {day:'Day 5',label:'日光一日遊',amt:11000},
-    {day:'Day 6',label:'豐洲・台場',amt:9200},
-    {day:'Day 7',label:'返程',amt:9800}
+    {day:'Day 1',label:'抵達・明洞',amt:180000},
+    {day:'Day 2',label:'古宮・北村',amt:250000},
+    {day:'Day 3',label:'弘大・新村',amt:300000},
+    {day:'Day 4',label:'江南・蠶室',amt:380000},
+    {day:'Day 5',label:'南山・東大門',amt:340000},
+    {day:'Day 6',label:'南怡島一日遊',amt:280000},
+    {day:'Day 7',label:'聖水洞・漢江',amt:300000},
+    {day:'Day 8',label:'返程',amt:200000}
   ]
 };
+let budgetData=JSON.parse(JSON.stringify(DEFAULT_BUDGET));
 
-let infoData={
+const DEFAULT_INFO={
+  greeting:'Yong Bros 🇰🇷',
+  tripName:"Seoul, we're coming.",
+  dateRange:'2026.09.18 — 09.25',
   tripRows:[
-    {label:'出發日',val:'2025/06/10'},
-    {label:'去程航班',val:'CI100 07:30'},
-    {label:'回程日',val:'2025/06/16'},
-    {label:'回程航班',val:'CI101 18:00'}
+    {label:'出發日',val:'2026/09/18'},
+    {label:'去程航班',val:'CI160 09:00'},
+    {label:'回程日',val:'2026/09/25'},
+    {label:'回程航班',val:'CI161 20:00'}
   ],
   hotels:[
-    {name:'新宿 Gracery Hotel',range:'2025/06/10 – 06/16',checkIn:'15:00',checkOut:'11:00'}
+    {name:'明洞 L7 by LOTTE',range:'2026/09/18 – 09/25',checkIn:'15:00',checkOut:'11:00'}
   ],
-  rate:4.62,
-  rateMyr:29.5,
+  rate:42,
+  rateMyr:300,
   nightMode:false,
   packing:[
     {id:'pi1',text:'護照',done:false},
     {id:'pi2',text:'健保卡',done:false},
     {id:'pi3',text:'現金/信用卡',done:false},
-    {id:'pi4',text:'充電頭',done:false},
-    {id:'pi5',text:'充電線',done:false},
-    {id:'pi6',text:'萬國轉接頭',done:false},
-    {id:'pi7',text:'耳機',done:false},
-    {id:'pi8',text:'雨傘',done:false},
-    {id:'pi9',text:'保溫瓶',done:false},
-    {id:'pi10',text:'換洗衣物',done:false},
-    {id:'pi11',text:'盥洗用品',done:false},
-    {id:'pi12',text:'隨身藥品',done:false}
+    {id:'pi4',text:'T-money 交通卡',done:false},
+    {id:'pi5',text:'充電頭',done:false},
+    {id:'pi6',text:'充電線',done:false},
+    {id:'pi7',text:'萬國轉接頭',done:false},
+    {id:'pi8',text:'耳機',done:false},
+    {id:'pi9',text:'雨傘',done:false},
+    {id:'pi10',text:'保溫瓶',done:false},
+    {id:'pi11',text:'換洗衣物',done:false},
+    {id:'pi12',text:'盥洗用品',done:false},
+    {id:'pi13',text:'隨身藥品',done:false}
   ],
   wishCats:[
     {id:'w1',name:'藥品',items:[]},
@@ -915,11 +1203,13 @@ let infoData={
     {id:'w3',name:'零食',items:[]}
   ],
   sos:[
-    {label:'台灣辦事處',val:'+81-3-3280-7811'},
-    {label:'日本警察',val:'110'},
-    {label:'救護車/火警',val:'119'}
+    {label:'駐韓國台北代表部',val:'+82-2-6329-6000'},
+    {label:'旅遊諮詢專線',val:'1330'},
+    {label:'韓國警察',val:'112'},
+    {label:'火警/救護',val:'119'}
   ]
 };
+let infoData=JSON.parse(JSON.stringify(DEFAULT_INFO));
 
 // Firebase save/load placeholders (replaced by module script)
 window._fbSave = function(){};
@@ -930,24 +1220,60 @@ function tagName(t){return TYPES[t]||t;}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 function toggleTopbarEdit(){
+  editMode=!editMode;
+  window.editMode=editMode;
+  const app=document.getElementById('app');
   const topbar=document.querySelector('.topbar');
   const btn=document.getElementById('topbarEditBtn');
   const bgLabel=document.querySelector('.topbar-bg-label');
-  const inputs=[document.getElementById('editGreeting'),document.getElementById('editTripName')];
-  const dayInputs=document.querySelectorAll('.day-num-input,.day-lbl-input');
-  const isEdit=topbar.classList.toggle('edit-mode');
-  if(isEdit){
-    btn.textContent='✅';
-    bgLabel.style.display='inline-flex';
-    inputs.forEach(inp=>{inp.removeAttribute('readonly');});
-    dayInputs.forEach(inp=>{inp.removeAttribute('readonly');});
-    inputs[0].focus();
-  } else {
-    btn.textContent='✏️';
-    bgLabel.style.display='none';
-    inputs.forEach(inp=>{inp.setAttribute('readonly','');});
-    dayInputs.forEach(inp=>{inp.setAttribute('readonly','');});
-  }
+  app.classList.toggle('editing',editMode);
+  topbar.classList.toggle('edit-mode',editMode);
+  btn.textContent=editMode?'✅':'✏️';
+  bgLabel.style.display=editMode?'inline-flex':'none';
+  // exit any per-section sub-edit modes when locking
+  if(!editMode){window._packEditMode=false;window._wishEditMode=false;}
+  // re-render current tab so edit-only controls appear/disappear
+  rerenderCurrent();
+  lockAll();
+  if(editMode){const g=document.getElementById('editGreeting');if(g)g.focus();}
+  else{save();}
+}
+
+function rerenderCurrent(){
+  if(currentTab==='itinerary')renderItinerary();
+  else if(currentTab==='hotel')renderHotel();
+  else if(currentTab==='budget')renderBudget();
+  else if(currentTab==='wish')renderWish();
+  else if(currentTab==='info')renderInfo();
+}
+
+// Lock/unlock every input across the app based on editMode
+function lockAll(){
+  const app=document.getElementById('app');
+  if(!app)return;
+  app.querySelectorAll('input,textarea,select').forEach(el=>{
+    if(el.type==='file')return;
+    if(el.classList.contains('always-on'))return;
+    if(editMode){
+      el.removeAttribute('readonly');
+      if(el.tagName==='SELECT')el.disabled=false;
+      el.classList.remove('view-locked');
+    }else{
+      if(el.tagName==='SELECT')el.disabled=true;
+      else el.setAttribute('readonly','');
+      el.classList.add('view-locked');
+    }
+  });
+}
+
+// Push the current title / date-range values into the topbar inputs
+function setTopbarFields(){
+  const g=document.getElementById('editGreeting');
+  const t=document.getElementById('editTripName');
+  const d=document.getElementById('dateValInput');
+  if(g&&infoData.greeting!==undefined)g.value=infoData.greeting;
+  if(t&&infoData.tripName!==undefined)t.value=infoData.tripName;
+  if(d&&infoData.dateRange!==undefined)d.value=infoData.dateRange;
 }
 
 function applyBg(day){
@@ -1028,19 +1354,24 @@ function handlePlacePhoto(e,idx){
   reader.readAsDataURL(file);e.target.value='';
 }
 
+function tripMonth(){
+  const m=(infoData.dateRange||'').match(/\d{4}[.\/-](\d{1,2})[.\/-]/);
+  return m?parseInt(m[1],10):9;
+}
 function renderItinerary(){
   const places=data[currentDay]||[];
-  let h=`<div class="sec-lbl">Day ${currentDay+1} — 6月${DAYS[currentDay].n}日（${DAYS[currentDay].d}）</div>`;
+  let h=`<div class="sec-lbl">Day ${currentDay+1} — ${tripMonth()}月${DAYS[currentDay].n}日（${DAYS[currentDay].d}）</div>`;
   places.forEach((p,i)=>{
     const noteHTML=p.note?`<div class="it-note">📝 ${esc(p.note)}</div>`:'';
     const photoHTML=p.photo
-      ?`<div style="position:relative"><img class="it-photo" src="${esc(p.photo)}" onerror="this.style.display='none'" loading="lazy"/><label style="position:absolute;bottom:6px;right:6px;background:rgba(255,255,255,0.82);border-radius:12px;padding:3px 8px;font-size:10px;color:var(--blue-600);cursor:pointer" for="placePhoto_${i}">🔄 換圖<input type="file" id="placePhoto_${i}" accept="image/*" style="display:none" onchange="handlePlacePhoto(event,${i})"/></label></div>`
-      :`<label class="it-photo-placeholder" for="placePhoto_${i}" style="cursor:pointer">📷 上傳照片<input type="file" id="placePhoto_${i}" accept="image/*" style="display:none" onchange="handlePlacePhoto(event,${i})"/></label>`;
-    h+=`<div class="it-card"><div class="it-row"><div class="it-time-col"><div class="it-time">${esc(p.time)}</div><div class="it-dot"></div></div><div class="it-body">${photoHTML}<div class="it-name">${esc(p.name)}</div><div class="it-desc">${esc(p.desc)}</div>${noteHTML}<div class="it-foot"><span class="tag ${tagCls(p.type)}">${tagName(p.type)}</span><div class="it-actions"><span class="ic-btn edit-btn" onclick="openEdit(${i})">✏️</span><a class="ic-btn" href="${esc(p.map||'#')}" target="_blank" rel="noopener">🧭</a></div></div></div></div></div>`;
+      ?`<div style="position:relative"><img class="it-photo" src="${esc(p.photo)}" onerror="this.style.display='none'" loading="lazy"/><label class="edit-only" style="position:absolute;bottom:6px;right:6px;background:rgba(255,255,255,0.82);border-radius:12px;padding:3px 8px;font-size:10px;color:var(--blue-600);cursor:pointer" for="placePhoto_${i}">🔄 換圖<input type="file" id="placePhoto_${i}" accept="image/*" style="display:none" onchange="handlePlacePhoto(event,${i})"/></label></div>`
+      :`<label class="it-photo-placeholder edit-only" for="placePhoto_${i}" style="cursor:pointer">📷 上傳照片<input type="file" id="placePhoto_${i}" accept="image/*" style="display:none" onchange="handlePlacePhoto(event,${i})"/></label>`;
+    h+=`<div class="it-card"><div class="it-row"><div class="it-time-col"><div class="it-time">${esc(p.time)}</div><div class="it-dot"></div></div><div class="it-body">${photoHTML}<div class="it-name">${esc(p.name)}</div><div class="it-desc">${esc(p.desc)}</div>${noteHTML}<div class="it-foot"><span class="tag ${tagCls(p.type)}">${tagName(p.type)}</span><div class="it-actions"><span class="ic-btn edit-btn edit-only" onclick="openEdit(${i})">✏️</span><a class="ic-btn" href="${esc(p.map||'#')}" target="_blank" rel="noopener">🧭</a></div></div></div></div></div>`;
   });
-  h+=`<div class="add-btn" onclick="openNew()">＋ 新增地點</div>`;
+  h+=`<div class="add-btn edit-only" onclick="openNew()">＋ 新增地點</div>`;
   document.getElementById('bodyContent').innerHTML=h;
   document.getElementById('bodyContent').scrollTop=0;
+  lockAll();
 }
 
 function calcBudgetSpent(){return budgetData.cats.reduce((s,c)=>s+c.amt,0);}
@@ -1050,17 +1381,18 @@ function renderBudget(){
   const pct=Math.round(spent/total*100);
   let h=`<div class="sec-lbl">總預算</div><div class="budget-card">`;
   h+=`<div class="bud-amounts">`;
-  h+=`<span class="bud-spent">¥${spent.toLocaleString()}</span>`;
-  h+=`<span class="bud-total">/ <input type="number" value="${total}" onchange="budgetData.total=parseInt(this.value)||0;renderBudget();" style="width:80px;border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-body);font-size:13px;color:var(--blue-400);text-align:right;outline:none;" /></span>`;
+  h+=`<span class="bud-spent">₩${spent.toLocaleString()}</span>`;
+  h+=`<span class="bud-total">/ <input type="number" value="${total}" onchange="budgetData.total=parseInt(this.value)||0;save();renderBudget();" style="width:100px;border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-body);font-size:13px;color:var(--blue-400);text-align:right;outline:none;" /></span>`;
   h+=`</div>`;
   h+=`<div class="bud-bar"><div class="bud-fill" style="width:${Math.min(pct,100)}%"></div></div>`;
   h+=`<div class="bud-pct">${pct}% 已使用</div>`;
-  h+=`<div class="bud-grid">${budgetData.cats.map((r,i)=>`<div class="bud-item"><div class="bud-cat">${r.icon} ${r.name}</div><div class="bud-amt">¥<input type="number" value="${r.amt}" onchange="budgetData.cats[${i}].amt=parseInt(this.value)||0;renderBudget();" style="width:70px;border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-display);font-size:15px;color:var(--blue-900);outline:none;" /></div></div>`).join('')}</div>`;
+  h+=`<div class="bud-grid">${budgetData.cats.map((r,i)=>`<div class="bud-item"><div class="bud-cat">${r.icon} ${r.name}</div><div class="bud-amt">₩<input type="number" value="${r.amt}" onchange="budgetData.cats[${i}].amt=parseInt(this.value)||0;save();renderBudget();" style="width:90px;border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-display);font-size:15px;color:var(--blue-900);outline:none;" /></div></div>`).join('')}</div>`;
   h+=`</div>`;
   h+=`<div class="sec-lbl">每日花費</div><div class="budget-card">`;
-  h+=budgetData.daily.map((r,i)=>`<div class="daily-row"><span class="daily-day">${r.day} <span style="color:#B5D4F4">·</span> ${r.label}</span><span class="daily-amt">¥<input type="number" value="${r.amt}" onchange="budgetData.daily[${i}].amt=parseInt(this.value)||0;" style="width:65px;border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-display);font-size:13px;font-weight:500;color:var(--blue-900);outline:none;" /></span></div>`).join('');
+  h+=budgetData.daily.map((r,i)=>`<div class="daily-row"><span class="daily-day">${r.day} <span style="color:#B5D4F4">·</span> ${r.label}</span><span class="daily-amt">₩<input type="number" value="${r.amt}" onchange="budgetData.daily[${i}].amt=parseInt(this.value)||0;save();" style="width:85px;border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-display);font-size:13px;font-weight:500;color:var(--blue-900);outline:none;" /></span></div>`).join('');
   h+=`</div>`;
   document.getElementById('bodyContent').innerHTML=h;
+  lockAll();
 }
 
 function renderInfo(){
@@ -1096,12 +1428,12 @@ function renderInfo(){
   h+=`</div>`;
   h+=renderPackingHTML();
   h+=`<div class="info-card"><div class="info-title">匯率換算</div><div class="rate-box">`;
-  h+=`<div class="rate-big">1 TWD = <input type="number" step="0.01" value="${infoData.rate}" onchange="infoData.rate=parseFloat(this.value)||0;renderInfo();" style="width:60px;border:none;border-bottom:2px solid var(--blue-400);background:transparent;font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--blue-800);outline:none;text-align:center;" /> JPY</div>`;
-  h+=`<div class="rate-small">¥10,000 ≈ NT$${Math.round(10000/infoData.rate).toLocaleString()}</div>`;
+  h+=`<div class="rate-big">1 TWD = <input type="number" step="0.01" value="${infoData.rate}" onchange="infoData.rate=parseFloat(this.value)||0;save();renderInfo();" style="width:64px;border:none;border-bottom:2px solid var(--blue-400);background:transparent;font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--blue-800);outline:none;text-align:center;" /> KRW</div>`;
+  h+=`<div class="rate-small">₩10,000 ≈ NT$${Math.round(10000/infoData.rate).toLocaleString()}</div>`;
   h+=`</div>`;
   h+=`<div class="rate-box" style="margin-top:10px">`;
-  h+=`<div class="rate-big">1 MYR = <input type="number" step="0.01" value="${infoData.rateMyr}" onchange="infoData.rateMyr=parseFloat(this.value)||0;renderInfo();" style="width:60px;border:none;border-bottom:2px solid var(--blue-400);background:transparent;font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--blue-800);outline:none;text-align:center;" /> JPY</div>`;
-  h+=`<div class="rate-small">¥10,000 ≈ RM${(10000/infoData.rateMyr).toFixed(2)}</div>`;
+  h+=`<div class="rate-big">1 MYR = <input type="number" step="0.01" value="${infoData.rateMyr}" onchange="infoData.rateMyr=parseFloat(this.value)||0;save();renderInfo();" style="width:64px;border:none;border-bottom:2px solid var(--blue-400);background:transparent;font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--blue-800);outline:none;text-align:center;" /> KRW</div>`;
+  h+=`<div class="rate-small">₩10,000 ≈ RM${(10000/infoData.rateMyr).toFixed(2)}</div>`;
   h+=`</div></div>`;
   h+=`<div class="sos-card"><div class="sos-title">緊急聯絡</div>`;
   h+=infoData.sos.map((r,i)=>`<div class="sos-row"><input style="border:none;border-bottom:1px solid rgba(240,149,149,0.5);background:transparent;font-size:13px;color:#791F1F;outline:none;width:90px;" value="${r.label}" onchange="infoData.sos[${i}].label=this.value;save();" /><input style="border:none;border-bottom:1px solid rgba(240,149,149,0.5);background:transparent;font-size:13px;font-weight:500;color:#A32D2D;outline:none;text-align:right;width:140px;" value="${r.val}" onchange="infoData.sos[${i}].val=this.value;save();" /></div>`).join('');
@@ -1109,6 +1441,7 @@ function renderInfo(){
   h+=`<button class="night-toggle" onclick="toggleNightMode()"><span style="font-size:16px">${infoData.nightMode?'☀️':'🌙'}</span><span>${infoData.nightMode?'日間模式':'夜間模式'}</span></button>`;
   h+=`<div class="info-card"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="width:8px;height:8px;border-radius:50%;background:#639922;display:inline-block;flex-shrink:0"></span><span style="font-family:var(--font-display);font-size:13px;font-weight:500;color:#3B6D11">Firebase 雲端同步已啟用</span></div><div style="font-size:12px;color:var(--blue-600);line-height:1.5">照片與行程即時同步，兩支手機都看得到</div></div>`;
   document.getElementById('bodyContent').innerHTML=h;
+  lockAll();
 }
 
 function renderHotel(){
@@ -1130,15 +1463,16 @@ function renderHotel(){
   let h='';
   infoData.hotels.forEach((ht,i)=>{
     h+=`<div class="info-card" style="position:relative">`;
-    h+=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div class="info-title" style="margin:0">住宿${infoData.hotels.length>1?' '+(i+1):''}</div><button onclick="deleteHotel(${i})" style="border:none;background:transparent;color:#A32D2D;font-size:12px;cursor:pointer;padding:2px 6px">刪除</button></div>`;
+    h+=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div class="info-title" style="margin:0">住宿${infoData.hotels.length>1?' '+(i+1):''}</div><button class="edit-only" onclick="deleteHotel(${i})" style="border:none;background:transparent;color:#A32D2D;font-size:12px;cursor:pointer;padding:2px 6px">刪除</button></div>`;
     h+=`<div style="margin-bottom:10px"><div style="font-size:11px;color:var(--blue-600);margin-bottom:3px">名稱</div><input style="${nameStyle}" value="${ht.name}" onchange="infoData.hotels[${i}].name=this.value;save();" placeholder="住宿名稱" /></div>`;
     h+=`<div class="info-row"><span class="info-l">住宿區間</span><input style="${inStyle}" value="${ht.range}" onchange="infoData.hotels[${i}].range=this.value;save();" placeholder="2025/06/10 – 06/16" /></div>`;
     h+=`<div class="info-row"><span class="info-l">📅 入住 · Check-in</span><input style="${inStyle}" value="${ht.checkIn}" onchange="infoData.hotels[${i}].checkIn=this.value;save();" placeholder="15:00" /></div>`;
     h+=`<div class="info-row"><span class="info-l">📅 退房 · Check-out</span><input style="${inStyle}" value="${ht.checkOut}" onchange="infoData.hotels[${i}].checkOut=this.value;save();" placeholder="11:00" /></div>`;
     h+=`</div>`;
   });
-  h+=`<button onclick="addHotel()" style="width:100%;padding:14px;margin-top:4px;background:#EBF4FF;border:1px dashed var(--blue-400);border-radius:var(--radius-lg);font-family:var(--font-display);font-size:14px;font-weight:500;color:var(--blue-600);cursor:pointer">＋ 新增住宿</button>`;
+  h+=`<button class="edit-only" onclick="addHotel()" style="width:100%;padding:14px;margin-top:4px;background:#EBF4FF;border:1px dashed var(--blue-400);border-radius:var(--radius-lg);font-family:var(--font-display);font-size:14px;font-weight:500;color:var(--blue-600);cursor:pointer">＋ 新增住宿</button>`;
   document.getElementById('bodyContent').innerHTML=h;
+  lockAll();
 }
 
 function addHotel(){
@@ -1210,7 +1544,7 @@ function renderPackingHTML(){
   const total=infoData.packing.length;
   const done=infoData.packing.filter(i=>i.done).length;
   const editMode=!!window._packEditMode;
-  let h=`<div class="info-card"><div class="info-title" style="display:flex;justify-content:space-between;align-items:center"><span>📦 打包清單</span><div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--blue-400);font-weight:400">${done}/${total} 已備齊</span><button class="pack-edit-btn" onclick="resetPackItems()" title="重置勾選">↻</button><button class="pack-edit-btn ${editMode?'active':''}" onclick="togglePackEdit()">${editMode?'✓':'✏️'}</button></div></div>`;
+  let h=`<div class="info-card"><div class="info-title" style="display:flex;justify-content:space-between;align-items:center"><span>📦 打包清單</span><div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--blue-400);font-weight:400">${done}/${total} 已備齊</span><button class="pack-edit-btn edit-only" onclick="resetPackItems()" title="重置勾選">↻</button><button class="pack-edit-btn edit-only ${editMode?'active':''}" onclick="togglePackEdit()">${editMode?'✓':'✏️'}</button></div></div>`;
   infoData.packing.forEach((it,idx)=>{
     h+=`<div class="pack-item ${it.done?'done':''}">`;
     h+=`<input class="pack-text" value="${esc(it.text)}" onchange="renamePackItem(${idx},this.value)" ${editMode?'':'readonly'} />`;
@@ -1221,7 +1555,7 @@ function renderPackingHTML(){
     }
     h+=`</div>`;
   });
-  h+=`<button class="pack-add-item" onclick="addPackItem()" style="margin:8px 0 4px">＋ 新增項目</button>`;
+  h+=`<button class="pack-add-item edit-only" onclick="addPackItem()" style="margin:8px 0 4px">＋ 新增項目</button>`;
   h+=`</div>`;
   return h;
 }
@@ -1274,7 +1608,7 @@ function renderWish(){
   const editMode=!!window._wishEditMode;
   if(!window._wishOpenCats)window._wishOpenCats={};
   let h=`<div class="${editMode?'wish-edit-mode':''}">`;
-  h+=`<div class="wish-page-head"><div class="wish-page-title">待買清單</div><button class="wish-edit-btn ${editMode?'active':''}" onclick="toggleWishEdit()">${editMode?'✓':'✏️'}</button></div>`;
+  h+=`<div class="wish-page-head"><div class="wish-page-title">待買清單</div><button class="wish-edit-btn edit-only ${editMode?'active':''}" onclick="toggleWishEdit()">${editMode?'✓':'✏️'}</button></div>`;
   infoData.wishCats.forEach((cat,ci)=>{
     const isOpen=!!window._wishOpenCats[cat.id];
     h+=`<div class="wish-cat-block ${isOpen?'open':''}" data-cat-id="${cat.id}">`;
@@ -1304,7 +1638,7 @@ function renderWish(){
       h+=`</div>`;
     });
     if(!editMode){
-      h+=`<div class="wish-add-item-card" onclick="openWishNewInCat('${cat.id}')">＋ 新增項目</div>`;
+      h+=`<div class="wish-add-item-card edit-only" onclick="openWishNewInCat('${cat.id}')">＋ 新增項目</div>`;
     }
     h+=`</div></div></div>`;
   });
@@ -1313,6 +1647,7 @@ function renderWish(){
   }
   h+=`</div>`;
   document.getElementById('bodyContent').innerHTML=h;
+  lockAll();
 }
 
 function toggleWishEdit(){
@@ -1417,7 +1752,8 @@ function renderWishDetailInPlace(cid,iid){
   let photoHTML='';
   if(it.photos&&it.photos.length>0){
     it.photos.forEach((p,pi)=>{
-      photoHTML+=`<div style="position:relative;flex-shrink:0" class="wish-detail-photo-wrap"><img class="wish-detail-photo" src="${p}" onclick="removeWishPhoto(${pi})" title="點擊刪除"/></div>`;
+      const delAttr=editMode?`onclick="removeWishPhoto(${pi})" title="點擊刪除"`:'';
+      photoHTML+=`<div style="position:relative;flex-shrink:0" class="wish-detail-photo-wrap"><img class="wish-detail-photo" src="${p}" ${delAttr}/></div>`;
     });
   } else {
     photoHTML=`<div class="wish-detail-photo empty">還沒有照片</div>`;
@@ -1431,17 +1767,18 @@ function renderWishDetailInPlace(cid,iid){
     <select class="mselect" id="wd-cat" onchange="changeWishItemCat('${cid}','${iid}',this.value)">${catOpts}</select>
     <div class="field-lbl">照片（點照片可刪除，可加多張）</div>
     <div class="wish-detail-photos">${photoHTML}</div>
-    <label class="wish-detail-add" for="wd-photo-file">📷 新增一張照片<input type="file" id="wd-photo-file" accept="image/*" style="display:none" onchange="handleWishPhoto(event)"/></label>
+    <label class="wish-detail-add edit-only" for="wd-photo-file">📷 新增一張照片<input type="file" id="wd-photo-file" accept="image/*" style="display:none" onchange="handleWishPhoto(event)"/></label>
     <div class="field-lbl">備註 / 連結（IG、TikTok 連結會自動變可點擊）</div>
     <textarea class="wish-detail-note" id="wd-note" placeholder="貼上網址或寫備註...">${esc(it.note||'')}</textarea>
     ${links.length?`<div class="wish-detail-links">${links.map(u=>`<a class="wish-detail-link" href="${esc(u)}" target="_blank" rel="noopener">🔗 ${esc(u.length>30?u.slice(0,30)+'...':u)}</a>`).join('')}</div>`:''}
     <button class="wish-detail-bought-btn ${it.bought?'done':''}" onclick="toggleWishBought('${cid}','${iid}')">${it.bought?'↺ 標記為未購買':'✓ 標記為已購買'}</button>
     <div class="modal-btns" style="margin-top:14px">
-      <button class="mbtn mbtn-del" onclick="delWishItemFromModal()">刪除</button>
+      <button class="mbtn mbtn-del edit-only" onclick="delWishItemFromModal()">刪除</button>
       <button class="mbtn mbtn-cancel" onclick="closeWishDetail()">關閉</button>
-      <button class="mbtn mbtn-save" onclick="saveWishDetail()">儲存</button>
+      <button class="mbtn mbtn-save edit-only" onclick="saveWishDetail()">儲存</button>
     </div>
   `;
+  lockAll();
 }
 
 function saveWishDetail(){
@@ -1514,8 +1851,9 @@ function showModal(time,name,desc,note,type,map,photo,isNewMode){
   const app=document.getElementById('app');
   const old=app.querySelector('.overlay');if(old)old.remove();
   const ov=document.createElement('div');ov.className='overlay';
-  ov.innerHTML=`<div class="modal"><div class="modal-title">${isNewMode?'＋ 新增地點':'✏️ 編輯地點'}</div><div class="field-lbl">時間</div><input class="minput" id="m-time" type="time" value="${esc(time)}"/><div class="field-lbl">地點名稱</div><input class="minput" id="m-name" value="${esc(name)}" placeholder="地點名稱"/><div class="field-lbl">簡短描述</div><input class="minput" id="m-desc" value="${esc(desc)}" placeholder="一行簡介"/><div class="field-lbl">備注（可多行）</div><textarea class="mtextarea" id="m-note" placeholder="例如：要排隊、記得帶現金、推薦必點 xx...">${esc(note)}</textarea><div class="field-lbl">類別</div><select class="mselect" id="m-type">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}"${k===type?' selected':''}>${v}</option>`).join('')}</select><div class="field-lbl">Google Maps 連結</div><input class="minput" id="m-map" value="${esc(map)}" placeholder="貼入 Google Maps 網址"/><div class="field-lbl">照片</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">${photo?`<img id="m-photo-preview" src="${esc(photo)}" style="width:60px;height:44px;object-fit:cover;border-radius:8px;border:0.5px solid var(--blue-200)"/>`:`<div id="m-photo-preview" style="width:60px;height:44px;background:#EBF4FF;border-radius:8px;border:0.5px solid var(--blue-200);display:flex;align-items:center;justify-content:center;font-size:18px">🏙</div>`}<label style="flex:1;padding:10px;background:#EBF4FF;border-radius:var(--radius-sm);border:0.5px dashed var(--blue-400);text-align:center;font-size:13px;color:var(--blue-600);cursor:pointer" for="m-photo-file">📷 ${photo?'換一張照片':'從相簿上傳'}<input type="file" id="m-photo-file" accept="image/*" style="display:none" onchange="handleModalPhoto(event)"/></label></div><input type="hidden" id="m-photo" value="${esc(photo)}"/><div class="modal-btns">${!isNewMode?`<button class="mbtn mbtn-del" onclick="deletePlace()">刪除</button>`:''}<button class="mbtn mbtn-cancel" onclick="closeModal()">取消</button><button class="mbtn mbtn-save" onclick="savePlace()">儲存</button></div></div>`;
+  ov.innerHTML=`<div class="modal"><div class="modal-title">${isNewMode?'＋ 新增地點':'✏️ 編輯地點'}</div><div class="field-lbl">時間</div><input class="minput" id="m-time" type="time" value="${esc(time)}"/><div class="field-lbl">地點名稱</div><input class="minput" id="m-name" value="${esc(name)}" placeholder="地點名稱"/><div class="field-lbl">簡短描述</div><input class="minput" id="m-desc" value="${esc(desc)}" placeholder="一行簡介"/><div class="field-lbl">備注（可多行）</div><textarea class="mtextarea" id="m-note" placeholder="例如：要排隊、記得帶現金、推薦必點 xx...">${esc(note)}</textarea><div class="field-lbl">類別</div><select class="mselect" id="m-type">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}"${k===type?' selected':''}>${v}</option>`).join('')}</select><div class="field-lbl">Google Maps 連結</div><input class="minput" id="m-map" value="${esc(map)}" placeholder="貼入 Google Maps 網址"/><div class="field-lbl">照片</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">${photo?`<img id="m-photo-preview" src="${esc(photo)}" style="width:60px;height:44px;object-fit:cover;border-radius:8px;border:0.5px solid var(--blue-200)"/>`:`<div id="m-photo-preview" class="mphoto-prev" style="width:60px;height:44px;background:#EBF4FF;border-radius:8px;border:0.5px solid var(--blue-200);display:flex;align-items:center;justify-content:center;font-size:18px">🏙</div>`}<label class="mphoto-upload" style="flex:1;padding:10px;background:#EBF4FF;border-radius:var(--radius-sm);border:0.5px dashed var(--blue-400);text-align:center;font-size:13px;color:var(--blue-600);cursor:pointer" for="m-photo-file">📷 ${photo?'換一張照片':'從相簿上傳'}<input type="file" id="m-photo-file" accept="image/*" style="display:none" onchange="handleModalPhoto(event)"/></label></div><input type="hidden" id="m-photo" value="${esc(photo)}"/><div class="modal-btns">${!isNewMode?`<button class="mbtn mbtn-del" onclick="deletePlace()">刪除</button>`:''}<button class="mbtn mbtn-cancel" onclick="closeModal()">取消</button><button class="mbtn mbtn-save" onclick="savePlace()">儲存</button></div></div>`;
   app.appendChild(ov);
+  lockAll();
 }
 
 function closeModal(){const ov=document.getElementById('app').querySelector('.overlay');if(ov)ov.remove();}
@@ -1559,45 +1897,65 @@ function switchTab(id,tabEl,nbIdx){
 }
 
 // Init default data and render immediately
-for(let i=0;i<7;i++){data[i]=DEFAULT[i]?JSON.parse(JSON.stringify(DEFAULT[i])):[];}
+for(let i=0;i<DAYS.length;i++){data[i]=DEFAULT[i]?JSON.parse(JSON.stringify(DEFAULT[i])):[];}
 
 function updateDateDisplay(){
-  const first=DAYS[0].n;
-  const last=DAYS[DAYS.length-1].n;
-  document.getElementById('dateValDisplay').textContent=`2025.06.${first.padStart(2,'0')} — 06.${last.padStart(2,'0')}`;
+  const d=document.getElementById('dateValInput');
+  if(d&&infoData.dateRange!==undefined)d.value=infoData.dateRange;
 }
 
-const scroll=document.getElementById('dayScroll');
-DAYS.forEach((d,i)=>{
-  const el=document.createElement('div');
-  el.className='day-pill'+(i===0?' active':'');
-  el.innerHTML=`
-    <input class="day-num-input" value="${d.n}" maxlength="2" readonly
-      style="display:block;width:38px;font-family:var(--font-display);font-size:15px;font-weight:500;color:#fff;background:transparent;border:none;border-bottom:1.5px solid rgba(255,255,255,0.4);outline:none;text-align:center;padding:0 0 1px;"
-      onclick="event.stopPropagation();"
-      onchange="DAYS[${i}].n=this.value.trim();updateDateDisplay();if(currentTab==='itinerary')renderItinerary();"
-    />
-    <input class="day-lbl-input" value="${d.d}" maxlength="3" readonly
-      style="display:block;width:38px;font-size:10px;color:#fff;background:transparent;border:none;outline:none;text-align:center;margin-top:1px;opacity:0.85;padding:0;"
-      onclick="event.stopPropagation();"
-      onchange="DAYS[${i}].d=this.value.trim();"
-    />`;
-  el.onclick=()=>{
-    document.querySelectorAll('.day-pill').forEach(p=>p.classList.remove('active'));
-    el.classList.add('active');currentDay=i;window.currentDay=i;applyBg(currentDay);
-    if(currentTab==='itinerary')renderItinerary();
-  };
-  scroll.appendChild(el);
-});
+function buildDayPills(){
+  const scroll=document.getElementById('dayScroll');
+  if(!scroll)return;
+  scroll.innerHTML='';
+  DAYS.forEach((d,i)=>{
+    const el=document.createElement('div');
+    el.className='day-pill'+(i===currentDay?' active':'');
+    el.innerHTML=`
+      <input class="day-num-input" value="${d.n}" maxlength="2" readonly
+        style="display:block;width:100%;font-family:var(--font-display);font-size:15px;font-weight:500;color:#fff;background:transparent;border:none;border-bottom:1.5px solid rgba(255,255,255,0.4);outline:none;text-align:center;padding:0 0 1px;"
+        onclick="event.stopPropagation();"
+        onchange="DAYS[${i}].n=this.value.trim();save();if(currentTab==='itinerary')renderItinerary();"
+      />
+      <input class="day-lbl-input" value="${d.d}" maxlength="3" readonly
+        style="display:block;width:100%;font-size:10px;color:#fff;background:transparent;border:none;outline:none;text-align:center;margin-top:1px;opacity:0.85;padding:0;"
+        onclick="event.stopPropagation();"
+        onchange="DAYS[${i}].d=this.value.trim();save();"
+      />`;
+    el.onclick=()=>{
+      document.querySelectorAll('.day-pill').forEach(p=>p.classList.remove('active'));
+      el.classList.add('active');currentDay=i;window.currentDay=i;applyBg(currentDay);
+      if(currentTab==='itinerary')renderItinerary();
+    };
+    scroll.appendChild(el);
+  });
+  lockAll();
+}
 
+buildDayPills();
+setTopbarFields();
+updateDateDisplay();
 applyNightMode();
 renderItinerary();
+lockAll();
 
 // Expose shared state for Firebase module
 window.data = data;
 window.bgData = bgData;
+window.budgetData = budgetData;
+window.DAYS = DAYS;
+window.infoData = infoData;
+window.editMode = editMode;
+// Built-in Seoul defaults, so the migration can reset to a clean state
+window.__DEFAULTS = { itinerary: DEFAULT, info: DEFAULT_INFO, budget: DEFAULT_BUDGET, days: SEOUL_DAYS };
 window.currentTab = currentTab;
 window.currentDay = currentDay;
+window.buildDayPills = buildDayPills;
+window.setTopbarFields = setTopbarFields;
+window.updateDateDisplay = updateDateDisplay;
+window.lockAll = lockAll;
+window.rerenderCurrent = rerenderCurrent;
+window.renderBudget = renderBudget;
 window.renderItinerary = renderItinerary;
 window.renderHotel = renderHotel;
 window.renderInfo = renderInfo;
@@ -1636,7 +1994,7 @@ window.applyBg = applyBg;
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const fbConfig = {
   apiKey: "AIzaSyCIOLBhCJnzfxReb6jOm-xB18C6oODaLhw",
@@ -1651,48 +2009,119 @@ const fbConfig = {
 const fbApp = initializeApp(fbConfig);
 const db = getDatabase(fbApp);
 
-window._fbSave = function() {
+// Bump this when the built-in defaults change and should overwrite the cloud copy once.
+const DATA_VERSION = 4; // v4 = Seoul 8 days (2026/09/18-25)
+
+function fbSaveAll(){
   const itinerary={};
-  for(let i=0;i<7;i++) itinerary['d'+i]=window.data[i]||[];
-  set(ref(db,'yongbros/itinerary'),itinerary);
-  set(ref(db,'yongbros/backgrounds'),window.bgData||{});
-  set(ref(db,'yongbros/info'),window.infoData||{});
-};
+  const n=(window.DAYS&&window.DAYS.length)||7;
+  for(let i=0;i<n;i++) itinerary['d'+i]=window.data[i]||[];
+  return Promise.all([
+    set(ref(db,'yongbros/itinerary'),itinerary),
+    set(ref(db,'yongbros/backgrounds'),window.bgData||{}),
+    set(ref(db,'yongbros/info'),window.infoData||{}),
+    set(ref(db,'yongbros/budget'),window.budgetData||{}),
+    set(ref(db,'yongbros/days'),window.DAYS||[])
+  ]);
+}
+window._fbSave = function(){ fbSaveAll(); };
 
-onValue(ref(db,'yongbros/itinerary'),(snapshot)=>{
-  if(snapshot.exists()){
-    const remote=snapshot.val();
-    for(let i=0;i<7;i++){
-      if(remote['d'+i]) window.data[i]=remote['d'+i];
+// Reset the in-memory state to the built-in Seoul defaults (mutating in place so
+// the closures in the main script keep their references).
+function applyDefaults(){
+  const D=window.__DEFAULTS; if(!D)return;
+  for(let i=0;i<D.days.length;i++){ window.data[i]= D.itinerary[i]?JSON.parse(JSON.stringify(D.itinerary[i])):[]; }
+  Object.keys(window.infoData).forEach(k=>delete window.infoData[k]);
+  Object.assign(window.infoData, JSON.parse(JSON.stringify(D.info)));
+  Object.keys(window.budgetData).forEach(k=>delete window.budgetData[k]);
+  Object.assign(window.budgetData, JSON.parse(JSON.stringify(D.budget)));
+  window.DAYS.length=0; JSON.parse(JSON.stringify(D.days)).forEach(d=>window.DAYS.push(d));
+  window.buildDayPills&&window.buildDayPills();
+  window.setTopbarFields&&window.setTopbarFields();
+  window.updateDateDisplay&&window.updateDateDisplay();
+  window.applyNightMode&&window.applyNightMode();
+  window.rerenderCurrent&&window.rerenderCurrent();
+}
+
+function attachListeners(){
+  onValue(ref(db,'yongbros/itinerary'),(snapshot)=>{
+    if(snapshot.exists()){
+      const remote=snapshot.val();
+      Object.keys(remote).forEach(k=>{
+        const m=k.match(/^d(\d+)$/);
+        if(m) window.data[+m[1]]=remote[k];
+      });
+      if(window.currentTab==='itinerary') window.renderItinerary();
     }
-    if(window.currentTab==='itinerary') window.renderItinerary();
-  } else {
-    window._fbSave();
-  }
-});
+  });
 
-onValue(ref(db,'yongbros/info'),(snapshot)=>{
-  if(snapshot.exists()){
-    const remote=snapshot.val()||{};
-    Object.keys(remote).forEach(k=>{
-      if(remote[k]!==null&&remote[k]!==undefined)window.infoData[k]=remote[k];
-    });
-    window.applyNightMode&&window.applyNightMode();
-    if(window.currentTab==='info'&&window.renderInfo) window.renderInfo();
-    else if(window.currentTab==='hotel'&&window.renderHotel) window.renderHotel();
-    else if(window.currentTab==='wish'&&window.renderWish) window.renderWish();
-  }
-});
+  onValue(ref(db,'yongbros/info'),(snapshot)=>{
+    if(snapshot.exists()){
+      const remote=snapshot.val()||{};
+      Object.keys(remote).forEach(k=>{
+        if(remote[k]!==null&&remote[k]!==undefined)window.infoData[k]=remote[k];
+      });
+      window.applyNightMode&&window.applyNightMode();
+      window.setTopbarFields&&window.setTopbarFields();
+      window.updateDateDisplay&&window.updateDateDisplay();
+      window.lockAll&&window.lockAll();
+      if(window.currentTab==='info'&&window.renderInfo) window.renderInfo();
+      else if(window.currentTab==='hotel'&&window.renderHotel) window.renderHotel();
+      else if(window.currentTab==='wish'&&window.renderWish) window.renderWish();
+    }
+  });
 
-let _bgLoaded=false;
-onValue(ref(db,'yongbros/backgrounds'),(snapshot)=>{
-  if(_bgLoaded) return;
-  _bgLoaded=true;
-  if(snapshot.exists()){
-    window.bgData=snapshot.val();
-    window.applyBg(window.currentDay);
+  onValue(ref(db,'yongbros/budget'),(snapshot)=>{
+    if(snapshot.exists()){
+      const remote=snapshot.val()||{};
+      if(remote.total!==undefined) window.budgetData.total=remote.total;
+      if(Array.isArray(remote.cats)) window.budgetData.cats=remote.cats;
+      if(Array.isArray(remote.daily)) window.budgetData.daily=remote.daily;
+      if(window.currentTab==='budget'&&window.renderBudget) window.renderBudget();
+    }
+  });
+
+  onValue(ref(db,'yongbros/days'),(snapshot)=>{
+    if(snapshot.exists()){
+      const remote=snapshot.val();
+      if(Array.isArray(remote)&&remote.length){
+        window.DAYS.length=0;
+        remote.forEach(d=>{ if(d) window.DAYS.push(d); });
+        window.buildDayPills&&window.buildDayPills();
+        if(window.currentTab==='itinerary'&&window.renderItinerary) window.renderItinerary();
+      }
+    }
+  });
+
+  let _bgLoaded=false;
+  onValue(ref(db,'yongbros/backgrounds'),(snapshot)=>{
+    if(_bgLoaded) return;
+    _bgLoaded=true;
+    if(snapshot.exists()){
+      window.bgData=snapshot.val();
+      window.applyBg(window.currentDay);
+    }
+  });
+}
+
+async function boot(){
+  let v=0;
+  try{
+    const vs=await get(ref(db,'yongbros/version'));
+    v=vs.exists()?vs.val():0;
+  }catch(e){ v=0; }
+  if(v<DATA_VERSION){
+    // First load of this version: reset to clean Seoul defaults and push them to the
+    // cloud. We AWAIT the write before attaching listeners, so the first snapshot the
+    // listeners receive is our confirmed data — not stale old data (which previously
+    // leaked fields like nightMode back in).
+    applyDefaults();
+    try{ await fbSaveAll(); }catch(e){}
+    try{ await set(ref(db,'yongbros/version'),DATA_VERSION); }catch(e){}
   }
-});
+  attachListeners();
+}
+boot();
 </script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js");}</script>
 </body>
