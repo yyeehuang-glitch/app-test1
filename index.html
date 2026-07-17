@@ -367,6 +367,11 @@
       margin-bottom: 12px;
     }
     .info-title { font-family: var(--font-display); font-size: 13px; font-weight: 500; color: var(--blue-800); margin-bottom: 10px; }
+    /* packing list title: box png + bigger text, day mode only */
+    .pack-box-img{ display:none; }
+    .app:not(.night) .pack-list-title{ display:inline-flex; align-items:center; gap:8px; font-size:19px; }
+    .app:not(.night) .pack-box-img{ display:inline-block; width:30px; height:30px; object-fit:contain; }
+    .app:not(.night) .pack-box-emoji{ display:none; }
     .info-row { display: flex; justify-content: space-between; font-size: 13px; padding: 7px 0; border-bottom: 0.5px solid #F0F3F7; }
     .info-row:last-child { border: none; }
     .info-l { color: var(--blue-800); }
@@ -397,6 +402,11 @@
     .nb-btn.active .nb-lbl { color: var(--blue-800); font-weight: 500; }
     .nb-active-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--blue-400); margin: 3px auto 0; opacity: 0; }
     .nb-btn.active .nb-active-dot { opacity: 1; }
+
+    /* custom PNG nav icons — day mode only; night mode keeps the emoji */
+    .nb-icon-img { width: 26px; height: 26px; object-fit: contain; display: block; margin: 0 auto 2px; }
+    .app:not(.night) .nb-icon-emoji { display: none; }
+    .app.night .nb-icon-img { display: none; }
 
     /* ── MODAL ── */
     .overlay {
@@ -575,7 +585,8 @@
     .app:not(.night) .topbar .date-lbl{ color:#8A7A5E; }
     .app:not(.night) .topbar .date-val{ color:#4A3D2B; }
     .app:not(.night) .editable-text:focus{ border-bottom-color:rgba(90,75,54,0.4); }
-    .app:not(.night) .topbar-edit-btn{ background:#F2B441; color:#fff; opacity:1; box-shadow:0 3px 0 #c98f1f, 0 5px 12px rgba(0,0,0,0.15); }
+    .app:not(.night) .topbar-edit-btn{ background:url('icon/nav/刷子.png') center/contain no-repeat; opacity:1; box-shadow:none; border-radius:0; width:32px; height:32px; font-size:0; backdrop-filter:none; -webkit-backdrop-filter:none; }
+    .app:not(.night) .topbar.edit-mode .topbar-edit-btn{ background:#F2B441; color:#fff; border-radius:50%; box-shadow:0 3px 0 #c98f1f, 0 5px 12px rgba(0,0,0,0.15); font-size:15px; }
     .app:not(.night) .topbar .date-banner{ background:#FBF6E9; border:2px solid #fff; box-shadow:0 4px 0 rgba(120,100,60,0.10); }
     .app:not(.night) .topbar .day-pill{ background:#FBF6E9; box-shadow:0 3px 0 rgba(120,100,60,0.13); }
     .app:not(.night) .topbar .day-pill.active{ background:linear-gradient(180deg,#7ECB82,#5AAA63); box-shadow:0 3px 0 #3d8047; }
@@ -601,7 +612,7 @@
     }
     .app:not(.night) .it-time-col{ background:#EFE6CC; }
     .app:not(.night) .it-time{ color:#4A3D2B; }
-    .app:not(.night) .it-dot{ background:#6FBF73; box-shadow:0 0 0 3px rgba(111,191,115,0.28); }
+    .app:not(.night) .it-dot{ width:18px; height:18px; margin-top:3px; border-radius:0; background:url('icon/葉子.webp') center/contain no-repeat; box-shadow:none; }
     .app:not(.night) .it-note{ background:#EDF6E1; border-left-color:#8FCB7E; color:#5b7038; }
     .app:not(.night) .it-photo-placeholder{ background:#F1EAD6; border-color:#D8C9A0; color:#8A7A5E; }
     .app:not(.night) .tag-transit{ color:#3E6DA0; }
@@ -609,6 +620,8 @@
     /* round buttons chunky */
     .app:not(.night) .ic-btn{ background:#EFE6CC; box-shadow:0 3px 0 rgba(120,100,60,0.14); }
     .app:not(.night) .ic-btn.edit-btn{ background:#F2B441; box-shadow:0 3px 0 #c98f1f; }
+    /* map-link buttons -> 地圖 png on a white circle, day mode only */
+    .app:not(.night) .ic-btn:not(.edit-btn){ background:#fff url('icon/nav/地圖.png') center/cover no-repeat; box-shadow:0 2px 5px rgba(0,0,0,0.18); font-size:0; }
 
     /* internals warm */
     .app:not(.night) .bud-item{ background:#F1EAD6; }
@@ -624,6 +637,15 @@
     .app:not(.night) .navbar{ background:#FBF6E9; box-shadow:0 -4px 16px rgba(120,100,60,0.10); border-top:2px solid rgba(255,255,255,0.7); }
     .app:not(.night) .nb-icon{ display:inline-flex; align-items:center; justify-content:center; width:44px; height:32px; border-radius:13px; margin:0 auto 2px; transition:background .15s; }
     .app:not(.night) .nb-btn.active .nb-icon{ background:linear-gradient(180deg,#8FD693,#6FBF73); }
+    /* PNG nav icons override the green-pill treatment in day mode */
+    .app:not(.night) .nb-icon-img{ display:block; width:52px; height:52px; object-fit:contain; background:none; border-radius:0; margin:0; }
+    .app:not(.night) .nb-btn.active .nb-icon-img{ background:none; }
+    .app:not(.night) .nb-icon-emoji{ display:none; }
+    /* day mode: hide labels + active dot, center icons, equal top/bottom edges */
+    .app:not(.night) .nb-lbl{ display:none; }
+    .app:not(.night) .nb-active-dot{ display:none; }
+    .app:not(.night) .nb-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0; }
+    .app:not(.night) .navbar{ padding-top:10px; padding-bottom:calc(12px + env(safe-area-inset-bottom)); }
     .app:not(.night) .nb-lbl{ color:#9A8A6E; }
     .app:not(.night) .nb-btn.active .nb-lbl{ color:#4E9E5A; font-weight:600; }
     .app:not(.night) .nb-active-dot{ display:none; }
@@ -1060,19 +1082,19 @@
 
   <div class="navbar">
     <div class="nb-btn active" id="nb0" onclick="switchTab('itinerary',null,0)">
-      <span class="nb-icon">📅</span><div class="nb-lbl">行程</div><div class="nb-active-dot"></div>
+      <img class="nb-icon nb-icon-img" src="icon/nav/行程.png" alt="行程"><span class="nb-icon nb-icon-emoji">📅</span><div class="nb-lbl">行程</div><div class="nb-active-dot"></div>
     </div>
     <div class="nb-btn" id="nb1" onclick="switchTab('hotel',null,1)">
-      <span class="nb-icon">🏨</span><div class="nb-lbl">住宿</div><div class="nb-active-dot"></div>
+      <img class="nb-icon nb-icon-img" src="icon/nav/住宿.png" alt="住宿"><span class="nb-icon nb-icon-emoji">🏨</span><div class="nb-lbl">住宿</div><div class="nb-active-dot"></div>
     </div>
     <div class="nb-btn" id="nb2" onclick="switchTab('budget',null,2)">
-      <span class="nb-icon">💰</span><div class="nb-lbl">預算</div><div class="nb-active-dot"></div>
+      <img class="nb-icon nb-icon-img" src="icon/nav/預算.png" alt="預算"><span class="nb-icon nb-icon-emoji">💰</span><div class="nb-lbl">預算</div><div class="nb-active-dot"></div>
     </div>
     <div class="nb-btn" id="nb3" onclick="switchTab('wish',null,3)">
-      <span class="nb-icon">🛒</span><div class="nb-lbl">待買</div><div class="nb-active-dot"></div>
+      <img class="nb-icon nb-icon-img" src="icon/nav/待買.png" alt="待買"><span class="nb-icon nb-icon-emoji">🛒</span><div class="nb-lbl">待買</div><div class="nb-active-dot"></div>
     </div>
     <div class="nb-btn" id="nb4" onclick="switchTab('info',null,4)">
-      <span class="nb-icon">ℹ️</span><div class="nb-lbl">我的</div><div class="nb-active-dot"></div>
+      <img class="nb-icon nb-icon-img" src="icon/nav/我的.png" alt="我的"><span class="nb-icon nb-icon-emoji">ℹ️</span><div class="nb-lbl">我的</div><div class="nb-active-dot"></div>
     </div>
   </div>
 </div>
@@ -1544,7 +1566,7 @@ function renderPackingHTML(){
   const total=infoData.packing.length;
   const done=infoData.packing.filter(i=>i.done).length;
   const editMode=!!window._packEditMode;
-  let h=`<div class="info-card"><div class="info-title" style="display:flex;justify-content:space-between;align-items:center"><span>📦 打包清單</span><div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--blue-400);font-weight:400">${done}/${total} 已備齊</span><button class="pack-edit-btn edit-only" onclick="resetPackItems()" title="重置勾選">↻</button><button class="pack-edit-btn edit-only ${editMode?'active':''}" onclick="togglePackEdit()">${editMode?'✓':'✏️'}</button></div></div>`;
+  let h=`<div class="info-card"><div class="info-title" style="display:flex;justify-content:space-between;align-items:center"><span class="pack-list-title"><img class="pack-box-img" src="icon/nav/箱子.png" alt=""><span class="pack-box-emoji">📦 </span>打包清單</span><div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--blue-400);font-weight:400">${done}/${total} 已備齊</span><button class="pack-edit-btn edit-only" onclick="resetPackItems()" title="重置勾選">↻</button><button class="pack-edit-btn edit-only ${editMode?'active':''}" onclick="togglePackEdit()">${editMode?'✓':'✏️'}</button></div></div>`;
   infoData.packing.forEach((it,idx)=>{
     h+=`<div class="pack-item ${it.done?'done':''}">`;
     h+=`<input class="pack-text" value="${esc(it.text)}" onchange="renamePackItem(${idx},this.value)" ${editMode?'':'readonly'} />`;
