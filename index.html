@@ -270,6 +270,11 @@
     .it-photo-placeholder:active { background: var(--blue-200); }
 
     .it-name { font-family: var(--font-display); font-size: 14px; font-weight: 500; color: var(--blue-900); margin-bottom: 3px; }
+    .it-name-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 3px; }
+    .it-name-row .it-name { margin-bottom: 0; }
+    .it-hours { font-size: 12px; color: var(--blue-600); white-space: nowrap; flex-shrink: 0; }
+    .it-time-sep { opacity: 0.55; margin: 0; line-height: 1; }
+    .app.night .it-hours { color: var(--muted); }
     .it-desc { font-size: 12px; color: var(--blue-600); line-height: 1.5; margin-bottom: 5px; }
     .it-note {
       font-size: 12px;
@@ -965,6 +970,29 @@
       backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
       color: #F5C787;
     }
+    .sync-toggle {
+      width: 100%;
+      padding: 14px 16px;
+      margin-top: 8px;
+      background: #DAF0EE;
+      border: 1px solid #93CFC9;
+      border-radius: var(--radius-lg);
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #0E6B63;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .app.night .sync-toggle {
+      background: rgba(95,209,203,0.14);
+      border: 1px solid rgba(95,209,203,0.35);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      color: #9FE1DB;
+    }
 
     /* ── DAY BACKGROUND ── */
     .topbar {
@@ -1065,8 +1093,9 @@
       </div>
     </div>
     <div class="day-scroll" id="dayScroll"></div>
-    <label class="topbar-bg-label" style="display:none;align-items:center;gap:5px;margin-top:10px;background:rgba(255,255,255,0.22);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:none;border-radius:20px;padding:5px 11px;font-size:11px;color:#fff;font-weight:500;cursor:pointer;">🖼 設定今日背景<input type="file" accept="image/*" style="display:none" onchange="handleBgUpload(event)"/></label>
-    <button class="topbar-edit-btn" id="topbarEditBtn" onclick="toggleTopbarEdit()">✏️</button>
+    <label class="topbar-bg-label" style="align-items:center;gap:5px;margin-top:10px;margin-right:6px;background:rgba(255,255,255,0.22);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:none;border-radius:20px;padding:5px 11px;font-size:11px;color:#fff;font-weight:500;cursor:pointer;">🖼 設定今日背景<input type="file" accept="image/*" style="display:none" onchange="handleBgUpload(event)"/></label>
+    <button class="topbar-bg-label" onclick="resetBg()" style="align-items:center;gap:5px;margin-top:10px;margin-right:6px;background:rgba(255,255,255,0.22);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:none;border-radius:20px;padding:5px 11px;font-size:11px;color:#fff;font-weight:500;cursor:pointer;font-family:var(--font-body);">↩ 還原預設</button>
+    <span class="topbar-bg-label topbar-edit-hint" style="align-items:center;margin-top:10px;background:transparent;padding:5px 2px;font-size:11px;color:rgba(255,255,255,0.85);">✎ 編輯中，點空白處結束</span>
   </div>
 
   <div class="tabs" id="mainTabs">
@@ -1246,20 +1275,113 @@ function toggleTopbarEdit(){
   window.editMode=editMode;
   const app=document.getElementById('app');
   const topbar=document.querySelector('.topbar');
-  const btn=document.getElementById('topbarEditBtn');
-  const bgLabel=document.querySelector('.topbar-bg-label');
   app.classList.toggle('editing',editMode);
   topbar.classList.toggle('edit-mode',editMode);
-  btn.textContent=editMode?'✅':'✏️';
-  bgLabel.style.display=editMode?'inline-flex':'none';
   // exit any per-section sub-edit modes when locking
   if(!editMode){window._packEditMode=false;window._wishEditMode=false;}
   // re-render current tab so edit-only controls appear/disappear
   rerenderCurrent();
   lockAll();
-  if(editMode){const g=document.getElementById('editGreeting');if(g)g.focus();}
-  else{save();}
+  if(!editMode)save();
 }
+
+// Tap a blank part of the top banner to toggle edit mode (replaces the old pencil).
+(function(){
+  const tb=document.querySelector('.topbar');
+  if(tb)tb.addEventListener('click',function(e){
+    if(e.target.closest('input,textarea,select,button,a,label,.day-pill'))return;
+    toggleTopbarEdit();
+  });
+})();
+
+// Restore today's background to the default (remove the uploaded image).
+function resetBg(){
+  if(!window.bgData||!window.bgData[currentDay]){alert('今天沒有設定背景，目前已是預設。');return;}
+  if(!confirm('確定要把今天的背景還原成預設嗎？'))return;
+  delete window.bgData[currentDay];
+  applyBg(currentDay);
+  window._fbSave();
+}
+window.resetBg=resetBg;
+
+// ═══ Google 試算表同步（單向：表 → App，手動、要按才動）═══
+// 把「行程」分頁「發布到網路 → CSV」後，將網址貼在下面這行的引號裡：
+let SHEET_CSV_URL = "";
+
+function parseCSV(text){
+  const rows=[];let row=[],cur='',inQ=false;
+  text=(text||'').replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(inQ){
+      if(c==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else inQ=false; }
+      else cur+=c;
+    }else{
+      if(c==='"')inQ=true;
+      else if(c===','){row.push(cur);cur='';}
+      else if(c==='\n'){row.push(cur);rows.push(row);row=[];cur='';}
+      else cur+=c;
+    }
+  }
+  if(cur!==''||row.length){row.push(cur);rows.push(row);}
+  return rows;
+}
+
+function importFromSheet(){
+  if(!SHEET_CSV_URL){alert('尚未設定 Google 試算表網址。\n請把「行程」分頁發布成 CSV 的網址給我，我幫你設定好就能用。');return;}
+  if(!confirm('要從 Google 試算表更新行程嗎？\n\n⚠️ 這會用試算表的內容「覆蓋」目前的行程。\n（已上傳的照片會盡量依地點名稱保留）'))return;
+  const url=SHEET_CSV_URL+(SHEET_CSV_URL.includes('?')?'&':'?')+'_t='+Date.now();
+  fetch(url).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
+    .then(txt=>applySheetRows(parseCSV(txt)))
+    .catch(e=>alert('讀取失敗，請確認網址正確、且已「發布到網路」。\n\n'+e));
+}
+
+function applySheetRows(rows){
+  if(!rows||rows.length<2){alert('試算表看起來沒有資料。');return;}
+  const header=rows[0].map(h=>(h||'').trim());
+  const col=kw=>header.findIndex(h=>h.includes(kw));
+  const idx={
+    day:col('天'),
+    time:col('時間'),
+    name:col('地點'),
+    hours:col('營業'),
+    desc:col('描述'),
+    note:(col('備註')>=0?col('備註'):col('備注')),
+    transport:col('交通'),
+    map:col('地圖'),
+    intro:col('介紹'),
+    type:col('類別')
+  };
+  if(idx.day<0||idx.name<0){alert('找不到「天」或「地點名稱」欄位，請確認標題列名稱。');return;}
+  const REV={'美食':'food','打卡景點':'sight','景點':'sight','購物':'shop','交通':'transit','住宿':'stay'};
+  const cleanTime=raw=>(raw||'').split(/\n+/).map(s=>s.replace(/\s*(上午|下午|AM|PM|am|pm)\s*/g,'').trim()).filter(Boolean).join('-');
+  const get=(row,k)=>idx[k]>=0?((row[idx[k]]||'').trim()):'';
+  const byDay={};
+  for(let r=1;r<rows.length;r++){
+    const row=rows[r];if(!row)continue;
+    const dayNum=parseInt(get(row,'day'),10);
+    const name=get(row,'name');
+    if(!dayNum||!name)continue;
+    const di=dayNum-1;
+    if(di<0||di>=window.DAYS.length)continue;
+    let map=get(row,'map');
+    if(!map)map='https://maps.google.com/?q='+encodeURIComponent(name);
+    const item={id:'s'+di+'_'+r,time:cleanTime(get(row,'time')),name,hours:get(row,'hours'),desc:get(row,'desc'),note:get(row,'note'),transport:get(row,'transport'),type:(REV[get(row,'type')]||'sight'),map,introUrl:get(row,'intro'),photo:''};
+    (byDay[di]=byDay[di]||[]).push(item);
+  }
+  let count=0;
+  for(let di=0;di<window.DAYS.length;di++){
+    const news=byDay[di]||[];
+    const olds=window.data[di]||[];
+    news.forEach(ni=>{const m=olds.find(oi=>oi.name===ni.name);if(m&&m.photo)ni.photo=m.photo;});
+    news.sort((a,b)=>timeKey(a.time).localeCompare(timeKey(b.time)));
+    window.data[di]=news;count+=news.length;
+  }
+  window._fbSave();
+  renderItinerary();
+  alert('已從試算表更新行程 ✅（共 '+count+' 個地點）');
+}
+window.importFromSheet=importFromSheet;
 
 function rerenderCurrent(){
   if(currentTab==='itinerary')renderItinerary();
@@ -1380,15 +1502,28 @@ function tripMonth(){
   const m=(infoData.dateRange||'').match(/\d{4}[.\/-](\d{1,2})[.\/-]/);
   return m?parseInt(m[1],10):9;
 }
+function fmtTimeHTML(t){
+  t=(t||'').trim();
+  const parts=t.split(/\s*[-~–—到]\s*/);
+  if(parts.length>=2 && parts[1]){
+    return `<div class="it-time">${esc(parts[0])}</div><div class="it-time it-time-sep">-</div><div class="it-time">${esc(parts[1])}</div>`;
+  }
+  return `<div class="it-time">${esc(t)}</div>`;
+}
+function timeKey(t){return (t||'').split(/[-~–—到]/)[0].trim();}
+
 function renderItinerary(){
   const places=data[currentDay]||[];
   let h=`<div class="sec-lbl">Day ${currentDay+1} — ${tripMonth()}月${DAYS[currentDay].n}日（${DAYS[currentDay].d}）</div>`;
   places.forEach((p,i)=>{
     const noteHTML=p.note?`<div class="it-note">📝 ${esc(p.note)}</div>`:'';
+    const transHTML=p.transport?`<div class="it-note it-transport">🚗 ${esc(p.transport)}</div>`:'';
+    const hoursHTML=p.hours?`<span class="it-hours">${esc(p.hours)}</span>`:'';
+    const introHTML=p.introUrl?`<a class="ic-btn" href="${esc(p.introUrl)}" target="_blank" rel="noopener">🔗</a>`:'';
     const photoHTML=p.photo
       ?`<div style="position:relative"><img class="it-photo" src="${esc(p.photo)}" onerror="this.style.display='none'" loading="lazy"/><label class="edit-only" style="position:absolute;bottom:6px;right:6px;background:rgba(255,255,255,0.82);border-radius:12px;padding:3px 8px;font-size:10px;color:var(--blue-600);cursor:pointer" for="placePhoto_${i}">🔄 換圖<input type="file" id="placePhoto_${i}" accept="image/*" style="display:none" onchange="handlePlacePhoto(event,${i})"/></label></div>`
       :`<label class="it-photo-placeholder edit-only" for="placePhoto_${i}" style="cursor:pointer">📷 上傳照片<input type="file" id="placePhoto_${i}" accept="image/*" style="display:none" onchange="handlePlacePhoto(event,${i})"/></label>`;
-    h+=`<div class="it-card"><div class="it-row"><div class="it-time-col"><div class="it-time">${esc(p.time)}</div><div class="it-dot"></div></div><div class="it-body">${photoHTML}<div class="it-name">${esc(p.name)}</div><div class="it-desc">${esc(p.desc)}</div>${noteHTML}<div class="it-foot"><span class="tag ${tagCls(p.type)}">${tagName(p.type)}</span><div class="it-actions"><span class="ic-btn edit-btn edit-only" onclick="openEdit(${i})">✏️</span><a class="ic-btn" href="${esc(p.map||'#')}" target="_blank" rel="noopener">🧭</a></div></div></div></div></div>`;
+    h+=`<div class="it-card"><div class="it-row"><div class="it-time-col">${fmtTimeHTML(p.time)}<div class="it-dot"></div></div><div class="it-body">${photoHTML}<div class="it-name-row"><div class="it-name">${esc(p.name)}</div>${hoursHTML}</div><div class="it-desc">${esc(p.desc)}</div>${noteHTML}${transHTML}<div class="it-foot"><span class="tag ${tagCls(p.type)}">${tagName(p.type)}</span><div class="it-actions"><span class="ic-btn edit-btn edit-only" onclick="openEdit(${i})">✏️</span>${introHTML}<a class="ic-btn" href="${esc(p.map||'#')}" target="_blank" rel="noopener">🧭</a></div></div></div></div></div>`;
   });
   h+=`<div class="add-btn edit-only" onclick="openNew()">＋ 新增地點</div>`;
   document.getElementById('bodyContent').innerHTML=h;
@@ -1461,6 +1596,7 @@ function renderInfo(){
   h+=infoData.sos.map((r,i)=>`<div class="sos-row"><input style="border:none;border-bottom:1px solid rgba(240,149,149,0.5);background:transparent;font-size:13px;color:#791F1F;outline:none;width:90px;" value="${r.label}" onchange="infoData.sos[${i}].label=this.value;save();" /><input style="border:none;border-bottom:1px solid rgba(240,149,149,0.5);background:transparent;font-size:13px;font-weight:500;color:#A32D2D;outline:none;text-align:right;width:140px;" value="${r.val}" onchange="infoData.sos[${i}].val=this.value;save();" /></div>`).join('');
   h+=`</div>`;
   h+=`<button class="night-toggle" onclick="toggleNightMode()"><span style="font-size:16px">${infoData.nightMode?'☀️':'🌙'}</span><span>${infoData.nightMode?'日間模式':'夜間模式'}</span></button>`;
+  h+=`<button class="sync-toggle" onclick="importFromSheet()"><span style="font-size:16px">🔄</span><span>從 Google 試算表更新行程</span></button>`;
   h+=`<div class="info-card"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="width:8px;height:8px;border-radius:50%;background:#639922;display:inline-block;flex-shrink:0"></span><span style="font-family:var(--font-display);font-size:13px;font-weight:500;color:#3B6D11">Firebase 雲端同步已啟用</span></div><div style="font-size:12px;color:var(--blue-600);line-height:1.5">照片與行程即時同步，兩支手機都看得到</div></div>`;
   document.getElementById('bodyContent').innerHTML=h;
   lockAll();
@@ -1866,14 +2002,16 @@ function removeWishPhoto(pi){
   save();renderWishDetailInPlace(cid,iid);
 }
 
-function openEdit(i){editIdx=i;isNew=false;const p=data[currentDay][i];showModal(p.time,p.name,p.desc,p.note||'',p.type,p.map,p.photo,false);}
-function openNew(){editIdx=null;isNew=true;showModal('','','','','food','','',true);}
+function openEdit(i){editIdx=i;isNew=false;showModal(data[currentDay][i],false);}
+function openNew(){editIdx=null;isNew=true;showModal({time:'',name:'',desc:'',note:'',type:'food',map:'',photo:'',hours:'',transport:'',introUrl:''},true);}
 
-function showModal(time,name,desc,note,type,map,photo,isNewMode){
+function showModal(p,isNewMode){
+  p=p||{};
+  const time=p.time||'',name=p.name||'',desc=p.desc||'',note=p.note||'',type=p.type||'food',map=p.map||'',photo=p.photo||'',hours=p.hours||'',transport=p.transport||'',introUrl=p.introUrl||'';
   const app=document.getElementById('app');
   const old=app.querySelector('.overlay');if(old)old.remove();
   const ov=document.createElement('div');ov.className='overlay';
-  ov.innerHTML=`<div class="modal"><div class="modal-title">${isNewMode?'＋ 新增地點':'✏️ 編輯地點'}</div><div class="field-lbl">時間</div><input class="minput" id="m-time" type="time" value="${esc(time)}"/><div class="field-lbl">地點名稱</div><input class="minput" id="m-name" value="${esc(name)}" placeholder="地點名稱"/><div class="field-lbl">簡短描述</div><input class="minput" id="m-desc" value="${esc(desc)}" placeholder="一行簡介"/><div class="field-lbl">備注（可多行）</div><textarea class="mtextarea" id="m-note" placeholder="例如：要排隊、記得帶現金、推薦必點 xx...">${esc(note)}</textarea><div class="field-lbl">類別</div><select class="mselect" id="m-type">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}"${k===type?' selected':''}>${v}</option>`).join('')}</select><div class="field-lbl">Google Maps 連結</div><input class="minput" id="m-map" value="${esc(map)}" placeholder="貼入 Google Maps 網址"/><div class="field-lbl">照片</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">${photo?`<img id="m-photo-preview" src="${esc(photo)}" style="width:60px;height:44px;object-fit:cover;border-radius:8px;border:0.5px solid var(--blue-200)"/>`:`<div id="m-photo-preview" class="mphoto-prev" style="width:60px;height:44px;background:#EBF4FF;border-radius:8px;border:0.5px solid var(--blue-200);display:flex;align-items:center;justify-content:center;font-size:18px">🏙</div>`}<label class="mphoto-upload" style="flex:1;padding:10px;background:#EBF4FF;border-radius:var(--radius-sm);border:0.5px dashed var(--blue-400);text-align:center;font-size:13px;color:var(--blue-600);cursor:pointer" for="m-photo-file">📷 ${photo?'換一張照片':'從相簿上傳'}<input type="file" id="m-photo-file" accept="image/*" style="display:none" onchange="handleModalPhoto(event)"/></label></div><input type="hidden" id="m-photo" value="${esc(photo)}"/><div class="modal-btns">${!isNewMode?`<button class="mbtn mbtn-del" onclick="deletePlace()">刪除</button>`:''}<button class="mbtn mbtn-cancel" onclick="closeModal()">取消</button><button class="mbtn mbtn-save" onclick="savePlace()">儲存</button></div></div>`;
+  ov.innerHTML=`<div class="modal"><div class="modal-title">${isNewMode?'＋ 新增地點':'✏️ 編輯地點'}</div><div class="field-lbl">時間（可填範圍，例 14:00-20:00）</div><input class="minput" id="m-time" value="${esc(time)}" placeholder="14:00 或 14:00-20:00"/><div class="field-lbl">地點名稱</div><input class="minput" id="m-name" value="${esc(name)}" placeholder="地點名稱"/><div class="field-lbl">營業時間（可留空）</div><input class="minput" id="m-hours" value="${esc(hours)}" placeholder="例如 10:00-20:00"/><div class="field-lbl">簡短描述</div><input class="minput" id="m-desc" value="${esc(desc)}" placeholder="一行簡介"/><div class="field-lbl">備注 / 價格（可多行，可留空）</div><textarea class="mtextarea" id="m-note" placeholder="例如：要排隊、記得帶現金、推薦必點 xx...">${esc(note)}</textarea><div class="field-lbl">交通方式（可多行，可留空）</div><textarea class="mtextarea" id="m-transport" placeholder="例如：搭地鐵 5 號線往光化門方向，鐘路3街站下車...">${esc(transport)}</textarea><div class="field-lbl">類別</div><select class="mselect" id="m-type">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}"${k===type?' selected':''}>${v}</option>`).join('')}</select><div class="field-lbl">Google Maps 連結</div><input class="minput" id="m-map" value="${esc(map)}" placeholder="貼入 Google Maps 網址"/><div class="field-lbl">介紹網址（可留空）</div><input class="minput" id="m-introurl" value="${esc(introUrl)}" placeholder="官網 / 部落格 / IG 介紹連結"/><div class="field-lbl">照片</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">${photo?`<img id="m-photo-preview" src="${esc(photo)}" style="width:60px;height:44px;object-fit:cover;border-radius:8px;border:0.5px solid var(--blue-200)"/>`:`<div id="m-photo-preview" class="mphoto-prev" style="width:60px;height:44px;background:#EBF4FF;border-radius:8px;border:0.5px solid var(--blue-200);display:flex;align-items:center;justify-content:center;font-size:18px">🏙</div>`}<label class="mphoto-upload" style="flex:1;padding:10px;background:#EBF4FF;border-radius:var(--radius-sm);border:0.5px dashed var(--blue-400);text-align:center;font-size:13px;color:var(--blue-600);cursor:pointer" for="m-photo-file">📷 ${photo?'換一張照片':'從相簿上傳'}<input type="file" id="m-photo-file" accept="image/*" style="display:none" onchange="handleModalPhoto(event)"/></label></div><input type="hidden" id="m-photo" value="${esc(photo)}"/><div class="modal-btns">${!isNewMode?`<button class="mbtn mbtn-del" onclick="deletePlace()">刪除</button>`:''}<button class="mbtn mbtn-cancel" onclick="closeModal()">取消</button><button class="mbtn mbtn-save" onclick="savePlace()">儲存</button></div></div>`;
   app.appendChild(ov);
   lockAll();
 }
@@ -1888,10 +2026,13 @@ function savePlace(){
   const type=document.getElementById('m-type').value;
   const map=document.getElementById('m-map').value.trim();
   const photo=document.getElementById('m-photo').value;
+  const hours=document.getElementById('m-hours').value.trim();
+  const transport=document.getElementById('m-transport').value.trim();
+  const introUrl=document.getElementById('m-introurl').value.trim();
   if(!name){alert('請輸入地點名稱');return;}
-  if(isNew){data[currentDay].push({id:nextId++,time,name,desc,note,type,map,photo});}
-  else{data[currentDay][editIdx]={...data[currentDay][editIdx],time,name,desc,note,type,map,photo};}
-  data[currentDay].sort((a,b)=>a.time.localeCompare(b.time));
+  if(isNew){data[currentDay].push({id:nextId++,time,name,desc,note,type,map,photo,hours,transport,introUrl});}
+  else{data[currentDay][editIdx]={...data[currentDay][editIdx],time,name,desc,note,type,map,photo,hours,transport,introUrl};}
+  data[currentDay].sort((a,b)=>timeKey(a.time).localeCompare(timeKey(b.time)));
   window._fbSave();closeModal();renderItinerary();
 }
 
