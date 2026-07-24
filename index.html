@@ -1306,7 +1306,7 @@ window.resetBg=resetBg;
 
 // ═══ Google 試算表同步（單向：表 → App，手動、要按才動）═══
 // 把「行程」分頁「發布到網路 → CSV」後，將網址貼在下面這行的引號裡：
-let SHEET_CSV_URL = "";
+let SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTHcN-wVNzw7rjO3B8gBtWnN7YWg9iwJDqUAp4EthKUPQJ1zuNSZhnlxQOAwksluw/pub?gid=998782303&single=true&output=csv";
 
 function parseCSV(text){
   const rows=[];let row=[],cur='',inQ=false;
@@ -1337,44 +1337,41 @@ function importFromSheet(){
 }
 
 function applySheetRows(rows){
-  if(!rows||rows.length<2){alert('試算表看起來沒有資料。');return;}
-  const header=rows[0].map(h=>(h||'').trim());
+  if(!rows||!rows.length){alert('試算表看起來沒有資料。');return;}
+  // 自動找出真正的標題列（含「地點」與「天」的那一列，跳過最上方的大標題）
+  let hi=rows.findIndex(r=>r&&r.some(c=>(c||'').includes('地點'))&&r.some(c=>(c||'').includes('天')));
+  if(hi<0)hi=rows.findIndex(r=>r&&r.some(c=>(c||'').includes('地點')));
+  if(hi<0)hi=0;
+  const header=rows[hi].map(h=>(h||'').trim());
   const col=kw=>header.findIndex(h=>h.includes(kw));
-  const idx={
-    day:col('天'),
-    time:col('時間'),
-    name:col('地點'),
-    hours:col('營業'),
-    desc:col('描述'),
-    note:(col('備註')>=0?col('備註'):col('備注')),
-    transport:col('交通'),
-    map:col('地圖'),
-    intro:col('介紹'),
-    type:col('類別')
-  };
-  if(idx.day<0||idx.name<0){alert('找不到「天」或「地點名稱」欄位，請確認標題列名稱。');return;}
+  const idx={day:col('天'),time:col('時間'),name:col('地點'),hours:col('營業'),desc:col('描述'),note:(col('備註')>=0?col('備註'):col('備注')),transport:col('交通'),map:col('地圖'),intro:col('介紹'),type:col('類別')};
+  if(idx.name<0){alert('找不到「地點名稱」欄位，請確認標題列。');return;}
   const REV={'美食':'food','打卡景點':'sight','景點':'sight','購物':'shop','交通':'transit','住宿':'stay'};
   const cleanTime=raw=>(raw||'').split(/\n+/).map(s=>s.replace(/\s*(上午|下午|AM|PM|am|pm)\s*/g,'').trim()).filter(Boolean).join('-');
   const get=(row,k)=>idx[k]>=0?((row[idx[k]]||'').trim()):'';
-  const byDay={};
-  for(let r=1;r<rows.length;r++){
+  const byDay={}; let lastDay=1, lastItem=null;
+  for(let r=hi+1;r<rows.length;r++){
     const row=rows[r];if(!row)continue;
-    const dayNum=parseInt(get(row,'day'),10);
+    let dn=parseInt(get(row,'day'),10); if(dn)lastDay=dn; else dn=lastDay;
     const name=get(row,'name');
-    if(!dayNum||!name)continue;
-    const di=dayNum-1;
-    if(di<0||di>=window.DAYS.length)continue;
-    let map=get(row,'map');
-    if(!map)map='https://maps.google.com/?q='+encodeURIComponent(name);
+    if(!name){
+      // 沒有地點名稱的列：把它的交通方式 / 備註併入上一個地點，避免資料遺失
+      if(lastItem){
+        const t=get(row,'transport'); if(t)lastItem.transport=(lastItem.transport?lastItem.transport+'\n':'')+t;
+        const nt=get(row,'note'); if(nt)lastItem.note=(lastItem.note?lastItem.note+'\n':'')+nt;
+      }
+      continue;
+    }
+    const di=dn-1; if(di<0||di>=window.DAYS.length)continue;
+    let map=get(row,'map'); if(!map)map='https://maps.google.com/?q='+encodeURIComponent(name);
     const item={id:'s'+di+'_'+r,time:cleanTime(get(row,'time')),name,hours:get(row,'hours'),desc:get(row,'desc'),note:get(row,'note'),transport:get(row,'transport'),type:(REV[get(row,'type')]||'sight'),map,introUrl:get(row,'intro'),photo:''};
-    (byDay[di]=byDay[di]||[]).push(item);
+    (byDay[di]=byDay[di]||[]).push(item); lastItem=item;
   }
   let count=0;
   for(let di=0;di<window.DAYS.length;di++){
     const news=byDay[di]||[];
     const olds=window.data[di]||[];
     news.forEach(ni=>{const m=olds.find(oi=>oi.name===ni.name);if(m&&m.photo)ni.photo=m.photo;});
-    news.sort((a,b)=>timeKey(a.time).localeCompare(timeKey(b.time)));
     window.data[di]=news;count+=news.length;
   }
   window._fbSave();
