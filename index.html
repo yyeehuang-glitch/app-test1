@@ -2017,6 +2017,7 @@ window.applyBg = applyBg;
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const fbConfig = {
   apiKey: "AIzaSyCIOLBhCJnzfxReb6jOm-xB18C6oODaLhw",
@@ -2030,6 +2031,7 @@ const fbConfig = {
 
 const fbApp = initializeApp(fbConfig);
 const db = getDatabase(fbApp);
+const auth = getAuth(fbApp);
 
 // Bump this when the built-in defaults change and should overwrite the cloud copy once.
 const DATA_VERSION = 4; // v4 = Seoul 8 days (2026/09/18-25)
@@ -2127,6 +2129,9 @@ function attachListeners(){
 }
 
 async function boot(){
+  // Sign in anonymously first so the database rules can require an authenticated
+  // user (blocks anonymous internet scanners) while the app stays login-free.
+  try{ await signInAnonymously(auth); }catch(e){ console.warn('anon sign-in failed', e); }
   let v=0;
   try{
     const vs=await get(ref(db,'yongbros/version'));
