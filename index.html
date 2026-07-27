@@ -275,6 +275,14 @@
     .it-hours { font-size: 12px; color: var(--blue-600); white-space: nowrap; flex-shrink: 0; }
     .it-time-sep { opacity: 0.55; margin: 0; line-height: 1; }
     .app.night .it-hours { color: var(--muted); }
+    /* 住宿:訂單截圖清單 + 底部按鈕列 */
+    .hotel-foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; margin-top: 12px; }
+    .hotel-shots { display: flex; flex-direction: column; gap: 5px; align-items: flex-start; flex: 1; min-width: 0; }
+    .hotel-shot-row { display: flex; align-items: center; gap: 6px; max-width: 100%; }
+    .hotel-shot-name { font-size: 12px; color: var(--blue-600); cursor: pointer; text-decoration: underline; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px; }
+    .hotel-shot-del { background: transparent; border: none; color: #A32D2D; font-size: 13px; cursor: pointer; padding: 0 4px; line-height: 1; }
+    .hotel-shot-add { font-size: 12px; color: var(--blue-600); cursor: pointer; padding: 4px 0; display: inline-block; }
+    .app.night .hotel-shot-name, .app.night .hotel-shot-add { color: #9FC5FF; }
     .it-desc { font-size: 12px; color: var(--blue-600); line-height: 1.5; margin-bottom: 5px; }
     .it-note {
       font-size: 12px;
@@ -1307,6 +1315,7 @@ window.resetBg=resetBg;
 // ═══ Google 試算表同步（單向：表 → App，手動、要按才動）═══
 // 把「行程」分頁「發布到網路 → CSV」後，將網址貼在下面這行的引號裡：
 let SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTHcN-wVNzw7rjO3B8gBtWnN7YWg9iwJDqUAp4EthKUPQJ1zuNSZhnlxQOAwksluw/pub?gid=998782303&single=true&output=csv";
+let SHEET_HOTEL_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTHcN-wVNzw7rjO3B8gBtWnN7YWg9iwJDqUAp4EthKUPQJ1zuNSZhnlxQOAwksluw/pub?gid=1734768985&single=true&output=csv";
 
 function parseCSV(text){
   const rows=[];let row=[],cur='',inQ=false;
@@ -1328,16 +1337,25 @@ function parseCSV(text){
 }
 
 function importFromSheet(){
-  if(!SHEET_CSV_URL){alert('尚未設定 Google 試算表網址。\n請把「行程」分頁發布成 CSV 的網址給我，我幫你設定好就能用。');return;}
-  if(!confirm('要從 Google 試算表更新行程嗎？\n\n⚠️ 這會用試算表的內容「覆蓋」目前的行程。\n（已上傳的照片會盡量依地點名稱保留）'))return;
-  const url=SHEET_CSV_URL+(SHEET_CSV_URL.includes('?')?'&':'?')+'_t='+Date.now();
-  fetch(url).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
-    .then(txt=>applySheetRows(parseCSV(txt)))
-    .catch(e=>alert('讀取失敗，請確認網址正確、且已「發布到網路」。\n\n'+e));
+  if(!SHEET_CSV_URL){alert('尚未設定 Google 試算表網址。');return;}
+  if(!confirm('要從 Google 試算表更新「行程 + 住宿」嗎？\n\n⚠️ 這會用試算表的內容「覆蓋」目前的行程與住宿。\n（已上傳的照片、訂單截圖會盡量依名稱保留）'))return;
+  const bust=u=>u+(u.includes('?')?'&':'?')+'_t='+Date.now();
+  const getText=u=>fetch(bust(u)).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text();});
+  Promise.all([
+    getText(SHEET_CSV_URL),
+    SHEET_HOTEL_CSV_URL?getText(SHEET_HOTEL_CSV_URL):Promise.resolve(null)
+  ]).then(([itinTxt,hotelTxt])=>{
+    const nPlaces=applySheetRows(parseCSV(itinTxt));
+    let nHotels=0;
+    if(hotelTxt) nHotels=applyHotels(parseHotelCSV(parseCSV(hotelTxt)));
+    window._fbSave();
+    rerenderCurrent();
+    alert('已從試算表更新 ✅\n行程 '+nPlaces+' 個地點'+(SHEET_HOTEL_CSV_URL?('、住宿 '+nHotels+' 間'):''));
+  }).catch(e=>alert('讀取失敗，請確認網址正確、且已「發布到網路」。\n\n'+e));
 }
 
 function applySheetRows(rows){
-  if(!rows||!rows.length){alert('試算表看起來沒有資料。');return;}
+  if(!rows||!rows.length)return 0;
   // 自動找出真正的標題列（含「地點」與「天」的那一列，跳過最上方的大標題）
   let hi=rows.findIndex(r=>r&&r.some(c=>(c||'').includes('地點'))&&r.some(c=>(c||'').includes('天')));
   if(hi<0)hi=rows.findIndex(r=>r&&r.some(c=>(c||'').includes('地點')));
@@ -1345,7 +1363,7 @@ function applySheetRows(rows){
   const header=rows[hi].map(h=>(h||'').trim());
   const col=kw=>header.findIndex(h=>h.includes(kw));
   const idx={day:col('天'),time:col('時間'),name:col('地點'),hours:col('營業'),desc:col('描述'),note:(col('備註')>=0?col('備註'):col('備注')),transport:col('交通'),map:col('地圖'),intro:col('介紹'),type:col('類別')};
-  if(idx.name<0){alert('找不到「地點名稱」欄位，請確認標題列。');return;}
+  if(idx.name<0)return 0;
   const REV={'美食':'food','打卡景點':'sight','景點':'sight','購物':'shop','交通':'transit','住宿':'stay'};
   const cleanTime=raw=>(raw||'').split(/\n+/).map(s=>s.replace(/\s*(上午|下午|AM|PM|am|pm)\s*/g,'').trim()).filter(Boolean).join('-');
   const get=(row,k)=>idx[k]>=0?((row[idx[k]]||'').trim()):'';
@@ -1371,12 +1389,55 @@ function applySheetRows(rows){
   for(let di=0;di<window.DAYS.length;di++){
     const news=byDay[di]||[];
     const olds=window.data[di]||[];
-    news.forEach(ni=>{const m=olds.find(oi=>oi.name===ni.name);if(m&&m.photo)ni.photo=m.photo;});
+    news.forEach(ni=>{
+      const m=olds.find(oi=>oi.name===ni.name);
+      if(m){
+        if(m.photo)ni.photo=m.photo;
+        ['time','hours','desc','note','transport','introUrl'].forEach(k=>{ if(!ni[k]&&m[k])ni[k]=m[k]; });
+      }
+    });
     window.data[di]=news;count+=news.length;
   }
-  window._fbSave();
-  renderItinerary();
-  alert('已從試算表更新行程 ✅（共 '+count+' 個地點）');
+  return count;
+}
+
+// 解析住宿分頁（直式:一格 key、一格 value；以「住宿N」當每間起點）
+function parseHotelCSV(rows){
+  const hotels=[]; let cur=null, lastKey=null;
+  const norm=s=>(s||'').trim();
+  (rows||[]).forEach(r=>{
+    if(!r)return;
+    const a=norm(r[0]), b=norm(r[1]);
+    if(/^住宿\s*\d+/.test(a)){ cur={name:b,address:'',checkInDate:'',checkOutDate:'',checkIn:'',checkOut:'',note:'',bookingUrl:'',naverUrl:'',mapUrl:'',shots:[]}; hotels.push(cur); lastKey='name'; return; }
+    if(!cur)return;
+    if(a===''){ if(b&&lastKey==='note')cur.note=(cur.note?cur.note+'\n':'')+b; return; }
+    if(a.includes('地址')){cur.address=b;lastKey='address';}
+    else if(a.includes('訂單')||a.includes('訂房')){cur.bookingUrl=b;lastKey='bookingUrl';}
+    else if(a.includes('導航2')||a.toLowerCase().includes('google')){cur.mapUrl=b;lastKey='mapUrl';}
+    else if(a.includes('導航')||a.toLowerCase().includes('naver')){cur.naverUrl=b;lastKey='naverUrl';}
+    else if(a.includes('入住')){cur.checkInDate=b;lastKey='checkInDate';}
+    else if(a.includes('退')){cur.checkOutDate=b;lastKey='checkOutDate';}
+    else if(a.includes('備注')||a.includes('備註')){cur.note=(cur.note?cur.note+'\n':'')+b;lastKey='note';}
+    else lastKey=null;
+  });
+  return hotels;
+}
+
+// 套用住宿（覆蓋 infoData.hotels；截圖與 App 內填的 Check-in/out 時間依名稱/位置保留）
+function applyHotels(newHotels){
+  if(!newHotels||!newHotels.length)return 0;
+  const olds=Array.isArray(infoData.hotels)?infoData.hotels:[];
+  const byName={}; olds.forEach(o=>{ if(o&&o.name){ byName[o.name]=(byName[o.name]===undefined)?o:null; } });
+  newHotels.forEach((nh,i)=>{
+    const m=(nh.name&&byName[nh.name])?byName[nh.name]:olds[i];
+    if(m){
+      if(m.shots&&m.shots.length)nh.shots=m.shots;
+      // 表格空白的欄位 → 保留 App 內既有值（不被清空）
+      ['address','checkInDate','checkOutDate','checkIn','checkOut','note','bookingUrl','naverUrl','mapUrl'].forEach(k=>{ if(!nh[k]&&m[k])nh[k]=m[k]; });
+    }
+  });
+  infoData.hotels=newHotels;
+  return newHotels.length;
 }
 window.importFromSheet=importFromSheet;
 
@@ -1593,7 +1654,7 @@ function renderInfo(){
   h+=infoData.sos.map((r,i)=>`<div class="sos-row"><input style="border:none;border-bottom:1px solid rgba(240,149,149,0.5);background:transparent;font-size:13px;color:#791F1F;outline:none;width:90px;" value="${r.label}" onchange="infoData.sos[${i}].label=this.value;save();" /><input style="border:none;border-bottom:1px solid rgba(240,149,149,0.5);background:transparent;font-size:13px;font-weight:500;color:#A32D2D;outline:none;text-align:right;width:140px;" value="${r.val}" onchange="infoData.sos[${i}].val=this.value;save();" /></div>`).join('');
   h+=`</div>`;
   h+=`<button class="night-toggle" onclick="toggleNightMode()"><span style="font-size:16px">${infoData.nightMode?'☀️':'🌙'}</span><span>${infoData.nightMode?'日間模式':'夜間模式'}</span></button>`;
-  h+=`<button class="sync-toggle" onclick="importFromSheet()"><span style="font-size:16px">🔄</span><span>從 Google 試算表更新行程</span></button>`;
+  h+=`<button class="sync-toggle" onclick="importFromSheet()"><span style="font-size:16px">🔄</span><span>從 Google 試算表更新行程 + 住宿</span></button>`;
   h+=`<div class="info-card"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span style="width:8px;height:8px;border-radius:50%;background:#639922;display:inline-block;flex-shrink:0"></span><span style="font-family:var(--font-display);font-size:13px;font-weight:500;color:#3B6D11">Firebase 雲端同步已啟用</span></div><div style="font-size:12px;color:var(--blue-600);line-height:1.5">照片與行程即時同步，兩支手機都看得到</div></div>`;
   document.getElementById('bodyContent').innerHTML=h;
   lockAll();
@@ -1616,18 +1677,80 @@ function renderHotel(){
   const inStyle=`border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-body);font-size:13px;font-weight:500;color:var(--blue-900);outline:none;text-align:right;width:170px;`;
   const nameStyle=`border:none;border-bottom:1.5px solid var(--blue-200);background:transparent;font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--blue-900);outline:none;width:100%;padding:4px 0;`;
   let h='';
+  const editing=!!window.editMode;
   infoData.hotels.forEach((ht,i)=>{
     h+=`<div class="info-card" style="position:relative">`;
     h+=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div class="info-title" style="margin:0">住宿${infoData.hotels.length>1?' '+(i+1):''}</div><button class="edit-only" onclick="deleteHotel(${i})" style="border:none;background:transparent;color:#A32D2D;font-size:12px;cursor:pointer;padding:2px 6px">刪除</button></div>`;
-    h+=`<div style="margin-bottom:10px"><div style="font-size:11px;color:var(--blue-600);margin-bottom:3px">名稱</div><input style="${nameStyle}" value="${ht.name}" onchange="infoData.hotels[${i}].name=this.value;save();" placeholder="住宿名稱" /></div>`;
-    h+=`<div class="info-row"><span class="info-l">住宿區間</span><input style="${inStyle}" value="${ht.range}" onchange="infoData.hotels[${i}].range=this.value;save();" placeholder="2025/06/10 – 06/16" /></div>`;
-    h+=`<div class="info-row"><span class="info-l">📅 入住 · Check-in</span><input style="${inStyle}" value="${ht.checkIn}" onchange="infoData.hotels[${i}].checkIn=this.value;save();" placeholder="15:00" /></div>`;
-    h+=`<div class="info-row"><span class="info-l">📅 退房 · Check-out</span><input style="${inStyle}" value="${ht.checkOut}" onchange="infoData.hotels[${i}].checkOut=this.value;save();" placeholder="11:00" /></div>`;
+    if(editing){
+      h+=`<div style="margin-bottom:10px"><div style="font-size:11px;color:var(--blue-600);margin-bottom:3px">名稱</div><input style="${nameStyle}" value="${esc(ht.name||'')}" onchange="infoData.hotels[${i}].name=this.value;save();" placeholder="住宿名稱" /></div>`;
+      h+=`<div class="info-row"><span class="info-l">📍 地址</span><input style="${inStyle}" value="${esc(ht.address||'')}" onchange="infoData.hotels[${i}].address=this.value;save();" placeholder="地址" /></div>`;
+      h+=`<div class="info-row"><span class="info-l">入住日期</span><input style="${inStyle}" value="${esc(ht.checkInDate||'')}" onchange="infoData.hotels[${i}].checkInDate=this.value;save();" placeholder="9/18" /></div>`;
+      h+=`<div class="info-row"><span class="info-l">退宿日期</span><input style="${inStyle}" value="${esc(ht.checkOutDate||'')}" onchange="infoData.hotels[${i}].checkOutDate=this.value;save();" placeholder="9/20" /></div>`;
+      h+=`<div class="info-row"><span class="info-l">🕒 Check-in 時間</span><input style="${inStyle}" value="${esc(ht.checkIn||'')}" onchange="infoData.hotels[${i}].checkIn=this.value;save();" placeholder="15:00" /></div>`;
+      h+=`<div class="info-row"><span class="info-l">🕒 Check-out 時間</span><input style="${inStyle}" value="${esc(ht.checkOut||'')}" onchange="infoData.hotels[${i}].checkOut=this.value;save();" placeholder="11:00" /></div>`;
+      h+=`<div style="margin:10px 0"><div style="font-size:11px;color:var(--blue-600);margin-bottom:4px">📝 備注</div><textarea class="mtextarea" style="min-height:60px" onchange="infoData.hotels[${i}].note=this.value;save();" placeholder="備注（可多行）">${esc(ht.note||'')}</textarea></div>`;
+      h+=`<div class="info-row"><span class="info-l">🧾 訂單連結</span><input style="${inStyle}" value="${esc(ht.bookingUrl||'')}" onchange="infoData.hotels[${i}].bookingUrl=this.value;save();" placeholder="訂單網址" /></div>`;
+      h+=`<div class="info-row"><span class="info-l">🗺️ NAVER 地圖</span><input style="${inStyle}" value="${esc(ht.naverUrl||'')}" onchange="infoData.hotels[${i}].naverUrl=this.value;save();" placeholder="NAVER 網址" /></div>`;
+      h+=`<div class="info-row"><span class="info-l">🧭 Google 地圖</span><input style="${inStyle}" value="${esc(ht.mapUrl||'')}" onchange="infoData.hotels[${i}].mapUrl=this.value;save();" placeholder="Google 網址" /></div>`;
+    } else {
+      if(ht.name)h+=`<div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--blue-900);margin-bottom:8px">${esc(ht.name)}</div>`;
+      if(ht.address)h+=`<div class="info-row"><span class="info-l">📍 地址</span><span class="info-r" style="text-align:right;max-width:210px">${esc(ht.address)}</span></div>`;
+      const dateStr=[ht.checkInDate,ht.checkOutDate].filter(Boolean).join(' – ');
+      if(dateStr)h+=`<div class="info-row"><span class="info-l">📅 住宿日期</span><span class="info-r">${esc(dateStr)}</span></div>`;
+      if(ht.checkIn||ht.checkOut)h+=`<div class="info-row"><span class="info-l">🕒 Check-in / out</span><span class="info-r">${esc(ht.checkIn||'—')} · ${esc(ht.checkOut||'—')}</span></div>`;
+      if(ht.note)h+=`<div class="it-note" style="margin-top:8px;white-space:pre-wrap">📝 ${esc(ht.note)}</div>`;
+    }
+    // 底部：左下角截圖清單、右下角圓鈕（只顯示有填的）
+    const shots=ht.shots||[];
+    const shotList=shots.map((s,si)=>`<div class="hotel-shot-row"><span class="hotel-shot-name" onclick="viewHotelShot(${i},${si})">📄 ${esc(s.name)}</span><button class="hotel-shot-del edit-only" onclick="delHotelShot(${i},${si})">✕</button></div>`).join('');
+    const btns=[];
+    if(ht.bookingUrl)btns.push(`<a class="ic-btn" href="${esc(ht.bookingUrl)}" target="_blank" rel="noopener">🧾</a>`);
+    if(ht.naverUrl)btns.push(`<a class="ic-btn" href="${esc(ht.naverUrl)}" target="_blank" rel="noopener">🗺️</a>`);
+    if(ht.mapUrl)btns.push(`<a class="ic-btn" href="${esc(ht.mapUrl)}" target="_blank" rel="noopener">🧭</a>`);
+    h+=`<div class="hotel-foot"><div class="hotel-shots">${shotList}<label class="hotel-shot-add edit-only" for="hotelShot_${i}">＋ 上傳訂單截圖<input type="file" id="hotelShot_${i}" accept="image/*" style="display:none" onchange="handleHotelShot(event,${i})"/></label></div><div class="it-actions">${btns.join('')}</div></div>`;
     h+=`</div>`;
   });
   h+=`<button class="edit-only" onclick="addHotel()" style="width:100%;padding:14px;margin-top:4px;background:#EBF4FF;border:1px dashed var(--blue-400);border-radius:var(--radius-lg);font-family:var(--font-display);font-size:14px;font-weight:500;color:var(--blue-600);cursor:pointer">＋ 新增住宿</button>`;
   document.getElementById('bodyContent').innerHTML=h;
   lockAll();
+}
+
+// 上傳訂單截圖：命名 → 壓縮（1200px / JPEG 0.75，文字仍清楚且體積小）→ 存 Firebase
+function handleHotelShot(e,hi){
+  const file=e.target.files[0];if(!file)return;
+  let nm=prompt('這張截圖的名稱？（例如：訂房確認、Airbnb 訂單）',(file.name||'截圖').replace(/\.[^.]+$/,''));
+  if(nm===null){e.target.value='';return;}
+  nm=(nm||'').trim()||'未命名截圖';
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    const img=new Image();
+    img.onload=function(){
+      const canvas=document.createElement('canvas');
+      const MAX=1200;let w=img.width,h=img.height;
+      if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      const compressed=canvas.toDataURL('image/jpeg',0.75);
+      if(!infoData.hotels[hi].shots)infoData.hotels[hi].shots=[];
+      infoData.hotels[hi].shots.push({name:nm,data:compressed});
+      save();renderHotel();
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);e.target.value='';
+}
+function viewHotelShot(hi,si){
+  const ht=infoData.hotels[hi];if(!ht||!ht.shots||!ht.shots[si])return;
+  const s=ht.shots[si];
+  const app=document.getElementById('app');const old=app.querySelector('.overlay');if(old)old.remove();
+  const ov=document.createElement('div');ov.className='overlay';ov.style.alignItems='center';
+  ov.innerHTML=`<div style="max-width:100%;text-align:center"><div style="color:#fff;margin-bottom:10px;font-size:14px;font-weight:500">${esc(s.name)}</div><img src="${s.data}" style="max-width:100%;max-height:68vh;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.4)"/><div style="margin-top:14px"><button class="mbtn mbtn-cancel" style="max-width:200px;margin:0 auto" onclick="closeModal()">關閉</button></div></div>`;
+  ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
+  app.appendChild(ov);
+}
+function delHotelShot(hi,si){
+  if(!confirm('確定刪除這張截圖？'))return;
+  if(infoData.hotels[hi]&&infoData.hotels[hi].shots){infoData.hotels[hi].shots.splice(si,1);save();renderHotel();}
 }
 
 function addHotel(){
