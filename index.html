@@ -1362,7 +1362,7 @@ function applySheetRows(rows){
   if(hi<0)hi=0;
   const header=rows[hi].map(h=>(h||'').trim());
   const col=kw=>header.findIndex(h=>h.includes(kw));
-  const idx={day:col('天'),time:col('時間'),name:col('地點'),hours:col('營業'),desc:col('描述'),note:(col('備註')>=0?col('備註'):col('備注')),transport:col('交通'),map:col('地圖'),intro:col('介紹'),type:col('類別')};
+  const idx={day:col('天'),time:col('時間'),name:col('地點'),hours:col('營業'),desc:col('描述'),note:(col('備註')>=0?col('備註'):col('備注')),transport:col('交通'),map:col('地圖'),intro:col('介紹'),type:col('類別'),booking:col('訂單'),naver:header.findIndex(h=>h.toUpperCase().includes('NAVER'))};
   if(idx.name<0)return 0;
   const REV={'美食':'food','打卡景點':'sight','景點':'sight','購物':'shop','交通':'transit','住宿':'stay'};
   const cleanTime=raw=>(raw||'').split(/\n+/).map(s=>s.replace(/\s*(上午|下午|AM|PM|am|pm)\s*/g,'').trim()).filter(Boolean).join('-');
@@ -1382,7 +1382,7 @@ function applySheetRows(rows){
     }
     const di=dn-1; if(di<0||di>=window.DAYS.length)continue;
     let map=get(row,'map'); if(!map)map='https://maps.google.com/?q='+encodeURIComponent(name);
-    const item={id:'s'+di+'_'+r,time:cleanTime(get(row,'time')),name,hours:get(row,'hours'),desc:get(row,'desc'),note:get(row,'note'),transport:get(row,'transport'),type:(REV[get(row,'type')]||'sight'),map,introUrl:get(row,'intro'),photo:''};
+    const item={id:'s'+di+'_'+r,time:cleanTime(get(row,'time')),name,hours:get(row,'hours'),desc:get(row,'desc'),note:get(row,'note'),transport:get(row,'transport'),type:(REV[get(row,'type')]||'sight'),map,introUrl:get(row,'intro'),bookingUrl:get(row,'booking'),naverUrl:get(row,'naver'),photo:''};
     (byDay[di]=byDay[di]||[]).push(item); lastItem=item;
   }
   let count=0;
@@ -1393,7 +1393,7 @@ function applySheetRows(rows){
       const m=olds.find(oi=>oi.name===ni.name);
       if(m){
         if(m.photo)ni.photo=m.photo;
-        ['time','hours','desc','note','transport','introUrl'].forEach(k=>{ if(!ni[k]&&m[k])ni[k]=m[k]; });
+        ['time','hours','desc','note','transport','introUrl','bookingUrl','naverUrl'].forEach(k=>{ if(!ni[k]&&m[k])ni[k]=m[k]; });
       }
     });
     window.data[di]=news;count+=news.length;
@@ -1560,6 +1560,9 @@ function tripMonth(){
   const m=(infoData.dateRange||'').match(/\d{4}[.\/-](\d{1,2})[.\/-]/);
   return m?parseInt(m[1],10):9;
 }
+// NAVER 綠色 N 圖示（和 Google 紅色定位針、訂單收據 明顯區分）
+const NAVER_ICON='<span style="color:#03C75A;font-weight:900;font-family:Arial,sans-serif;font-size:14px">N</span>';
+
 function fmtTimeHTML(t){
   t=(t||'').trim();
   const parts=t.split(/\s*[-~–—到]\s*/);
@@ -1578,10 +1581,12 @@ function renderItinerary(){
     const transHTML=p.transport?`<div class="it-note it-transport">🚗 ${esc(p.transport)}</div>`:'';
     const hoursHTML=p.hours?`<span class="it-hours">${esc(p.hours)}</span>`:'';
     const introHTML=p.introUrl?`<a class="ic-btn" href="${esc(p.introUrl)}" target="_blank" rel="noopener">🔗</a>`:'';
+    const bookingHTML=p.bookingUrl?`<a class="ic-btn" href="${esc(p.bookingUrl)}" target="_blank" rel="noopener">🧾</a>`:'';
+    const naverHTML=p.naverUrl?`<a class="ic-btn" href="${esc(p.naverUrl)}" target="_blank" rel="noopener">${NAVER_ICON}</a>`:'';
     const photoHTML=p.photo
       ?`<div style="position:relative"><img class="it-photo" src="${esc(p.photo)}" onerror="this.style.display='none'" loading="lazy"/><label class="edit-only" style="position:absolute;bottom:6px;right:6px;background:rgba(255,255,255,0.82);border-radius:12px;padding:3px 8px;font-size:10px;color:var(--blue-600);cursor:pointer" for="placePhoto_${i}">🔄 換圖<input type="file" id="placePhoto_${i}" accept="image/*" style="display:none" onchange="handlePlacePhoto(event,${i})"/></label></div>`
       :`<label class="it-photo-placeholder edit-only" for="placePhoto_${i}" style="cursor:pointer">📷 上傳照片<input type="file" id="placePhoto_${i}" accept="image/*" style="display:none" onchange="handlePlacePhoto(event,${i})"/></label>`;
-    h+=`<div class="it-card"><div class="it-row"><div class="it-time-col">${fmtTimeHTML(p.time)}<div class="it-dot"></div></div><div class="it-body">${photoHTML}<div class="it-name-row"><div class="it-name">${esc(p.name)}</div>${hoursHTML}</div><div class="it-desc">${esc(p.desc)}</div>${noteHTML}${transHTML}<div class="it-foot"><span class="tag ${tagCls(p.type)}">${tagName(p.type)}</span><div class="it-actions"><span class="ic-btn edit-btn edit-only" onclick="openEdit(${i})">✏️</span>${introHTML}<a class="ic-btn" href="${esc(p.map||'#')}" target="_blank" rel="noopener">🧭</a></div></div></div></div></div>`;
+    h+=`<div class="it-card"><div class="it-row"><div class="it-time-col">${fmtTimeHTML(p.time)}<div class="it-dot"></div></div><div class="it-body">${photoHTML}<div class="it-name-row"><div class="it-name">${esc(p.name)}</div>${hoursHTML}</div><div class="it-desc">${esc(p.desc)}</div>${noteHTML}${transHTML}<div class="it-foot"><span class="tag ${tagCls(p.type)}">${tagName(p.type)}</span><div class="it-actions"><span class="ic-btn edit-btn edit-only" onclick="openEdit(${i})">✏️</span>${introHTML}${bookingHTML}${naverHTML}<a class="ic-btn" href="${esc(p.map||'#')}" target="_blank" rel="noopener">📍</a></div></div></div></div></div>`;
   });
   h+=`<div class="add-btn edit-only" onclick="openNew()">＋ 新增地點</div>`;
   document.getElementById('bodyContent').innerHTML=h;
@@ -1695,9 +1700,10 @@ function renderHotel(){
     } else {
       if(ht.name)h+=`<div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--blue-900);margin-bottom:8px">${esc(ht.name)}</div>`;
       if(ht.address)h+=`<div class="info-row"><span class="info-l">📍 地址</span><span class="info-r" style="text-align:right;max-width:210px">${esc(ht.address)}</span></div>`;
-      const dateStr=[ht.checkInDate,ht.checkOutDate].filter(Boolean).join(' – ');
-      if(dateStr)h+=`<div class="info-row"><span class="info-l">📅 住宿日期</span><span class="info-r">${esc(dateStr)}</span></div>`;
-      if(ht.checkIn||ht.checkOut)h+=`<div class="info-row"><span class="info-l">🕒 Check-in / out</span><span class="info-r">${esc(ht.checkIn||'—')} · ${esc(ht.checkOut||'—')}</span></div>`;
+      const dateStr=[ht.checkInDate,ht.checkOutDate].filter(Boolean).join(' – ')||(ht.range||'');
+      if(dateStr)h+=`<div class="info-row"><span class="info-l">📅 住宿區間</span><span class="info-r">${esc(dateStr)}</span></div>`;
+      if(ht.checkIn)h+=`<div class="info-row"><span class="info-l">📅 入住 · Check-in</span><span class="info-r">${esc(ht.checkIn)}</span></div>`;
+      if(ht.checkOut)h+=`<div class="info-row"><span class="info-l">📅 退房 · Check-out</span><span class="info-r">${esc(ht.checkOut)}</span></div>`;
       if(ht.note)h+=`<div class="it-note" style="margin-top:8px;white-space:pre-wrap">📝 ${esc(ht.note)}</div>`;
     }
     // 底部：左下角截圖清單、右下角圓鈕（只顯示有填的）
@@ -1705,8 +1711,8 @@ function renderHotel(){
     const shotList=shots.map((s,si)=>`<div class="hotel-shot-row"><span class="hotel-shot-name" onclick="viewHotelShot(${i},${si})">📄 ${esc(s.name)}</span><button class="hotel-shot-del edit-only" onclick="delHotelShot(${i},${si})">✕</button></div>`).join('');
     const btns=[];
     if(ht.bookingUrl)btns.push(`<a class="ic-btn" href="${esc(ht.bookingUrl)}" target="_blank" rel="noopener">🧾</a>`);
-    if(ht.naverUrl)btns.push(`<a class="ic-btn" href="${esc(ht.naverUrl)}" target="_blank" rel="noopener">🗺️</a>`);
-    if(ht.mapUrl)btns.push(`<a class="ic-btn" href="${esc(ht.mapUrl)}" target="_blank" rel="noopener">🧭</a>`);
+    if(ht.naverUrl)btns.push(`<a class="ic-btn" href="${esc(ht.naverUrl)}" target="_blank" rel="noopener">${NAVER_ICON}</a>`);
+    if(ht.mapUrl)btns.push(`<a class="ic-btn" href="${esc(ht.mapUrl)}" target="_blank" rel="noopener">📍</a>`);
     h+=`<div class="hotel-foot"><div class="hotel-shots">${shotList}<label class="hotel-shot-add edit-only" for="hotelShot_${i}">＋ 上傳訂單截圖<input type="file" id="hotelShot_${i}" accept="image/*" style="display:none" onchange="handleHotelShot(event,${i})"/></label></div><div class="it-actions">${btns.join('')}</div></div>`;
     h+=`</div>`;
   });
@@ -2123,15 +2129,15 @@ function removeWishPhoto(pi){
 }
 
 function openEdit(i){editIdx=i;isNew=false;showModal(data[currentDay][i],false);}
-function openNew(){editIdx=null;isNew=true;showModal({time:'',name:'',desc:'',note:'',type:'food',map:'',photo:'',hours:'',transport:'',introUrl:''},true);}
+function openNew(){editIdx=null;isNew=true;showModal({time:'',name:'',desc:'',note:'',type:'food',map:'',photo:'',hours:'',transport:'',introUrl:'',bookingUrl:'',naverUrl:''},true);}
 
 function showModal(p,isNewMode){
   p=p||{};
-  const time=p.time||'',name=p.name||'',desc=p.desc||'',note=p.note||'',type=p.type||'food',map=p.map||'',photo=p.photo||'',hours=p.hours||'',transport=p.transport||'',introUrl=p.introUrl||'';
+  const time=p.time||'',name=p.name||'',desc=p.desc||'',note=p.note||'',type=p.type||'food',map=p.map||'',photo=p.photo||'',hours=p.hours||'',transport=p.transport||'',introUrl=p.introUrl||'',bookingUrl=p.bookingUrl||'',naverUrl=p.naverUrl||'';
   const app=document.getElementById('app');
   const old=app.querySelector('.overlay');if(old)old.remove();
   const ov=document.createElement('div');ov.className='overlay';
-  ov.innerHTML=`<div class="modal"><div class="modal-title">${isNewMode?'＋ 新增地點':'✏️ 編輯地點'}</div><div class="field-lbl">時間（可填範圍，例 14:00-20:00）</div><input class="minput" id="m-time" value="${esc(time)}" placeholder="14:00 或 14:00-20:00"/><div class="field-lbl">地點名稱</div><input class="minput" id="m-name" value="${esc(name)}" placeholder="地點名稱"/><div class="field-lbl">營業時間（可留空）</div><input class="minput" id="m-hours" value="${esc(hours)}" placeholder="例如 10:00-20:00"/><div class="field-lbl">簡短描述</div><input class="minput" id="m-desc" value="${esc(desc)}" placeholder="一行簡介"/><div class="field-lbl">備注 / 價格（可多行，可留空）</div><textarea class="mtextarea" id="m-note" placeholder="例如：要排隊、記得帶現金、推薦必點 xx...">${esc(note)}</textarea><div class="field-lbl">交通方式（可多行，可留空）</div><textarea class="mtextarea" id="m-transport" placeholder="例如：搭地鐵 5 號線往光化門方向，鐘路3街站下車...">${esc(transport)}</textarea><div class="field-lbl">類別</div><select class="mselect" id="m-type">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}"${k===type?' selected':''}>${v}</option>`).join('')}</select><div class="field-lbl">Google Maps 連結</div><input class="minput" id="m-map" value="${esc(map)}" placeholder="貼入 Google Maps 網址"/><div class="field-lbl">介紹網址（可留空）</div><input class="minput" id="m-introurl" value="${esc(introUrl)}" placeholder="官網 / 部落格 / IG 介紹連結"/><div class="field-lbl">照片</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">${photo?`<img id="m-photo-preview" src="${esc(photo)}" style="width:60px;height:44px;object-fit:cover;border-radius:8px;border:0.5px solid var(--blue-200)"/>`:`<div id="m-photo-preview" class="mphoto-prev" style="width:60px;height:44px;background:#EBF4FF;border-radius:8px;border:0.5px solid var(--blue-200);display:flex;align-items:center;justify-content:center;font-size:18px">🏙</div>`}<label class="mphoto-upload" style="flex:1;padding:10px;background:#EBF4FF;border-radius:var(--radius-sm);border:0.5px dashed var(--blue-400);text-align:center;font-size:13px;color:var(--blue-600);cursor:pointer" for="m-photo-file">📷 ${photo?'換一張照片':'從相簿上傳'}<input type="file" id="m-photo-file" accept="image/*" style="display:none" onchange="handleModalPhoto(event)"/></label></div><input type="hidden" id="m-photo" value="${esc(photo)}"/><div class="modal-btns">${!isNewMode?`<button class="mbtn mbtn-del" onclick="deletePlace()">刪除</button>`:''}<button class="mbtn mbtn-cancel" onclick="closeModal()">取消</button><button class="mbtn mbtn-save" onclick="savePlace()">儲存</button></div></div>`;
+  ov.innerHTML=`<div class="modal"><div class="modal-title">${isNewMode?'＋ 新增地點':'✏️ 編輯地點'}</div><div class="field-lbl">時間（可填範圍，例 14:00-20:00）</div><input class="minput" id="m-time" value="${esc(time)}" placeholder="14:00 或 14:00-20:00"/><div class="field-lbl">地點名稱</div><input class="minput" id="m-name" value="${esc(name)}" placeholder="地點名稱"/><div class="field-lbl">營業時間（可留空）</div><input class="minput" id="m-hours" value="${esc(hours)}" placeholder="例如 10:00-20:00"/><div class="field-lbl">簡短描述</div><input class="minput" id="m-desc" value="${esc(desc)}" placeholder="一行簡介"/><div class="field-lbl">備注 / 價格（可多行，可留空）</div><textarea class="mtextarea" id="m-note" placeholder="例如：要排隊、記得帶現金、推薦必點 xx...">${esc(note)}</textarea><div class="field-lbl">交通方式（可多行，可留空）</div><textarea class="mtextarea" id="m-transport" placeholder="例如：搭地鐵 5 號線往光化門方向，鐘路3街站下車...">${esc(transport)}</textarea><div class="field-lbl">類別</div><select class="mselect" id="m-type">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}"${k===type?' selected':''}>${v}</option>`).join('')}</select><div class="field-lbl">Google Maps 連結</div><input class="minput" id="m-map" value="${esc(map)}" placeholder="貼入 Google Maps 網址"/><div class="field-lbl">介紹網址（可留空）</div><input class="minput" id="m-introurl" value="${esc(introUrl)}" placeholder="官網 / 部落格 / IG 介紹連結"/><div class="field-lbl">🧾 訂單連結（可留空）</div><input class="minput" id="m-booking" value="${esc(bookingUrl)}" placeholder="Trip/Agoda 訂單網址"/><div class="field-lbl">NAVER 地圖（可留空）</div><input class="minput" id="m-naver" value="${esc(naverUrl)}" placeholder="NAVER 地圖網址"/><div class="field-lbl">照片</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">${photo?`<img id="m-photo-preview" src="${esc(photo)}" style="width:60px;height:44px;object-fit:cover;border-radius:8px;border:0.5px solid var(--blue-200)"/>`:`<div id="m-photo-preview" class="mphoto-prev" style="width:60px;height:44px;background:#EBF4FF;border-radius:8px;border:0.5px solid var(--blue-200);display:flex;align-items:center;justify-content:center;font-size:18px">🏙</div>`}<label class="mphoto-upload" style="flex:1;padding:10px;background:#EBF4FF;border-radius:var(--radius-sm);border:0.5px dashed var(--blue-400);text-align:center;font-size:13px;color:var(--blue-600);cursor:pointer" for="m-photo-file">📷 ${photo?'換一張照片':'從相簿上傳'}<input type="file" id="m-photo-file" accept="image/*" style="display:none" onchange="handleModalPhoto(event)"/></label></div><input type="hidden" id="m-photo" value="${esc(photo)}"/><div class="modal-btns">${!isNewMode?`<button class="mbtn mbtn-del" onclick="deletePlace()">刪除</button>`:''}<button class="mbtn mbtn-cancel" onclick="closeModal()">取消</button><button class="mbtn mbtn-save" onclick="savePlace()">儲存</button></div></div>`;
   app.appendChild(ov);
   lockAll();
 }
@@ -2149,9 +2155,11 @@ function savePlace(){
   const hours=document.getElementById('m-hours').value.trim();
   const transport=document.getElementById('m-transport').value.trim();
   const introUrl=document.getElementById('m-introurl').value.trim();
+  const bookingUrl=document.getElementById('m-booking').value.trim();
+  const naverUrl=document.getElementById('m-naver').value.trim();
   if(!name){alert('請輸入地點名稱');return;}
-  if(isNew){data[currentDay].push({id:nextId++,time,name,desc,note,type,map,photo,hours,transport,introUrl});}
-  else{data[currentDay][editIdx]={...data[currentDay][editIdx],time,name,desc,note,type,map,photo,hours,transport,introUrl};}
+  if(isNew){data[currentDay].push({id:nextId++,time,name,desc,note,type,map,photo,hours,transport,introUrl,bookingUrl,naverUrl});}
+  else{data[currentDay][editIdx]={...data[currentDay][editIdx],time,name,desc,note,type,map,photo,hours,transport,introUrl,bookingUrl,naverUrl};}
   data[currentDay].sort((a,b)=>timeKey(a.time).localeCompare(timeKey(b.time)));
   window._fbSave();closeModal();renderItinerary();
 }
