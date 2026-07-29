@@ -286,6 +286,9 @@
     .hotel-shot-del { background: transparent; border: none; color: #A32D2D; font-size: 13px; cursor: pointer; padding: 0 4px; line-height: 1; }
     .hotel-shot-add { font-size: 12px; color: var(--blue-600); cursor: pointer; padding: 4px 0; display: inline-block; }
     .app.night .hotel-shot-name, .app.night .hotel-shot-add { color: #9FC5FF; }
+    /* 住宿名稱：日間深色墨、夜間亮色（不然會和深色背景重疊看不清） */
+    .hotel-name-display { color: var(--blue-900); }
+    .app.night .hotel-name-display { color: #EFEBFF !important; }
     .it-desc { font-size: 12px; color: var(--blue-600); line-height: 1.5; margin-bottom: 5px; }
     .it-note {
       font-size: 12px;
@@ -1365,7 +1368,9 @@ function applySheetRows(rows){
   if(hi<0)hi=0;
   const header=rows[hi].map(h=>(h||'').trim());
   const col=kw=>header.findIndex(h=>h.includes(kw));
-  const idx={day:col('天'),time:col('時間'),name:col('地點'),hours:col('營業'),desc:col('描述'),note:(col('備註')>=0?col('備註'):col('備注')),transport:col('交通'),map:col('地圖'),intro:col('介紹'),type:col('類別'),booking:col('訂單'),naver:header.findIndex(h=>h.toUpperCase().includes('NAVER'))};
+  // 依序比對多個關鍵字，找到第一個符合的欄位（相容新舊標題、有無 emoji 都可）
+  const colAny=(...kws)=>{ for(const k of kws){ const i=header.findIndex(h=>h.toUpperCase().includes(k.toUpperCase())); if(i>=0)return i; } return -1; };
+  const idx={day:col('天'),time:col('時間'),name:col('地點'),hours:col('營業'),desc:col('描述'),note:(col('備註')>=0?col('備註'):col('備注')),transport:col('交通'),map:colAny('地圖','Google Maps','Google'),intro:col('介紹'),type:col('類別'),booking:colAny('預定','預訂','訂單','訂房'),naver:colAny('NAVER')};
   if(idx.name<0)return 0;
   const REV={'美食':'food','打卡景點':'sight','景點':'sight','購物':'shop','交通':'transit','住宿':'stay'};
   const cleanTime=raw=>(raw||'').split(/\n+/).map(s=>s.replace(/\s*(上午|下午|AM|PM|am|pm)\s*/g,'').trim()).filter(Boolean).join('-');
@@ -1384,7 +1389,8 @@ function applySheetRows(rows){
       continue;
     }
     const di=dn-1; if(di<0||di>=window.DAYS.length)continue;
-    let map=get(row,'map'); if(!map)map='https://maps.google.com/?q='+encodeURIComponent(name);
+    // 只有 Excel「地圖」欄真的有填才存 map；空白就留空，右下角 📍 才不會出現
+    let map=get(row,'map');
     const item={id:'s'+di+'_'+r,time:cleanTime(get(row,'time')),name,hours:get(row,'hours'),desc:get(row,'desc'),note:get(row,'note'),transport:get(row,'transport'),type:(REV[get(row,'type')]||'sight'),map,introUrl:get(row,'intro'),bookingUrl:get(row,'booking'),naverUrl:get(row,'naver'),photo:'',src:'sheet'};
     (byDay[di]=byDay[di]||[]).push(item); lastItem=item;
   }
@@ -1396,7 +1402,7 @@ function applySheetRows(rows){
       const m=olds.find(oi=>oi.name===ni.name);
       if(m){
         if(m.photo)ni.photo=m.photo;
-        ['time','hours','desc','note','transport','introUrl','bookingUrl','naverUrl'].forEach(k=>{ if(!ni[k]&&m[k])ni[k]=m[k]; });
+        ['time','hours','desc','note','transport','introUrl','bookingUrl','naverUrl','map'].forEach(k=>{ if(!ni[k]&&m[k])ni[k]=m[k]; });
       }
     });
     // 聰明合併：保留「網頁自己加的、Excel 沒有的」地點
@@ -1413,6 +1419,9 @@ function applySheetRows(rows){
 function parseHotelCSV(rows){
   const hotels=[]; let cur=null, lastKey=null;
   const norm=s=>(s||'').trim();
+  // Excel 的入住/退宿列：日期在第 2 欄、時間（HH:MM）在後面的欄位 → 掃整列找出時間
+  const findTime=row=>{ for(let k=1;k<row.length;k++){ const m=norm(row[k]).match(/\d{1,2}:\d{2}/); if(m)return m[0]; } return ''; };
+  const dateOnly=s=>norm(s).replace(/\d{1,2}:\d{2}/,'').trim();
   (rows||[]).forEach(r=>{
     if(!r)return;
     const a=norm(r[0]), b=norm(r[1]);
@@ -1423,8 +1432,8 @@ function parseHotelCSV(rows){
     else if(a.includes('訂單')||a.includes('訂房')){cur.bookingUrl=b;lastKey='bookingUrl';}
     else if(a.includes('導航2')||a.toLowerCase().includes('google')){cur.mapUrl=b;lastKey='mapUrl';}
     else if(a.includes('導航')||a.toLowerCase().includes('naver')){cur.naverUrl=b;lastKey='naverUrl';}
-    else if(a.includes('入住')){cur.checkInDate=b;lastKey='checkInDate';}
-    else if(a.includes('退')){cur.checkOutDate=b;lastKey='checkOutDate';}
+    else if(a.includes('入住')){cur.checkInDate=dateOnly(b);const t=findTime(r);if(t)cur.checkIn=t;lastKey='checkInDate';}
+    else if(a.includes('退')){cur.checkOutDate=dateOnly(b);const t=findTime(r);if(t)cur.checkOut=t;lastKey='checkOutDate';}
     else if(a.includes('備注')||a.includes('備註')){cur.note=(cur.note?cur.note+'\n':'')+b;lastKey='note';}
     else lastKey=null;
   });
@@ -1597,10 +1606,13 @@ function renderItinerary(){
     const introHTML=p.introUrl?`<a class="ic-btn" href="${esc(p.introUrl)}" target="_blank" rel="noopener">🔗</a>`:'';
     const bookingHTML=p.bookingUrl?`<a class="ic-btn" href="${esc(p.bookingUrl)}" target="_blank" rel="noopener">🧾</a>`:'';
     const naverHTML=p.naverUrl?`<a class="ic-btn" href="${esc(p.naverUrl)}" target="_blank" rel="noopener">${NAVER_ICON}</a>`:'';
+    // 只有真的填了 Google 地圖才顯示 📍（舊資料自動生成的 maps.google.com/?q= 視為未填）
+    const hasMap=p.map&&!/^https?:\/\/maps\.google\.com\/\?q=/.test(p.map);
+    const mapHTML=hasMap?`<a class="ic-btn" href="${esc(p.map)}" target="_blank" rel="noopener">📍</a>`:'';
     const photoHTML=p.photo
       ?`<div style="position:relative"><img class="it-photo" src="${esc(p.photo)}" onerror="this.style.display='none'" loading="lazy"/><label class="edit-only" style="position:absolute;bottom:6px;right:6px;background:rgba(255,255,255,0.82);border-radius:12px;padding:3px 8px;font-size:10px;color:var(--blue-600);cursor:pointer" for="placePhoto_${i}">🔄 換圖<input type="file" id="placePhoto_${i}" accept="image/*" style="display:none" onchange="handlePlacePhoto(event,${i})"/></label></div>`
       :`<label class="it-photo-placeholder edit-only" for="placePhoto_${i}" style="cursor:pointer">📷 上傳照片<input type="file" id="placePhoto_${i}" accept="image/*" style="display:none" onchange="handlePlacePhoto(event,${i})"/></label>`;
-    h+=`<div class="it-card"><div class="it-row"><div class="it-time-col">${fmtTimeHTML(p.time)}<div class="it-dot"></div>${p.src==='app'?'<div class="it-local-dot" title="網頁新增，Excel 沒有"></div>':''}</div><div class="it-body">${photoHTML}<div class="it-name-row"><div class="it-name">${esc(p.name)}</div>${hoursHTML}</div><div class="it-desc">${esc(p.desc)}</div>${noteHTML}${transHTML}<div class="it-foot"><span class="tag ${tagCls(p.type)}">${tagName(p.type)}</span><div class="it-actions"><span class="ic-btn edit-btn edit-only" onclick="openEdit(${i})">✏️</span>${bookingHTML}${naverHTML}<a class="ic-btn" href="${esc(p.map||'#')}" target="_blank" rel="noopener">📍</a>${introHTML}</div></div></div></div></div>`;
+    h+=`<div class="it-card"><div class="it-row"><div class="it-time-col">${fmtTimeHTML(p.time)}<div class="it-dot"></div>${p.src==='app'?'<div class="it-local-dot" title="網頁新增，Excel 沒有"></div>':''}</div><div class="it-body">${photoHTML}<div class="it-name-row"><div class="it-name">${esc(p.name)}</div>${hoursHTML}</div><div class="it-desc">${esc(p.desc)}</div>${noteHTML}${transHTML}<div class="it-foot"><span class="tag ${tagCls(p.type)}">${tagName(p.type)}</span><div class="it-actions"><span class="ic-btn edit-btn edit-only" onclick="openEdit(${i})">✏️</span>${bookingHTML}${naverHTML}${mapHTML}${introHTML}</div></div></div></div></div>`;
   });
   h+=`<div class="add-btn edit-only" onclick="openNew()">＋ 新增地點</div>`;
   document.getElementById('bodyContent').innerHTML=h;
@@ -1712,7 +1724,7 @@ function renderHotel(){
       h+=`<div class="info-row"><span class="info-l">🗺️ NAVER 地圖</span><input style="${inStyle}" value="${esc(ht.naverUrl||'')}" onchange="infoData.hotels[${i}].naverUrl=this.value;save();" placeholder="NAVER 網址" /></div>`;
       h+=`<div class="info-row"><span class="info-l">🧭 Google 地圖</span><input style="${inStyle}" value="${esc(ht.mapUrl||'')}" onchange="infoData.hotels[${i}].mapUrl=this.value;save();" placeholder="Google 網址" /></div>`;
     } else {
-      if(ht.name)h+=`<div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--blue-900);margin-bottom:8px">${esc(ht.name)}</div>`;
+      if(ht.name)h+=`<div class="hotel-name-display" style="font-family:var(--font-display);font-size:16px;font-weight:600;margin-bottom:8px">${esc(ht.name)}</div>`;
       if(ht.address)h+=`<div class="info-row"><span class="info-l">📍 地址</span><span class="info-r" style="text-align:right;max-width:210px">${esc(ht.address)}</span></div>`;
       const dateStr=[ht.checkInDate,ht.checkOutDate].filter(Boolean).join(' – ')||(ht.range||'');
       if(dateStr)h+=`<div class="info-row"><span class="info-l">📅 住宿區間</span><span class="info-r">${esc(dateStr)}</span></div>`;
