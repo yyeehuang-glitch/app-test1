@@ -1154,6 +1154,29 @@
     .exp-in-amt { width:80px; }
     .exp-add-btn { font-family:var(--font-display); font-weight:600; font-size:13px; color:#fff; background:#6FBF73; border:none; border-radius:10px; padding:7px 17px; cursor:pointer; box-shadow:0 3px 0 #4f9a54; }
     .exp-addday { display:block; width:100%; margin-top:12px; padding:12px; font-family:var(--font-display); font-weight:600; font-size:14px; color:#6FBF73; background:var(--blue-50); border:2px dashed #8FCB7E; border-radius:14px; cursor:pointer; }
+    .exp-form-day { font-size:11.5px; color:#8A7A5E; margin-bottom:9px; font-weight:500; }
+    .exp-form-r1 { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:9px; flex-wrap:wrap; }
+    .exp-person-toggle { display:inline-flex; gap:5px; }
+    .exp-share-toggle { display:inline-flex; gap:4px; }
+    .exp-sbtn { font-family:var(--font-body); font-size:12px; color:#8A7A5E; background:var(--blue-50); border:1.5px solid var(--blue-200); border-radius:14px; padding:4px 11px; cursor:pointer; }
+    .exp-sbtn.on { background:#6FBF73; color:#fff; border-color:#6FBF73; }
+    .exp-form-owe { display:flex; align-items:center; gap:7px; margin-top:9px; flex-wrap:wrap; }
+    .exp-in-owe { width:110px; }
+    .exp-owe-hint { font-size:10.5px; color:#B4A98C; }
+    .exp-settlebox { margin-top:12px; }
+    .exp-sb-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+    .exp-sb-title { font-family:var(--font-display); font-size:14px; font-weight:600; color:#4A3D2B; }
+    .exp-sb-tbl { width:100%; border-collapse:collapse; font-family:var(--font-body); font-size:12px; }
+    .exp-sb-tbl td { padding:5px 2px; color:#5A4B36; border-bottom:1px solid rgba(120,100,60,0.10); }
+    .exp-sb-tbl td.r { text-align:right; font-weight:500; color:#4A3D2B; }
+    .exp-sb-tbl .exp-sb-settled td { color:#9AA98C; }
+    .exp-sb-net { margin-top:9px; text-align:right; font-family:var(--font-display); font-size:14px; font-weight:600; color:#E0982A; }
+    .exp-sb-net.done { color:#6FBF73; }
+    .exp-sb-empty { font-size:12px; color:#B4A98C; padding:4px 0; }
+    .app.night .exp-form-day, .app.night .exp-sb-empty, .app.night .exp-owe-hint { color:#9FB8D9; }
+    .app.night .exp-sb-title, .app.night .exp-sb-tbl td.r { color:#E8F1FC; }
+    .app.night .exp-sb-tbl td { color:#C9D9F0; }
+    .app.night .exp-sbtn { background:#22344F; color:#C9D9F0; border-color:rgba(95,168,255,0.3); }
     .app.night .exp-tbl td, .app.night .exp-day-t, .app.night .exp-subt, .app.night .exp-sum-spent { color:#E8F1FC; }
     .app.night .exp-tbl th, .app.night .exp-day-d, .app.night .exp-f-lbl, .app.night .exp-owe, .app.night .exp-sum-total { color:#9FB8D9; }
     .app.night .exp-sel, .app.night .exp-in { background:#22344F; color:#E8F1FC; border-color:rgba(95,168,255,0.3); }
@@ -1697,65 +1720,76 @@ function renderItinerary(){
   lockAll();
 }
 
-// ===== 記賬 (Expense tracker) — 取代原本的預算頁 =====
+// ===== 記賬 (Expense tracker) — 單日檢視，跟頂部日期膠囊 =====
 const EXP_PEOPLE={
   happy:{name:'Happy',pill:'#6FBF73',tint:'rgba(111,191,115,0.14)',subTint:'rgba(111,191,115,0.22)'},
   huang:{name:'Huang',pill:'#E0982A',tint:'rgba(233,166,43,0.15)',subTint:'rgba(233,166,43,0.24)'}
 };
 const EXP_CATS=[
-  {k:'餐飲',split:true},{k:'交通',split:true},{k:'住宿',split:true},{k:'門票',split:true},
-  {k:'周邊',split:false},{k:'穿搭',split:false},{k:'保養',split:false},{k:'伴手禮',split:false},{k:'其他',split:false}
+  {k:'餐飲',even:true},{k:'交通',even:true},{k:'住宿',even:true},{k:'門票',even:true},
+  {k:'周邊',even:false},{k:'穿搭',even:false},{k:'保養',even:false},{k:'伴手禮',even:false},{k:'其他',even:false}
 ];
-function expCatSplit(k){const c=EXP_CATS.find(c=>c.k===k);return c?c.split:true;}
+const SHARE_LABEL={even:'均攤',personal:'—',custom:'自訂'};
+function expCatShare(k){const c=EXP_CATS.find(c=>c.k===k);return (c&&c.even)?'even':'personal';}
 function ensureExpenses(){
   if(!budgetData||typeof budgetData!=='object')return;
   if(!Array.isArray(budgetData.expenses))budgetData.expenses=[];
-  if(!budgetData.maxDay||budgetData.maxDay<1)budgetData.maxDay=1;
 }
-// 結算：net>0 => Huang 欠 Happy；net<0 => Happy 欠 Huang（只算「均攤且未結」）
-function expBalance(){
-  let net=0;
-  budgetData.expenses.forEach(e=>{
-    if(e.split&&!e.settled){
-      const half=(e.amt||0)/2;
-      if(e.person==='happy')net+=half; else net-=half;
-    }
-  });
-  return Math.round(net);
-}
+// 相容舊資料（舊格式是 split:true/false）
+function expShare(e){ if(e.share)return e.share; return e.split?'even':'personal'; }
+function expOwe(e){ const s=expShare(e); if(s==='personal')return 0; if(s==='custom')return e.owe||0; return Math.round((e.amt||0)/2); }
+
 function renderBudget(){
   ensureExpenses();
-  const exps=budgetData.expenses;
+  const day=currentDay;
   const settleMode=!!window._expSettleMode;
-  const totalSpent=exps.reduce((s,e)=>s+(e.amt||0),0);
-  const total=budgetData.total||0;
-  const pct=total?Math.min(Math.round(totalSpent/total*100),100):0;
-  const net=expBalance();
-  const balText=net===0?'兩人已結清 🎉':(net>0?`Huang 欠 Happy ₩${net.toLocaleString()}`:`Happy 欠 Huang ₩${Math.abs(net).toLocaleString()}`);
   let h=`<div class="sec-lbl">記賬</div>`;
-  h+=`<div class="budget-card exp-sum">`;
-  h+=`<div class="exp-sum-top"><span class="exp-sum-spent">₩${totalSpent.toLocaleString()}</span><span class="exp-sum-total">/ 預算 ₩${total.toLocaleString()}</span></div>`;
-  h+=`<div class="bud-bar"><div class="bud-fill" style="width:${pct}%"></div></div>`;
-  h+=`<div class="exp-bal-row"><span class="exp-bal ${net===0?'done':''}">${balText}</span><button class="exp-settle-btn always-on${settleMode?' on':''}" onclick="toggleExpSettle()">${settleMode?'完成':'結清'}</button></div>`;
-  if(settleMode)h+=`<div class="exp-settle-hint">點下面「均攤」的項目打勾＝已還，改完再按「完成」</div>`;
-  h+=`</div>`;
-  const maxDay=budgetData.maxDay;
-  for(let d=0;d<maxDay;d++)h+=renderExpDay(d,settleMode);
-  h+=renderExpAddForm();
-  if(maxDay<DAYS.length)h+=`<button class="exp-addday always-on" onclick="expAddDay()">＋ 新增 DAY ${maxDay+1}</button>`;
+  h+=renderExpAddForm(day);
+  h+=renderExpDetail(day,settleMode);
+  h+=renderExpSettleBox(day,settleMode);
   document.getElementById('bodyContent').innerHTML=h;
   lockAll();
 }
-function renderExpDay(d,settleMode){
-  const dd=DAYS[d]||{n:String(d+1),d:''};
+function renderExpAddForm(day){
+  const dd=DAYS[day]||{n:String(day+1),d:''};
   const wk=(dd.d||'').replace(/^週/,'');
-  const dayExps=budgetData.expenses.filter(e=>e.day===d);
-  let h=`<div class="exp-day-hd"><div class="exp-day-t">DAY ${d+1}</div><div class="exp-day-d">${tripMonth()}月${dd.n}日　${wk}</div></div>`;
-  h+=`<div class="budget-card exp-card"><table class="exp-tbl"><colgroup><col class="c-p"><col class="c-c"><col class="c-k"><col class="c-a"><col class="c-s"><col class="c-r"></colgroup>`;
+  const lastP=window._expLastPerson||'happy';
+  const lastC=window._expLastCat||EXP_CATS[0].k;
+  window._expDraftPerson=lastP;
+  const draftShare=window._expDraftShare||expCatShare(lastC);
+  window._expDraftShare=draftShare;
+  const catOpts=EXP_CATS.map(c=>`<option value="${c.k}"${c.k===lastC?' selected':''}>${c.k}</option>`).join('');
+  const kws=[...new Set(budgetData.expenses.map(e=>e.kw).filter(Boolean))];
+  const kwOpts=kws.map(k=>`<option value="${esc(k)}"></option>`).join('');
+  const hp=lastP==='happy';
+  const sBtn=(s,label)=>`<button type="button" id="expS_${s}" class="exp-sbtn${draftShare===s?' on':''}" onclick="expPickShare('${s}')">${label}</button>`;
+  let h=`<div class="budget-card exp-form">`;
+  h+=`<div class="exp-form-day">記一筆 → DAY ${day+1} · ${tripMonth()}/${dd.n} ${wk}</div>`;
+  h+=`<div class="exp-form-r1">`;
+  h+=`<span class="exp-person-toggle">`;
+  h+=`<button type="button" id="expPH" class="exp-pbtn" style="${hp?'background:#6FBF73;color:#fff;border-color:#6FBF73':''}" onclick="expPickPerson('happy')">Happy</button>`;
+  h+=`<button type="button" id="expPU" class="exp-pbtn" style="${!hp?'background:#E0982A;color:#fff;border-color:#E0982A':''}" onclick="expPickPerson('huang')">Huang</button>`;
+  h+=`</span>`;
+  h+=`<span class="exp-share-toggle">${sBtn('even','均攤')}${sBtn('personal','個人')}${sBtn('custom','自訂')}</span>`;
+  h+=`</div>`;
+  h+=`<div class="exp-form-r2">`;
+  h+=`<select id="expCat" class="always-on exp-sel" onchange="expCatChanged()">${catOpts}</select>`;
+  h+=`<input id="expKw" class="always-on exp-in exp-in-kw" list="expKwList" placeholder="買了什麼" autocomplete="off"/>`;
+  h+=`<datalist id="expKwList">${kwOpts}</datalist>`;
+  h+=`<input id="expAmt" class="always-on exp-in exp-in-amt" type="number" inputmode="numeric" placeholder="₩ 金額"/>`;
+  h+=`<button type="button" class="exp-add-btn always-on" onclick="expAdd()">記</button>`;
+  h+=`</div>`;
+  h+=`<div class="exp-form-owe" id="expOweWrap" style="${draftShare==='custom'?'':'display:none'}"><span class="exp-f-lbl">對方欠</span><input id="expOwe" class="always-on exp-in exp-in-owe" type="number" inputmode="numeric" placeholder="₩ 欠多少"/><span class="exp-owe-hint">金額照填總額，這裡填要還的部分</span></div>`;
+  h+=`</div>`;
+  return h;
+}
+function renderExpDetail(day,settleMode){
+  const dayExps=budgetData.expenses.filter(e=>e.day===day);
+  let h=`<div class="budget-card exp-card"><table class="exp-tbl"><colgroup><col class="c-p"><col class="c-c"><col class="c-k"><col class="c-a"><col class="c-s"><col class="c-r"></colgroup>`;
   h+=`<thead><tr><th>購買人</th><th>類別</th><th>關鍵字</th><th class="r">金額</th><th class="ctr">算誰的</th><th>結果</th></tr></thead><tbody>`;
   h+=renderExpPersonRows(dayExps,'happy',settleMode);
   h+=renderExpPersonRows(dayExps,'huang',settleMode);
-  if(!dayExps.length)h+=`<tr><td colspan="6" class="exp-empty">還沒記帳，下面「記一筆」↓</td></tr>`;
+  if(!dayExps.length)h+=`<tr><td colspan="6" class="exp-empty">這天還沒記帳，上面「記一筆」↑</td></tr>`;
   h+=`</tbody></table></div>`;
   return h;
 }
@@ -1771,57 +1805,62 @@ function renderExpPersonRows(dayExps,person,settleMode){
 function renderExpRow(e,settleMode){
   const P=EXP_PEOPLE[e.person]||EXP_PEOPLE.happy;
   const settled=!!e.settled;
-  const splitCell=e.split?'均攤':'—';
+  const share=expShare(e);
+  const owe=expOwe(e);
+  const isShared=share!=='personal';
+  const shareCell=SHARE_LABEL[share]||'均攤';
   let resultCell;
-  if(!e.split){resultCell='<span class="exp-dash">—</span>';}
-  else if(settled){resultCell='<span class="exp-ok">✓ 已結</span>';}
+  if(!isShared){resultCell='<span class="exp-dash">—</span>';}
+  else if(settled){resultCell='<span class="exp-ok">✓已還</span>';}
   else{
-    const half=Math.round((e.amt||0)/2);
     const debtor=e.person==='happy'?'Huang':'Happy';
-    resultCell=`<span class="exp-owe">${debtor}還${half.toLocaleString()}</span>`;
+    resultCell=`<span class="exp-owe">${debtor}還${owe.toLocaleString()}</span>`;
   }
-  let rowClick='';let splitClick='';
-  if(settleMode&&e.split){
+  let rowClick='';let shareClick='';
+  if(settleMode&&isShared){
     rowClick=` onclick="expToggleSettled('${e.id}')" style="cursor:pointer"`;
-    resultCell=settled?'<span class="exp-ok">✓ 已結</span>':'<span class="exp-check">○ 點我</span>';
+    resultCell=settled?'<span class="exp-ok">✓已還</span>':'<span class="exp-check">○ 點我</span>';
   }else if(editMode){
     rowClick=` onclick="expDelete('${e.id}')" style="cursor:pointer"`;
-    splitClick=` onclick="event.stopPropagation();expToggleSplit('${e.id}')" style="cursor:pointer;text-decoration:underline dotted"`;
+    shareClick=` onclick="event.stopPropagation();expCycleShare('${e.id}')" style="cursor:pointer;text-decoration:underline dotted"`;
   }
   return `<tr class="exp-row${settled?' exp-settled':''}" style="background:${P.tint}"${rowClick}>`+
     `<td><span class="exp-chip" style="background:${P.pill}">${P.name}</span></td>`+
     `<td class="exp-cat">${esc(e.cat||'')}</td>`+
     `<td class="exp-kw">${esc(e.kw||'')}</td>`+
     `<td class="r exp-amt">${(e.amt||0).toLocaleString()}</td>`+
-    `<td class="ctr exp-split ${e.split?'is-share':''}"${splitClick}>${splitCell}</td>`+
+    `<td class="ctr exp-split ${isShared?'is-share':''}"${shareClick}>${shareCell}</td>`+
     `<td>${resultCell}</td></tr>`;
 }
-function renderExpAddForm(){
-  ensureExpenses();
-  const maxDay=budgetData.maxDay;
-  const lastP=window._expLastPerson||'happy';
-  const lastC=window._expLastCat||EXP_CATS[0].k;
-  window._expDraftPerson=lastP;
-  let dayOpts='';
-  for(let d=0;d<maxDay;d++)dayOpts+=`<option value="${d}"${d===maxDay-1?' selected':''}>DAY ${d+1}</option>`;
-  const catOpts=EXP_CATS.map(c=>`<option value="${c.k}"${c.k===lastC?' selected':''}>${c.k}</option>`).join('');
-  const kws=[...new Set(budgetData.expenses.map(e=>e.kw).filter(Boolean))];
-  const kwOpts=kws.map(k=>`<option value="${esc(k)}"></option>`).join('');
-  const hp=lastP==='happy';
-  let h=`<div class="budget-card exp-form">`;
-  h+=`<div class="exp-form-r1"><span class="exp-f-lbl">記一筆 · 天</span>`;
-  h+=`<select id="expDay" class="always-on exp-sel exp-sel-day">${dayOpts}</select>`;
-  h+=`<span class="exp-person-toggle">`;
-  h+=`<button type="button" id="expPH" class="exp-pbtn" style="${hp?'background:#6FBF73;color:#fff;border-color:#6FBF73':''}" onclick="expPickPerson('happy')">Happy</button>`;
-  h+=`<button type="button" id="expPU" class="exp-pbtn" style="${!hp?'background:#E0982A;color:#fff;border-color:#E0982A':''}" onclick="expPickPerson('huang')">Huang</button>`;
-  h+=`</span></div>`;
-  h+=`<div class="exp-form-r2">`;
-  h+=`<select id="expCat" class="always-on exp-sel">${catOpts}</select>`;
-  h+=`<input id="expKw" class="always-on exp-in exp-in-kw" list="expKwList" placeholder="買了什麼" autocomplete="off"/>`;
-  h+=`<datalist id="expKwList">${kwOpts}</datalist>`;
-  h+=`<input id="expAmt" class="always-on exp-in exp-in-amt" type="number" inputmode="numeric" placeholder="₩ 金額"/>`;
-  h+=`<button type="button" class="exp-add-btn always-on" onclick="expAdd()">記</button>`;
-  h+=`</div></div>`;
+function renderExpSettleBox(day,settleMode){
+  const dayExps=budgetData.expenses.filter(e=>e.day===day);
+  let huOwesHa=0,haOwesHu=0,settledAmt=0;
+  let hasShared=false;
+  dayExps.forEach(e=>{
+    if(expShare(e)==='personal')return;
+    hasShared=true;
+    const owe=expOwe(e);
+    if(e.settled){settledAmt+=owe;return;}
+    if(e.person==='happy')huOwesHa+=owe; else haOwesHu+=owe;
+  });
+  const net=huOwesHa-haOwesHu;
+  const HA='<span class="exp-chip" style="background:#6FBF73">Happy</span>';
+  const HU='<span class="exp-chip" style="background:#E0982A">Huang</span>';
+  let h=`<div class="budget-card exp-settlebox">`;
+  h+=`<div class="exp-sb-head"><span class="exp-sb-title">當天結算</span><button class="exp-settle-btn always-on${settleMode?' on':''}" onclick="toggleExpSettle()">${settleMode?'完成':'結清'}</button></div>`;
+  if(!hasShared){
+    h+=`<div class="exp-sb-empty">這天沒有均攤/自訂款項</div>`;
+  }else{
+    h+=`<table class="exp-sb-tbl">`;
+    if(huOwesHa>0)h+=`<tr><td>${HU} 還 ${HA}</td><td class="r">₩${huOwesHa.toLocaleString()}</td></tr>`;
+    if(haOwesHu>0)h+=`<tr><td>${HA} 還 ${HU}</td><td class="r">₩${haOwesHu.toLocaleString()}</td></tr>`;
+    if(settledAmt>0)h+=`<tr class="exp-sb-settled"><td>已還 ✓</td><td class="r">₩${settledAmt.toLocaleString()}</td></tr>`;
+    h+=`</table>`;
+    const netTxt=net===0?((huOwesHa+haOwesHu===0)?'當天已結清 🎉':'互相抵銷，不用還'):(net>0?`Huang 欠 Happy ₩${net.toLocaleString()}`:`Happy 欠 Huang ₩${Math.abs(net).toLocaleString()}`);
+    h+=`<div class="exp-sb-net ${net===0?'done':''}">${netTxt}</div>`;
+  }
+  if(settleMode)h+=`<div class="exp-settle-hint">點上面明細的均攤/自訂項目打勾＝已還（不會刪除）</div>`;
+  h+=`</div>`;
   return h;
 }
 function expPickPerson(p){
@@ -1832,33 +1871,44 @@ function expPickPerson(p){
     else{bu.style.cssText='background:#E0982A;color:#fff;border-color:#E0982A';bh.style.cssText='';}
   }
 }
+function expPickShare(s){
+  window._expDraftShare=s;
+  ['even','personal','custom'].forEach(x=>{const b=document.getElementById('expS_'+x);if(b)b.classList.toggle('on',x===s);});
+  const w=document.getElementById('expOweWrap');if(w)w.style.display=(s==='custom')?'':'none';
+}
+function expCatChanged(){
+  const cat=document.getElementById('expCat').value;
+  expPickShare(expCatShare(cat));
+}
 function expAdd(){
   ensureExpenses();
   const amtIn=document.getElementById('expAmt');
   const amt=parseInt(amtIn.value,10)||0;
   if(amt<=0){amtIn.focus();return;}
-  const day=parseInt(document.getElementById('expDay').value,10)||0;
   const person=window._expDraftPerson||'happy';
   const cat=document.getElementById('expCat').value;
   const kw=(document.getElementById('expKw').value||'').trim();
-  budgetData.expenses.push({id:genId('e_'),day:day,person:person,cat:cat,kw:kw,amt:amt,split:expCatSplit(cat),settled:false,settledDate:''});
-  window._expLastPerson=person;window._expLastCat=cat;
+  const share=window._expDraftShare||expCatShare(cat);
+  let owe=0;
+  if(share==='custom'){owe=parseInt((document.getElementById('expOwe')||{}).value,10)||0;}
+  else if(share==='even'){owe=Math.round(amt/2);}
+  budgetData.expenses.push({id:genId('e_'),day:currentDay,person:person,cat:cat,kw:kw,amt:amt,share:share,owe:owe,settled:false,settledDate:''});
+  window._expLastPerson=person;window._expLastCat=cat;window._expDraftShare=expCatShare(cat);
   save();renderBudget();
-}
-function expAddDay(){
-  ensureExpenses();
-  if(budgetData.maxDay<DAYS.length){budgetData.maxDay++;save();renderBudget();}
 }
 function toggleExpSettle(){window._expSettleMode=!window._expSettleMode;renderBudget();}
 function expToggleSettled(id){
   const e=budgetData.expenses.find(x=>x.id===id);if(!e)return;
   e.settled=!e.settled;
-  e.settledDate=e.settled?(tripMonth()+'/'+((DAYS[budgetData.maxDay-1]||{}).n||'')):'';
+  e.settledDate=e.settled?(tripMonth()+'/'+((DAYS[currentDay]||{}).n||'')):'';
   save();renderBudget();
 }
-function expToggleSplit(id){
+function expCycleShare(id){
   const e=budgetData.expenses.find(x=>x.id===id);if(!e)return;
-  e.split=!e.split; if(!e.split)e.settled=false;
+  const s=expShare(e);
+  e.share=(s==='personal')?'even':'personal';
+  if(e.share==='even')e.owe=Math.round((e.amt||0)/2);
+  if(e.share==='personal')e.settled=false;
   save();renderBudget();
 }
 function expDelete(id){
@@ -2476,8 +2526,8 @@ function buildDayPills(){
       />`;
     el.onclick=()=>{
       document.querySelectorAll('.day-pill').forEach(p=>p.classList.remove('active'));
-      el.classList.add('active');currentDay=i;window.currentDay=i;applyBg(currentDay);
-      if(currentTab==='itinerary')renderItinerary();
+      el.classList.add('active');currentDay=i;window.currentDay=i;applyBg(currentDay);window._expSettleMode=false;
+      rerenderCurrent();
     };
     scroll.appendChild(el);
   });
