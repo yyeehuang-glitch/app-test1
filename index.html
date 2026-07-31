@@ -1084,6 +1084,34 @@
       }
       .body { max-height: 60vh; }
     }
+
+    /* ===== 按鈕回饋感（純視覺/觸覺，無聲音） ===== */
+    /* 拿掉點擊灰框、消除點擊延遲、長按不跳選單 → 更像原生 App */
+    * { -webkit-tap-highlight-color: transparent; }
+    .tab, .nb-btn, .day-pill, .ic-btn, .add-btn, .mbtn, .sync-toggle,
+    .night-toggle, .topbar-bg-label, .topbar-edit-btn, .pack-check,
+    .pack-add-item, .pack-item-del, button, [onclick] {
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+    }
+    /* 按鈕按下：輕微縮小 + 變淡，放開回彈 → 有「按下去」的實體感 */
+    .tab, .nb-btn, .day-pill, .ic-btn, .add-btn, .mbtn, .sync-toggle,
+    .night-toggle, .topbar-bg-label, .topbar-edit-btn, .pack-add-item,
+    .pack-item-del, button {
+      transition: transform .08s ease, opacity .08s ease, filter .08s ease;
+    }
+    .tab:active, .nb-btn:active, .day-pill:active, .ic-btn:active,
+    .add-btn:active, .mbtn:active, .sync-toggle:active, .night-toggle:active,
+    .topbar-bg-label:active, .topbar-edit-btn:active, .pack-add-item:active,
+    .pack-item-del:active, button:active {
+      transform: scale(.95);
+      opacity: .8;
+    }
+    /* 底部導覽列圖示按下時也一起縮，回饋更明顯 */
+    .nb-btn:active .nb-icon { transform: scale(.9); }
+    .nb-icon { transition: transform .08s ease; }
+    /* 切換分頁時內容輕微淡入 */
+    @keyframes yb-fade { from { opacity: .35; transform: translateY(5px); } to { opacity: 1; transform: none; } }
   </style>
 </head>
 <body>
@@ -2211,7 +2239,15 @@ function switchTab(id,tabEl,nbIdx){
   else if(id==='budget')renderBudget();
   else if(id==='wish')renderWish();
   else renderInfo();
+  const bc=document.getElementById('bodyContent');
+  if(bc){ bc.style.animation='none'; void bc.offsetWidth; bc.style.animation='yb-fade .18s ease'; }
 }
+// Android 輕震回饋（純觸覺、無聲音；iOS 不支援 vibrate 會自動略過）
+document.addEventListener('click',function(e){
+  if(e.target.closest('.tab,.nb-btn,.day-pill,.ic-btn,.add-btn,.mbtn,.sync-toggle,.night-toggle,.topbar-edit-btn,.topbar-bg-label,.pack-check,button')){
+    if(navigator.vibrate){ try{ navigator.vibrate(8); }catch(_){} }
+  }
+},true);
 
 // Init default data and render immediately
 for(let i=0;i<DAYS.length;i++){data[i]=DEFAULT[i]?JSON.parse(JSON.stringify(DEFAULT[i])):[];}
@@ -2255,6 +2291,35 @@ updateDateDisplay();
 applyNightMode();
 renderItinerary();
 lockAll();
+
+// ===== 本地快取：離線也能看最後一次的資料 =====
+// 每次同步/存檔都把最新狀態存一份在手機；開機先讀這份，所以離線顯示的是
+// 「上次連上網時的資料」，不會被重設成預設。
+function saveLocalCache(){
+  try{
+    localStorage.setItem('yb_cache', JSON.stringify({v:1,data:data,budgetData:budgetData,DAYS:DAYS,infoData:infoData,bgData:bgData}));
+  }catch(e){
+    // localStorage 空間有限（背景圖/照片是 base64 會很大）：塞不下就退而求其次，不存背景圖
+    try{ localStorage.setItem('yb_cache', JSON.stringify({v:1,data:data,budgetData:budgetData,DAYS:DAYS,infoData:infoData})); }catch(e2){}
+  }
+}
+function loadLocalCache(){
+  try{
+    var raw=localStorage.getItem('yb_cache'); if(!raw) return false;
+    var c=JSON.parse(raw); if(!c) return false;
+    if(c.data){ Object.keys(data).forEach(function(k){delete data[k];}); Object.assign(data,c.data); }
+    if(c.infoData){ Object.keys(infoData).forEach(function(k){delete infoData[k];}); Object.assign(infoData,c.infoData); }
+    if(c.budgetData){ Object.keys(budgetData).forEach(function(k){delete budgetData[k];}); Object.assign(budgetData,c.budgetData); }
+    if(Array.isArray(c.DAYS)&&c.DAYS.length){ DAYS.length=0; c.DAYS.forEach(function(d){DAYS.push(d);}); }
+    if(c.bgData){ Object.keys(bgData).forEach(function(k){delete bgData[k];}); Object.assign(bgData,c.bgData); }
+    buildDayPills(); setTopbarFields(); updateDateDisplay(); applyNightMode(); renderItinerary(); lockAll(); applyBg(currentDay);
+    return true;
+  }catch(e){ return false; }
+}
+window.saveLocalCache=saveLocalCache;
+window.loadLocalCache=loadLocalCache;
+// 開機立刻用本地快取蓋掉預設（即使完全沒網路、Firebase 載不進來也看得到資料）
+loadLocalCache();
 
 // Expose shared state for Firebase module
 window.data = data;
@@ -2343,7 +2408,7 @@ function fbSaveAll(){
     set(ref(db,'yongbros/days'),window.DAYS||[])
   ]);
 }
-window._fbSave = function(){ fbSaveAll(); };
+window._fbSave = function(){ fbSaveAll(); window.saveLocalCache&&window.saveLocalCache(); };
 
 // Reset the in-memory state to the built-in Seoul defaults (mutating in place so
 // the closures in the main script keep their references).
@@ -2371,6 +2436,7 @@ function attachListeners(){
         if(m) window.data[+m[1]]=remote[k];
       });
       if(window.currentTab==='itinerary') window.renderItinerary();
+      window.saveLocalCache&&window.saveLocalCache();
     }
   });
 
@@ -2387,6 +2453,7 @@ function attachListeners(){
       if(window.currentTab==='info'&&window.renderInfo) window.renderInfo();
       else if(window.currentTab==='hotel'&&window.renderHotel) window.renderHotel();
       else if(window.currentTab==='wish'&&window.renderWish) window.renderWish();
+      window.saveLocalCache&&window.saveLocalCache();
     }
   });
 
@@ -2397,6 +2464,7 @@ function attachListeners(){
       if(Array.isArray(remote.cats)) window.budgetData.cats=remote.cats;
       if(Array.isArray(remote.daily)) window.budgetData.daily=remote.daily;
       if(window.currentTab==='budget'&&window.renderBudget) window.renderBudget();
+      window.saveLocalCache&&window.saveLocalCache();
     }
   });
 
@@ -2408,6 +2476,7 @@ function attachListeners(){
         remote.forEach(d=>{ if(d) window.DAYS.push(d); });
         window.buildDayPills&&window.buildDayPills();
         if(window.currentTab==='itinerary'&&window.renderItinerary) window.renderItinerary();
+        window.saveLocalCache&&window.saveLocalCache();
       }
     }
   });
@@ -2419,6 +2488,7 @@ function attachListeners(){
     if(snapshot.exists()){
       window.bgData=snapshot.val();
       window.applyBg(window.currentDay);
+      window.saveLocalCache&&window.saveLocalCache();
     }
   });
 }
@@ -2427,12 +2497,15 @@ async function boot(){
   // Sign in anonymously first so the database rules can require an authenticated
   // user (blocks anonymous internet scanners) while the app stays login-free.
   try{ await signInAnonymously(auth); }catch(e){ console.warn('anon sign-in failed', e); }
-  let v=0;
+  let v=0, versionRead=false;
   try{
     const vs=await get(ref(db,'yongbros/version'));
     v=vs.exists()?vs.val():0;
-  }catch(e){ v=0; }
-  if(v<DATA_VERSION){
+    versionRead=true; // 只有真的讀到雲端（有網路）才算數
+  }catch(e){ versionRead=false; }
+  // 關鍵修正：只有「確實連上雲端且版本較舊」時才重設為預設。
+  // 離線時 get() 會失敗、versionRead=false → 絕不重設，保留本地快取的最後資料。
+  if(versionRead && v<DATA_VERSION){
     // First load of this version: reset to clean Seoul defaults and push them to the
     // cloud. We AWAIT the write before attaching listeners, so the first snapshot the
     // listeners receive is our confirmed data — not stale old data (which previously
@@ -2440,6 +2513,7 @@ async function boot(){
     applyDefaults();
     try{ await fbSaveAll(); }catch(e){}
     try{ await set(ref(db,'yongbros/version'),DATA_VERSION); }catch(e){}
+    window.saveLocalCache&&window.saveLocalCache();
   }
   attachListeners();
 }
