@@ -1152,9 +1152,15 @@
     .exp-sel, .exp-in { font-family:var(--font-body); font-size:12px; color:#4A3D2B; background:var(--white); border:1.5px solid var(--blue-200); border-radius:10px; padding:6px 8px; outline:none; }
     .exp-in-kw { flex:1; min-width:78px; }
     .exp-in-amt { width:80px; }
-    .exp-add-btn { font-family:var(--font-display); font-weight:600; font-size:13px; color:#fff; background:#6FBF73; border:none; border-radius:10px; padding:7px 17px; cursor:pointer; box-shadow:0 3px 0 #4f9a54; }
+    .exp-add-btn { font-family:var(--font-display); font-weight:600; font-size:13px; color:#6FBF73; background:transparent; border:1.5px solid #6FBF73; border-radius:10px; padding:7px 17px; cursor:pointer; }
+    .exp-add-btn:active { background:#6FBF73; color:#fff; border-color:#6FBF73; }
     .exp-addday { display:block; width:100%; margin-top:12px; padding:12px; font-family:var(--font-display); font-weight:600; font-size:14px; color:#6FBF73; background:var(--blue-50); border:2px dashed #8FCB7E; border-radius:14px; cursor:pointer; }
-    .exp-form-day { font-size:11.5px; color:#8A7A5E; margin-bottom:9px; font-weight:500; }
+    .exp-form-day { font-size:11.5px; color:#8A7A5E; margin-bottom:9px; font-weight:500; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .exp-reset-btn { font-family:var(--font-body); font-size:11px; color:#E24B4A; background:transparent; border:1px solid rgba(226,75,74,0.5); border-radius:12px; padding:2px 10px; cursor:pointer; white-space:nowrap; }
+    .exp-tbl col.c-x { width:26px; }
+    .exp-xcell { text-align:center; padding:5px 1px !important; }
+    .exp-del-x { width:20px; height:20px; border-radius:50%; border:none; background:#E24B4A; color:#fff; font-size:11px; line-height:1; padding:0; cursor:pointer; }
+    .app.night .exp-sbtn.on { background:#6FBF73; color:#fff; border-color:#6FBF73; }
     .exp-form-r1 { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:9px; flex-wrap:wrap; }
     .exp-person-toggle { display:inline-flex; gap:5px; }
     .exp-share-toggle { display:inline-flex; gap:4px; }
@@ -1756,7 +1762,7 @@ function renderExpAddForm(day){
   const lastP=window._expLastPerson||'happy';
   const lastC=window._expLastCat||EXP_CATS[0].k;
   window._expDraftPerson=lastP;
-  const draftShare=window._expDraftShare||expCatShare(lastC);
+  const draftShare=window._expDraftShare||'personal';
   window._expDraftShare=draftShare;
   const catOpts=EXP_CATS.map(c=>`<option value="${c.k}"${c.k===lastC?' selected':''}>${c.k}</option>`).join('');
   const kws=[...new Set(budgetData.expenses.map(e=>e.kw).filter(Boolean))];
@@ -1764,16 +1770,16 @@ function renderExpAddForm(day){
   const hp=lastP==='happy';
   const sBtn=(s,label)=>`<button type="button" id="expS_${s}" class="exp-sbtn${draftShare===s?' on':''}" onclick="expPickShare('${s}')">${label}</button>`;
   let h=`<div class="budget-card exp-form">`;
-  h+=`<div class="exp-form-day">記一筆 → DAY ${day+1} · ${tripMonth()}/${dd.n} ${wk}</div>`;
+  h+=`<div class="exp-form-day"><span>記一筆 → DAY ${day+1} · ${tripMonth()}/${dd.n} ${wk}</span>${editMode?`<button type="button" class="exp-reset-btn always-on" onclick="expResetDay()">↺ 還原</button>`:''}</div>`;
   h+=`<div class="exp-form-r1">`;
   h+=`<span class="exp-person-toggle">`;
   h+=`<button type="button" id="expPH" class="exp-pbtn" style="${hp?'background:#6FBF73;color:#fff;border-color:#6FBF73':''}" onclick="expPickPerson('happy')">Happy</button>`;
   h+=`<button type="button" id="expPU" class="exp-pbtn" style="${!hp?'background:#E0982A;color:#fff;border-color:#E0982A':''}" onclick="expPickPerson('huang')">Huang</button>`;
   h+=`</span>`;
-  h+=`<span class="exp-share-toggle">${sBtn('even','均攤')}${sBtn('personal','個人')}${sBtn('custom','自訂')}</span>`;
+  h+=`<span class="exp-share-toggle">${sBtn('personal','個人')}${sBtn('even','均攤')}${sBtn('custom','自訂')}</span>`;
   h+=`</div>`;
   h+=`<div class="exp-form-r2">`;
-  h+=`<select id="expCat" class="always-on exp-sel" onchange="expCatChanged()">${catOpts}</select>`;
+  h+=`<select id="expCat" class="always-on exp-sel">${catOpts}</select>`;
   h+=`<input id="expKw" class="always-on exp-in exp-in-kw" list="expKwList" placeholder="買了什麼" autocomplete="off"/>`;
   h+=`<datalist id="expKwList">${kwOpts}</datalist>`;
   h+=`<input id="expAmt" class="always-on exp-in exp-in-amt" type="number" inputmode="numeric" placeholder="₩ 金額"/>`;
@@ -1784,25 +1790,28 @@ function renderExpAddForm(day){
   return h;
 }
 function renderExpDetail(day,settleMode){
+  const edit=editMode&&!settleMode;
   const dayExps=budgetData.expenses.filter(e=>e.day===day);
-  let h=`<div class="budget-card exp-card"><table class="exp-tbl"><colgroup><col class="c-p"><col class="c-c"><col class="c-k"><col class="c-a"><col class="c-s"><col class="c-r"></colgroup>`;
-  h+=`<thead><tr><th>購買人</th><th>類別</th><th>關鍵字</th><th class="r">金額</th><th class="ctr">算誰的</th><th>結果</th></tr></thead><tbody>`;
-  h+=renderExpPersonRows(dayExps,'happy',settleMode);
-  h+=renderExpPersonRows(dayExps,'huang',settleMode);
-  if(!dayExps.length)h+=`<tr><td colspan="6" class="exp-empty">這天還沒記帳，上面「記一筆」↑</td></tr>`;
+  const xcol=edit?'<col class="c-x">':'';
+  const xth=edit?'<th></th>':'';
+  let h=`<div class="budget-card exp-card"><table class="exp-tbl"><colgroup>${xcol}<col class="c-p"><col class="c-c"><col class="c-k"><col class="c-a"><col class="c-s"><col class="c-r"></colgroup>`;
+  h+=`<thead><tr>${xth}<th>購買人</th><th>類別</th><th>關鍵字</th><th class="r">金額</th><th class="ctr">算誰的</th><th>結果</th></tr></thead><tbody>`;
+  h+=renderExpPersonRows(dayExps,'happy',settleMode,edit);
+  h+=renderExpPersonRows(dayExps,'huang',settleMode,edit);
+  if(!dayExps.length)h+=`<tr><td colspan="${edit?7:6}" class="exp-empty">這天還沒記帳，上面「記一筆」↑</td></tr>`;
   h+=`</tbody></table></div>`;
   return h;
 }
-function renderExpPersonRows(dayExps,person,settleMode){
+function renderExpPersonRows(dayExps,person,settleMode,edit){
   const list=dayExps.filter(e=>e.person===person);
   if(!list.length)return '';
   const P=EXP_PEOPLE[person];
   let h='';let sub=0;
-  list.forEach(e=>{ sub+=e.amt||0; h+=renderExpRow(e,settleMode); });
-  h+=`<tr class="exp-subrow" style="background:${P.subTint}"><td><span class="exp-chip" style="background:${P.pill}">${P.name}</span></td><td colspan="2" class="exp-subt">今日合計</td><td class="r exp-subt">${sub.toLocaleString()}</td><td colspan="2"></td></tr>`;
+  list.forEach(e=>{ sub+=e.amt||0; h+=renderExpRow(e,settleMode,edit); });
+  h+=`<tr class="exp-subrow" style="background:${P.subTint}">${edit?'<td></td>':''}<td><span class="exp-chip" style="background:${P.pill}">${P.name}</span></td><td colspan="2" class="exp-subt">今日合計</td><td class="r exp-subt">${sub.toLocaleString()}</td><td colspan="2"></td></tr>`;
   return h;
 }
-function renderExpRow(e,settleMode){
+function renderExpRow(e,settleMode,edit){
   const P=EXP_PEOPLE[e.person]||EXP_PEOPLE.happy;
   const settled=!!e.settled;
   const share=expShare(e);
@@ -1820,11 +1829,12 @@ function renderExpRow(e,settleMode){
   if(settleMode&&isShared){
     rowClick=` onclick="expToggleSettled('${e.id}')" style="cursor:pointer"`;
     resultCell=settled?'<span class="exp-ok">✓已還</span>':'<span class="exp-check">○ 點我</span>';
-  }else if(editMode){
-    rowClick=` onclick="expDelete('${e.id}')" style="cursor:pointer"`;
-    shareClick=` onclick="event.stopPropagation();expCycleShare('${e.id}')" style="cursor:pointer;text-decoration:underline dotted"`;
+  }else if(edit){
+    shareClick=` onclick="expCycleShare('${e.id}')" style="cursor:pointer;text-decoration:underline dotted"`;
   }
+  const xcell=edit?`<td class="exp-xcell"><button type="button" class="exp-del-x always-on" onclick="expDelete('${e.id}')">✕</button></td>`:'';
   return `<tr class="exp-row${settled?' exp-settled':''}" style="background:${P.tint}"${rowClick}>`+
+    xcell+
     `<td><span class="exp-chip" style="background:${P.pill}">${P.name}</span></td>`+
     `<td class="exp-cat">${esc(e.cat||'')}</td>`+
     `<td class="exp-kw">${esc(e.kw||'')}</td>`+
@@ -1876,10 +1886,6 @@ function expPickShare(s){
   ['even','personal','custom'].forEach(x=>{const b=document.getElementById('expS_'+x);if(b)b.classList.toggle('on',x===s);});
   const w=document.getElementById('expOweWrap');if(w)w.style.display=(s==='custom')?'':'none';
 }
-function expCatChanged(){
-  const cat=document.getElementById('expCat').value;
-  expPickShare(expCatShare(cat));
-}
 function expAdd(){
   ensureExpenses();
   const amtIn=document.getElementById('expAmt');
@@ -1893,7 +1899,7 @@ function expAdd(){
   if(share==='custom'){owe=parseInt((document.getElementById('expOwe')||{}).value,10)||0;}
   else if(share==='even'){owe=Math.round(amt/2);}
   budgetData.expenses.push({id:genId('e_'),day:currentDay,person:person,cat:cat,kw:kw,amt:amt,share:share,owe:owe,settled:false,settledDate:''});
-  window._expLastPerson=person;window._expLastCat=cat;window._expDraftShare=expCatShare(cat);
+  window._expLastPerson=person;window._expLastCat=cat;window._expDraftShare='personal';
   save();renderBudget();
 }
 function toggleExpSettle(){window._expSettleMode=!window._expSettleMode;renderBudget();}
@@ -1912,9 +1918,14 @@ function expCycleShare(id){
   save();renderBudget();
 }
 function expDelete(id){
-  const e=budgetData.expenses.find(x=>x.id===id);if(!e)return;
-  if(!confirm('刪除這筆？\n'+(e.cat||'')+' '+(e.kw||'')+' ₩'+(e.amt||0).toLocaleString()))return;
   budgetData.expenses=budgetData.expenses.filter(x=>x.id!==id);
+  save();renderBudget();
+}
+function expResetDay(){
+  const dd=DAYS[currentDay]||{n:''};
+  if(!confirm(tripMonth()+'/'+dd.n+' 記賬記錄確認清除，清除後將無法復原'))return;
+  budgetData.expenses=budgetData.expenses.filter(e=>e.day!==currentDay);
+  window._expSettleMode=false;
   save();renderBudget();
 }
 
