@@ -1152,8 +1152,10 @@
     .exp-sel, .exp-in { font-family:var(--font-body); font-size:12px; color:#4A3D2B; background:var(--white); border:1.5px solid var(--blue-200); border-radius:10px; padding:6px 8px; outline:none; }
     .exp-in-kw { flex:1; min-width:78px; }
     .exp-in-amt { width:80px; }
-    .exp-add-btn { font-family:var(--font-display); font-weight:600; font-size:13px; color:#6FBF73; background:transparent; border:1.5px solid #6FBF73; border-radius:10px; padding:7px 17px; cursor:pointer; }
+    .exp-add-btn { font-family:var(--font-body); font-weight:500; font-size:16px; line-height:1; color:#8A7A5E; background:var(--blue-50); border:1.5px solid var(--blue-200); border-radius:14px; padding:5px 16px; cursor:pointer; }
     .exp-add-btn:active { background:#6FBF73; color:#fff; border-color:#6FBF73; }
+    .app.night .exp-add-btn { background:#22344F; color:#C9D9F0; border-color:rgba(95,168,255,0.3); }
+    .app.night .exp-add-btn:active { background:#6FBF73; color:#fff; border-color:#6FBF73; }
     .exp-addday { display:block; width:100%; margin-top:12px; padding:12px; font-family:var(--font-display); font-weight:600; font-size:14px; color:#6FBF73; background:var(--blue-50); border:2px dashed #8FCB7E; border-radius:14px; cursor:pointer; }
     .exp-form-day { font-size:11.5px; color:#8A7A5E; margin-bottom:9px; font-weight:500; display:flex; align-items:center; justify-content:space-between; gap:8px; }
     .exp-reset-btn { font-family:var(--font-body); font-size:11px; color:#E24B4A; background:transparent; border:1px solid rgba(226,75,74,0.5); border-radius:12px; padding:2px 10px; cursor:pointer; white-space:nowrap; }
@@ -1783,7 +1785,7 @@ function renderExpAddForm(day){
   h+=`<input id="expKw" class="always-on exp-in exp-in-kw" list="expKwList" placeholder="買了什麼" autocomplete="off"/>`;
   h+=`<datalist id="expKwList">${kwOpts}</datalist>`;
   h+=`<input id="expAmt" class="always-on exp-in exp-in-amt" type="number" inputmode="numeric" placeholder="₩ 金額"/>`;
-  h+=`<button type="button" class="exp-add-btn always-on" onclick="expAdd()">記</button>`;
+  h+=`<button type="button" class="exp-add-btn always-on" onclick="expAdd()">＋</button>`;
   h+=`</div>`;
   h+=`<div class="exp-form-owe" id="expOweWrap" style="${draftShare==='custom'?'':'display:none'}"><span class="exp-f-lbl">對方欠</span><input id="expOwe" class="always-on exp-in exp-in-owe" type="number" inputmode="numeric" placeholder="₩ 欠多少"/><span class="exp-owe-hint">金額照填總額，這裡填要還的部分</span></div>`;
   h+=`</div>`;
