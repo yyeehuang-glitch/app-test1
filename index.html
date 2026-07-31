@@ -2245,7 +2245,7 @@ function switchTab(id,tabEl,nbIdx){
 // Android 輕震回饋（純觸覺、無聲音；iOS 不支援 vibrate 會自動略過）
 document.addEventListener('click',function(e){
   if(e.target.closest('.tab,.nb-btn,.day-pill,.ic-btn,.add-btn,.mbtn,.sync-toggle,.night-toggle,.topbar-edit-btn,.topbar-bg-label,.pack-check,button')){
-    if(navigator.vibrate){ try{ navigator.vibrate(8); }catch(_){} }
+    if(navigator.vibrate){ try{ navigator.vibrate(25); }catch(_){} }
   }
 },true);
 
